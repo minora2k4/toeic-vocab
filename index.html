@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#4F46E5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TOEIC Vocab">
+<meta name="description" content="Ôn tập từ vựng và cấu trúc TOEIC bằng thẻ ghi nhớ và quiz.">
+<title>TOEIC Vocab — Ôn tập</title>
+<style>
+:root{
+  --bg:#F3F5FB; --surface:#FFFFFF; --surface-2:#EDF0F8; --ink:#182031; --muted:#697386;
+  --line:#E3E8F2; --brand:#4F46E5; --brand-2:#6366F1; --brand-soft:#EEF0FE; --ring:rgba(79,70,229,.4);
+  --ok:#16A34A; --ok-bg:#DCFCE7; --bad:#DC2626; --bad-bg:#FEE2E2;
+  --pos-n:#0284C7; --pos-v:#16A34A; --pos-adj:#EA580C; --pos-adv:#9333EA; --pos-prep:#0891B2; --pos-phr:#64748B; --pos-struct:#DB2777;
+  --shadow:0 1px 2px rgba(24,32,49,.06), 0 6px 20px -12px rgba(24,32,49,.18);
+  --r:14px; --r-lg:18px;
+}
+[data-theme="dark"]{
+  --bg:#0D1120; --surface:#161B2B; --surface-2:#1E2537; --ink:#E7EAF3; --muted:#98A2B8;
+  --line:#2A3245; --brand:#7C78F2; --brand-2:#8B87F5; --brand-soft:#20233A; --ring:rgba(124,120,242,.5);
+  --ok:#34D399; --ok-bg:#0E2A22; --bad:#F87171; --bad-bg:#331717;
+  --pos-n:#38BDF8; --pos-v:#34D399; --pos-adj:#FB923C; --pos-adv:#C084FC; --pos-prep:#22D3EE; --pos-phr:#94A3B8; --pos-struct:#F472B6;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:680px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; background:var(--bg)}
+
+/* ---------- Header ---------- */
+.appbar{
+  position:sticky; top:0; z-index:20; background:var(--surface); border-bottom:1px solid var(--line);
+  padding:calc(env(safe-area-inset-top) + 12px) 16px 12px; display:flex; align-items:center; gap:12px;
+}
+.brand{display:flex; align-items:center; gap:10px; min-width:0}
+.brand-mark{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--brand),var(--brand-2)); display:grid; place-items:center; flex:0 0 auto; box-shadow:0 4px 12px -4px var(--ring)}
+.brand-mark svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.brand-name{font-weight:800; letter-spacing:-.02em; font-size:17px; line-height:1}
+.brand-name span{color:var(--muted); font-weight:600}
+.brand-sub{font-size:11.5px; color:var(--muted); margin-top:2px}
+.icon-btn{margin-left:auto; width:40px; height:40px; border-radius:11px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); display:grid; place-items:center; cursor:pointer}
+.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn:active{transform:scale(.94)}
+[data-theme="light"] .moon{display:block} [data-theme="light"] .sun{display:none}
+[data-theme="dark"] .moon{display:none} [data-theme="dark"] .sun{display:block}
+
+/* ---------- Main ---------- */
+#view{flex:1; padding:14px 16px calc(80px + env(safe-area-inset-bottom))}
+
+/* ---------- Chips ---------- */
+.chips{display:flex; gap:8px; overflow-x:auto; padding:2px 0 10px; margin:0 -16px; padding-left:16px; padding-right:16px; scrollbar-width:none; -ms-overflow-style:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto; border:1px solid var(--line); background:var(--surface); color:var(--muted); font-weight:600; font-size:13.5px; padding:8px 14px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:background .15s,color .15s,border-color .15s}
+.chip.active{background:var(--brand); border-color:var(--brand); color:#fff; box-shadow:0 4px 12px -5px var(--ring)}
+.chip:active{transform:scale(.97)}
+
+/* ---------- Toolbar ---------- */
+.toolbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px}
+.search{flex:1 1 200px; display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:0 12px; min-height:42px}
+.search .ic{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.search input{border:0; outline:0; background:transparent; color:var(--ink); font-size:15px; width:100%; padding:9px 0}
+.switch{display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); cursor:pointer; user-select:none}
+.switch input{width:18px;height:18px;accent-color:var(--brand)}
+.switch.big{font-size:15px; color:var(--ink); background:var(--surface); border:1px solid var(--line); padding:12px 14px; border-radius:12px; width:100%; margin:4px 0 8px}
+
+/* ---------- Progress ---------- */
+.progress-row{display:flex; align-items:center; gap:10px; margin:2px 0 14px}
+.bar{flex:1; height:8px; background:var(--surface-2); border-radius:999px; overflow:hidden}
+.bar span{display:block; height:100%; background:linear-gradient(90deg,var(--brand),var(--brand-2)); border-radius:999px; transition:width .35s ease}
+.progress-label{font-size:12.5px; color:var(--muted); white-space:nowrap}
+.progress-label b{color:var(--ink)}
+.hint-line{font-size:12.5px; color:var(--muted); margin:2px 2px 10px}
+.group-h{font-size:13px; font-weight:700; color:var(--muted); margin:18px 2px 8px; letter-spacing:.01em}
+
+/* ---------- Pills (loại từ) ---------- */
+.pos-n{--accent:var(--pos-n)} .pos-v{--accent:var(--pos-v)} .pos-adj{--accent:var(--pos-adj)}
+.pos-adv{--accent:var(--pos-adv)} .pos-prep{--accent:var(--pos-prep)} .pos-phr{--accent:var(--pos-phr)}
+.pos-struct{--accent:var(--pos-struct)}
+.pill{display:inline-flex; align-items:center; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--accent); color:#fff; white-space:nowrap; letter-spacing:.01em}
+@supports (background: color-mix(in srgb, red, white)){
+  .pill{background:color-mix(in srgb, var(--accent) 15%, var(--surface)); color:color-mix(in srgb, var(--accent) 78%, var(--ink))}
+}
+.pos-n-ink{color:var(--pos-n)} .pos-v-ink{color:var(--pos-v)} .pos-adj-ink{color:var(--pos-adj)}
+.pos-adv-ink{color:var(--pos-adv)} .pos-struct-ink{color:var(--pos-struct)}
+
+/* ---------- Family cards (Tổng hợp) ---------- */
+.fam-list{display:flex; flex-direction:column; gap:10px}
+.fam-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow)}
+.fam-head{width:100%; display:flex; align-items:center; gap:10px; padding:13px 15px; background:transparent; border:0; cursor:pointer; color:var(--ink); text-align:left}
+.fam-base{font-weight:800; font-size:17px; letter-spacing:-.01em}
+.tag-user{font-size:10px; font-weight:700; color:var(--brand); background:var(--brand-soft); padding:2px 7px; border-radius:6px}
+.fam-count{margin-left:auto; font-size:12px; color:var(--muted)}
+.fam-head .chev{width:18px;height:18px;stroke:var(--muted);transition:transform .2s}
+.fam-card.collapsed .chev{transform:rotate(-90deg)}
+.fam-card.collapsed .fam-body{display:none}
+.fam-body{padding:0 15px 12px}
+.fam-row{display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--line)}
+.fam-row .pill{flex:0 0 auto}
+.fam-word{font-weight:700; font-size:15px; flex:0 0 auto}
+.fam-vi{color:var(--muted); font-size:13.5px; margin-left:auto; text-align:right}
+.fam-row.known .fam-word{text-decoration:line-through; opacity:.6}
+.fam-syn{margin-top:8px; font-size:13px; color:var(--pos-struct)}
+.fam-note{margin-top:6px; font-size:12.5px; color:var(--muted); font-style:italic}
+.mini-check{flex:0 0 auto; width:26px; height:26px; border-radius:8px; border:1.5px solid var(--line); background:var(--surface-2); display:grid; place-items:center; cursor:pointer; padding:0}
+.mini-check .ic{width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.mini-check.on{background:var(--ok); border-color:var(--ok)}
+.mini-check.on .ic{stroke:#fff; opacity:1}
+
+/* ---------- Flashcards (POS + Cấu trúc) ---------- */
+.card-grid{display:grid; grid-template-columns:1fr; gap:10px}
+@media(min-width:560px){.card-grid{grid-template-columns:1fr 1fr}}
+.fcard{position:relative; background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent,var(--brand)); border-radius:var(--r); padding:13px 14px 12px; cursor:pointer; box-shadow:var(--shadow); transition:transform .12s}
+.fcard:active{transform:scale(.99)}
+.fcard-top{display:flex; align-items:center; gap:8px; margin-bottom:6px}
+.fcard-term{font-size:21px; font-weight:800; letter-spacing:-.01em; word-break:break-word}
+.struct-term{font-size:17px; color:var(--pos-struct)}
+.fcard-meaning{display:none; margin-top:8px; padding-top:9px; border-top:1px dashed var(--line); font-size:15px; color:var(--ink); animation:fade .18s ease}
+.fcard.revealed .fcard-meaning{display:block}
+.fcard.revealed .fcard-hint{display:none}
+.fcard-sub{font-size:12.5px; color:var(--muted); margin-top:4px}
+.struct-after{font-size:13px; color:var(--muted); margin-bottom:2px}
+.struct-after b{color:var(--pos-struct)}
+.fcard-hint{margin-top:8px; font-size:12px; color:var(--muted)}
+.fcard-top .mini-check{margin-left:auto}
+.fcard.is-known{opacity:.72}
+.fcard.is-known .fcard-term{text-decoration:line-through}
+@keyframes fade{from{opacity:0; transform:translateY(-2px)}to{opacity:1;transform:none}}
+
+/* ---------- Empty ---------- */
+.empty{text-align:center; color:var(--muted); padding:34px 16px; font-size:14px; background:var(--surface); border:1px dashed var(--line); border-radius:var(--r)}
+
+/* ---------- Setup / forms ---------- */
+.setup{display:flex; flex-direction:column}
+.setup-h{font-size:13px; font-weight:700; color:var(--muted); margin:14px 2px 8px}
+.seg{display:flex; gap:6px; background:var(--surface-2); border:1px solid var(--line); padding:4px; border-radius:13px; margin-bottom:2px}
+.seg-btn{flex:1; border:0; background:transparent; color:var(--muted); font-weight:600; font-size:13.5px; padding:9px 6px; border-radius:9px; cursor:pointer; white-space:nowrap}
+.seg-btn.active{background:var(--surface); color:var(--ink); box-shadow:var(--shadow)}
+.form{display:flex; flex-direction:column; gap:12px; margin-top:6px}
+.fld{display:flex; flex-direction:column; gap:6px}
+.fld-label{font-size:13px; font-weight:600; color:var(--muted)}
+.form input,.form select{width:100%; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:11px; padding:12px 13px; font-size:15px; outline:none}
+.form input:focus,.form select:focus{border-color:var(--brand); box-shadow:0 0 0 3px var(--ring)}
+
+/* ---------- Buttons ---------- */
+.btn-primary,.btn-outline,.btn-ghost,.btn-danger{font-family:inherit; font-size:15px; font-weight:700; border-radius:12px; padding:13px 16px; cursor:pointer; border:1px solid transparent; transition:transform .1s,filter .15s}
+.btn-primary{background:var(--brand); color:#fff; box-shadow:0 6px 16px -8px var(--ring)}
+.btn-outline{background:var(--surface); color:var(--brand); border-color:var(--brand)}
+.btn-ghost{background:transparent; color:var(--muted)}
+.btn-danger{background:transparent; color:var(--bad); border-color:var(--bad)}
+.btn-primary:active,.btn-outline:active,.btn-ghost:active,.btn-danger:active{transform:scale(.98)}
+.btn-primary:disabled{opacity:.5; box-shadow:none}
+.block{display:block; width:100%; margin-top:14px}
+
+/* ---------- Quiz runner ---------- */
+.quiz-bar{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+.quiz-bar .btn-ghost{padding:8px 10px; font-size:13.5px; margin-right:auto}
+.quiz-count{font-size:13.5px; color:var(--muted); font-weight:600}
+.quiz-score{font-size:13.5px; color:var(--ok); font-weight:700}
+.quiz-progress{margin-bottom:18px}
+.q-prompt{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 18px; text-align:center; box-shadow:var(--shadow); margin-bottom:16px}
+.q-sub{font-size:12.5px; color:var(--muted); font-weight:600; margin-bottom:8px}
+.q-term{font-size:27px; font-weight:800; letter-spacing:-.01em; word-break:break-word; line-height:1.25}
+.q-ask{font-size:13.5px; color:var(--muted); margin-top:10px}
+.opts{display:flex; flex-direction:column; gap:10px}
+.opt{font-family:inherit; text-align:left; font-size:15.5px; font-weight:600; background:var(--surface); border:1.5px solid var(--line); color:var(--ink); border-radius:13px; padding:15px 16px; cursor:pointer; transition:border-color .12s,background .12s,transform .1s}
+.opt:active{transform:scale(.99)}
+.opt.correct{border-color:var(--ok); background:var(--ok-bg); color:var(--ok)}
+.opt.wrong{border-color:var(--bad); background:var(--bad-bg); color:var(--bad)}
+.opt.dim{opacity:.55}
+.opt:disabled{cursor:default}
+.feedback{margin-top:16px; padding:13px 15px; border-radius:12px; font-size:14px; line-height:1.55}
+.feedback.good{background:var(--ok-bg); color:var(--ok)}
+.feedback.bad{background:var(--bad-bg); color:var(--bad)}
+.feedback b{display:block; margin-bottom:2px}
+
+/* ---------- Result ---------- */
+.result{text-align:center; padding:18px 0 4px}
+.result-ring{position:relative; width:132px; height:132px; border-radius:50%; margin:0 auto 14px; background:conic-gradient(var(--brand) calc(var(--p,0)*1%), var(--surface-2) 0); display:grid; place-items:center}
+.result-ring::after{content:''; position:absolute; inset:11px; border-radius:50%; background:var(--surface)}
+.result-pct{position:relative; z-index:1; font-size:30px; font-weight:800}
+.result-msg{font-size:19px; font-weight:800}
+.result-score{color:var(--muted); margin-top:4px}
+.wrong-list{display:flex; flex-direction:column; gap:8px}
+.wrong-item{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--bad); border-radius:12px; padding:11px 13px}
+.wrong-term{font-weight:800; font-size:16px; margin-bottom:3px}
+.wrong-ans{font-size:13.5px; color:var(--muted)}
+.result-actions{margin-top:18px}
+.result-actions .block{margin-top:10px}
+
+/* ---------- Backup ---------- */
+.info-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:14px 15px; font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:14px}
+.info-card b{color:var(--ink)}
+.warn{margin-top:8px; color:var(--bad); font-weight:600}
+.stat-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:6px}
+.stat{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 8px; text-align:center}
+.stat-n{font-size:24px; font-weight:800}
+.stat-l{font-size:11.5px; color:var(--muted); margin-top:2px}
+.file-btn{position:relative; text-align:center}
+
+/* ---------- User list (Thêm từ) ---------- */
+.user-list{display:flex; flex-direction:column; gap:8px}
+.user-row{display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:11px; padding:10px 12px}
+.user-row .fam-vi{font-size:13px}
+.del{flex:0 0 auto; width:32px; height:32px; border-radius:9px; border:1px solid var(--line); background:var(--surface-2); display:grid; place-items:center; cursor:pointer}
+.del .ic{width:16px;height:16px;stroke:var(--bad);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Bottom nav ---------- */
+.tabbar{position:fixed; left:0; right:0; bottom:0; z-index:30; background:var(--surface); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
+.tabbar-inner{max-width:680px; margin:0 auto; display:flex}
+.nav-btn{flex:1; background:transparent; border:0; cursor:pointer; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 4px 8px; font-size:11px; font-weight:600}
+.nav-btn svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn.active{color:var(--brand)}
+.nav-btn:active{transform:scale(.95)}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed; left:50%; bottom:calc(76px + env(safe-area-inset-bottom)); transform:translate(-50%,20px); background:var(--ink); color:var(--surface); font-size:13.5px; font-weight:600; padding:11px 18px; border-radius:12px; opacity:0; pointer-events:none; transition:opacity .2s,transform .2s; z-index:50; max-width:90%; text-align:center}
+#toast.show{opacity:1; transform:translate(-50%,0)}
+
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important; animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="appbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M3 5.5A2 2 0 0 1 5 4h5v15H5a2 2 0 0 0-2 1.5z"/><path d="M21 5.5A2 2 0 0 0 19 4h-5v15h5a2 2 0 0 1 2 1.5z"/></svg>
+      </div>
+      <div>
+        <div class="brand-name">TOEIC <span>Vocab</span></div>
+        <div class="brand-sub">Sổ tay ôn tập của bạn</div>
+      </div>
+    </div>
+    <button class="icon-btn" id="themeBtn" data-action="theme" aria-label="Đổi giao diện">
+      <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </header>
+
+  <main id="view"><!-- render động --></main>
+
+  <nav class="tabbar" aria-label="Điều hướng chính">
+    <div class="tabbar-inner">
+      <button class="nav-btn" data-action="nav" data-view="study">
+        <svg viewBox="0 0 24 24"><path d="M4 5.5A2 2 0 0 1 6 4h6v16H6a2 2 0 0 0-2 1.2z"/><path d="M20 5.5A2 2 0 0 0 18 4h-6v16h6a2 2 0 0 1 2 1.2z"/></svg>
+        <span>Học</span>
+      </button>
+      <button class="nav-btn" data-action="nav" data-view="quiz">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg>
+        <span>Kiểm tra</span>
+      </button>
+      <button class="nav-btn" data-action="nav" data-view="add">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Thêm từ</span>
+      </button>
+      <button class="nav-btn" data-action="nav" data-view="backup">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        <span>Sao lưu</span>
+      </button>
+    </div>
+  </nav>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================================
+   TOEIC VOCAB — DỮ LIỆU GỐC
+   ----------------------------------------------------------------------------
+   Trích từ sổ tay viết tay của bạn, đã mở rộng đầy đủ các dạng wordform
+   (danh từ / động từ / tính từ / trạng từ) cho mỗi từ.
+
+   CÁCH THÊM / SỬA TỪ TRỰC TIẾP (nếu không muốn dùng nút "Thêm từ" trong app):
+     - Mỗi "family" là một họ từ cùng gốc.
+       { id, base, syn:[từ đồng nghĩa], note, forms:[ {w, pos, vi} ] }
+     - pos nhận 1 trong: 'n' | 'v' | 'adj' | 'adv' | 'prep' | 'phr'
+     - vi = nghĩa tiếng Việt.
+   Cấu trúc ngữ pháp nằm ở mảng STRUCTURES bên dưới.
+   ============================================================================ */
+
+var TOEIC_DATA = {
+  version: 1,
+
+  /* ---- HỌ TỪ VỰNG (WORD FAMILIES) ---- */
+  families: [
+    { id:'f001', base:'dedicate', syn:['contribute'], forms:[
+      {w:'dedicate', pos:'v', vi:'cống hiến, tận tâm, dành cho'},
+      {w:'dedicated', pos:'adj', vi:'tận tâm, tận tụy, được dành riêng cho'},
+      {w:'dedication', pos:'n', vi:'sự cống hiến, tận tâm'},
+      {w:'dedicative', pos:'adj', vi:'mang tính cống hiến'},
+      {w:'dedicator', pos:'n', vi:'người cống hiến'} ]},
+
+    { id:'f002', base:'instead', forms:[
+      {w:'instead', pos:'adv', vi:'thay vào đó'} ]},
+
+    { id:'f003', base:'addition', forms:[
+      {w:'addition', pos:'n', vi:'sự thêm vào'},
+      {w:'additional', pos:'adj', vi:'thêm, bổ sung'},
+      {w:'additionally', pos:'adv', vi:'ngoài ra, hơn nữa'} ]},
+
+    { id:'f004', base:'instance', forms:[
+      {w:'instance', pos:'n', vi:'ví dụ, trường hợp'} ]},
+
+    { id:'f005', base:'facility', forms:[
+      {w:'facility', pos:'n', vi:'cơ sở, tiện nghi (facilities)'},
+      {w:'facilitate', pos:'v', vi:'tạo điều kiện, hỗ trợ'},
+      {w:'facilitator', pos:'n', vi:'người hỗ trợ, điều phối'} ]},
+
+    { id:'f006', base:'courage', forms:[
+      {w:'courage', pos:'n', vi:'sự can đảm, lòng dũng cảm'},
+      {w:'courageous', pos:'adj', vi:'can đảm, dũng cảm'},
+      {w:'encourage', pos:'v', vi:'khuyến khích, động viên'},
+      {w:'encouraged', pos:'adj', vi:'được khích lệ'},
+      {w:'encouraging', pos:'adj', vi:'đầy khích lệ, đáng khích lệ'},
+      {w:'encouragement', pos:'n', vi:'sự khích lệ'} ]},
+
+    { id:'f007', base:'charge', forms:[
+      {w:'charge', pos:'v', vi:'tính phí; nạp (điện); phụ trách'},
+      {w:'charge', pos:'n', vi:'phí, tiền công; sự phụ trách'} ]},
+
+    { id:'f008', base:'receipt', syn:['invoice'], forms:[
+      {w:'receipt', pos:'n', vi:'biên lai, hóa đơn'} ]},
+
+    { id:'f009', base:'payment', forms:[
+      {w:'pay', pos:'v', vi:'trả, thanh toán'},
+      {w:'payment', pos:'n', vi:'khoản thanh toán'},
+      {w:'payable', pos:'adj', vi:'phải trả, đến hạn trả'} ]},
+
+    { id:'f010', base:'cash', forms:[
+      {w:'cash', pos:'n', vi:'tiền mặt'} ]},
+
+    { id:'f011', base:'demand', note:'keep up with demand = đáp ứng nhu cầu', forms:[
+      {w:'demand', pos:'n', vi:'nhu cầu, sự đòi hỏi'},
+      {w:'demand', pos:'v', vi:'đòi hỏi, yêu cầu'} ]},
+
+    { id:'f012', base:'prevent', forms:[
+      {w:'prevent', pos:'v', vi:'ngăn chặn, cản trở'},
+      {w:'prevention', pos:'n', vi:'sự ngăn chặn'},
+      {w:'preventive', pos:'adj', vi:'mang tính phòng ngừa'} ]},
+
+    { id:'f013', base:'annual', forms:[
+      {w:'annual', pos:'adj', vi:'hàng năm, thường niên'},
+      {w:'annually', pos:'adv', vi:'hàng năm'} ]},
+
+    { id:'f014', base:'purchase', syn:['buy'], forms:[
+      {w:'purchase', pos:'v', vi:'mua'},
+      {w:'purchase', pos:'n', vi:'việc mua, món hàng đã mua'},
+      {w:'purchaser', pos:'n', vi:'người mua'} ]},
+
+    { id:'f015', base:'approve', forms:[
+      {w:'approve', pos:'v', vi:'phê duyệt, chấp thuận'},
+      {w:'approval', pos:'n', vi:'sự phê duyệt'},
+      {w:'approved', pos:'adj', vi:'đã được phê duyệt'} ]},
+
+    { id:'f016', base:'revise', forms:[
+      {w:'revise', pos:'v', vi:'ôn lại, sửa lại, điều chỉnh'},
+      {w:'revision', pos:'n', vi:'sự sửa đổi, bản sửa'} ]},
+
+    { id:'f017', base:'essential', forms:[
+      {w:'essential', pos:'adj', vi:'thiết yếu, cần thiết'},
+      {w:'essentially', pos:'adv', vi:'về cơ bản'} ]},
+
+    { id:'f018', base:'restrict', forms:[
+      {w:'restrict', pos:'v', vi:'hạn chế'},
+      {w:'restricted', pos:'adj', vi:'bị hạn chế'},
+      {w:'restriction', pos:'n', vi:'sự hạn chế'} ]},
+
+    { id:'f019', base:'intention', forms:[
+      {w:'intend', pos:'v', vi:'dự định'},
+      {w:'intention', pos:'n', vi:'ý định, chủ đích'},
+      {w:'intentional', pos:'adj', vi:'cố ý, có chủ đích'},
+      {w:'intentionally', pos:'adv', vi:'một cách cố ý'} ]},
+
+    { id:'f020', base:'refer', forms:[
+      {w:'refer', pos:'v', vi:'giới thiệu, tham chiếu, đề cập'},
+      {w:'reference', pos:'n', vi:'sự tham khảo, tham chiếu'},
+      {w:'referral', pos:'n', vi:'sự giới thiệu (chuyển tiếp)'} ]},
+
+    { id:'f021', base:'estimate', forms:[
+      {w:'estimate', pos:'v', vi:'ước tính'},
+      {w:'estimate', pos:'n', vi:'bản ước tính'},
+      {w:'estimated', pos:'adj', vi:'ước tính, dự kiến'},
+      {w:'estimation', pos:'n', vi:'sự ước lượng'} ]},
+
+    { id:'f022', base:'deposit', forms:[
+      {w:'deposit', pos:'n', vi:'tiền đặt cọc'},
+      {w:'deposit', pos:'v', vi:'gửi tiền, đặt cọc'} ]},
+
+    { id:'f023', base:'avoid', forms:[
+      {w:'avoid', pos:'v', vi:'tránh'},
+      {w:'avoidable', pos:'adj', vi:'có thể tránh được'},
+      {w:'avoidance', pos:'n', vi:'sự né tránh'} ]},
+
+    { id:'f024', base:'temporary', forms:[
+      {w:'temporary', pos:'adj', vi:'tạm thời'},
+      {w:'temporarily', pos:'adv', vi:'một cách tạm thời'} ]},
+
+    { id:'f025', base:'prompt', forms:[
+      {w:'prompt', pos:'adj', vi:'nhanh, đúng giờ'},
+      {w:'prompt', pos:'v', vi:'thúc đẩy, nhắc'},
+      {w:'promptly', pos:'adv', vi:'nhanh chóng, đúng giờ'},
+      {w:'promptness', pos:'n', vi:'sự nhanh chóng'} ]},
+
+    { id:'f026', base:'perform', forms:[
+      {w:'perform', pos:'v', vi:'biểu diễn, thực hiện'},
+      {w:'performance', pos:'n', vi:'màn trình diễn, hiệu suất'},
+      {w:'performer', pos:'n', vi:'người biểu diễn'} ]},
+
+    { id:'f027', base:'conduct', forms:[
+      {w:'conduct', pos:'v', vi:'tiến hành'},
+      {w:'conduct', pos:'n', vi:'hành vi, cách cư xử'},
+      {w:'conductor', pos:'n', vi:'người chỉ huy, nhạc trưởng'} ]},
+
+    { id:'f028', base:'destination', forms:[
+      {w:'destination', pos:'n', vi:'điểm đến'},
+      {w:'destined', pos:'adj', vi:'được định để đến, dành cho'} ]},
+
+    { id:'f029', base:'excursion', forms:[
+      {w:'excursion', pos:'n', vi:'chuyến tham quan'} ]},
+
+    { id:'f030', base:'attach', syn:['enclose'], forms:[
+      {w:'attach', pos:'v', vi:'đính kèm'},
+      {w:'attachment', pos:'n', vi:'tệp đính kèm, sự gắn bó'},
+      {w:'attached', pos:'adj', vi:'được đính kèm'} ]},
+
+    { id:'f031', base:'purpose', forms:[
+      {w:'purpose', pos:'n', vi:'mục đích'},
+      {w:'purposeful', pos:'adj', vi:'có mục đích'},
+      {w:'purposely', pos:'adv', vi:'một cách cố ý'} ]},
+
+    { id:'f032', base:'direction', forms:[
+      {w:'direct', pos:'v', vi:'chỉ đạo, hướng dẫn'},
+      {w:'direct', pos:'adj', vi:'trực tiếp, thẳng thắn, minh bạch'},
+      {w:'direction', pos:'n', vi:'phương hướng, chỉ dẫn'},
+      {w:'directly', pos:'adv', vi:'một cách trực tiếp'},
+      {w:'director', pos:'n', vi:'giám đốc, đạo diễn'} ]},
+
+    { id:'f033', base:'coordinate', forms:[
+      {w:'coordinate', pos:'v', vi:'điều phối, phối hợp'},
+      {w:'coordinator', pos:'n', vi:'người điều phối'},
+      {w:'coordination', pos:'n', vi:'sự phối hợp'} ]},
+
+    { id:'f034', base:'navigate', forms:[
+      {w:'navigate', pos:'v', vi:'điều hướng'},
+      {w:'navigation', pos:'n', vi:'sự điều hướng'},
+      {w:'navigator', pos:'n', vi:'người dẫn đường'} ]},
+
+    { id:'f035', base:'clarify', forms:[
+      {w:'clarify', pos:'v', vi:'làm rõ'},
+      {w:'clarification', pos:'n', vi:'sự làm rõ'},
+      {w:'clarity', pos:'n', vi:'sự rõ ràng'} ]},
+
+    { id:'f036', base:'postpone', forms:[
+      {w:'postpone', pos:'v', vi:'hoãn, trì hoãn'},
+      {w:'postponement', pos:'n', vi:'sự trì hoãn'} ]},
+
+    { id:'f037', base:'manufacture', syn:['produce'], forms:[
+      {w:'manufacture', pos:'v', vi:'sản xuất'},
+      {w:'manufacture', pos:'n', vi:'việc sản xuất'},
+      {w:'manufacturer', pos:'n', vi:'nhà sản xuất'},
+      {w:'manufacturing', pos:'n', vi:'ngành/việc sản xuất'} ]},
+
+    { id:'f038', base:'equip', syn:['tool','device','appliance'], forms:[
+      {w:'equip', pos:'v', vi:'trang bị'},
+      {w:'equipment', pos:'n', vi:'trang thiết bị'} ]},
+
+    { id:'f039', base:'arrange', syn:['set up','host','organize'], forms:[
+      {w:'arrange', pos:'v', vi:'sắp xếp, tổ chức'},
+      {w:'arrangement', pos:'n', vi:'sự sắp xếp'} ]},
+
+    { id:'f040', base:'organize', syn:['arrange','set up','host'], forms:[
+      {w:'organize', pos:'v', vi:'tổ chức, sắp xếp'},
+      {w:'organization', pos:'n', vi:'tổ chức'},
+      {w:'organizer', pos:'n', vi:'người tổ chức'},
+      {w:'organized', pos:'adj', vi:'có tổ chức, ngăn nắp'} ]},
+
+    { id:'f041', base:'locate', syn:['venue','site','area','place','spot'], forms:[
+      {w:'locate', pos:'v', vi:'định vị, đặt tại'},
+      {w:'location', pos:'n', vi:'địa điểm'} ]},
+
+    { id:'f042', base:'vary', syn:['change','turn','switch','amend','adjust','modify','differ'], forms:[
+      {w:'vary', pos:'v', vi:'thay đổi, khác nhau'},
+      {w:'variety', pos:'n', vi:'sự đa dạng'},
+      {w:'various', pos:'adj', vi:'đa dạng, nhiều'},
+      {w:'variation', pos:'n', vi:'sự biến đổi'},
+      {w:'variable', pos:'adj', vi:'hay thay đổi'} ]},
+
+    { id:'f043', base:'adjust', forms:[
+      {w:'adjust', pos:'v', vi:'điều chỉnh'},
+      {w:'adjustment', pos:'n', vi:'sự điều chỉnh'},
+      {w:'adjustable', pos:'adj', vi:'có thể điều chỉnh'} ]},
+
+    { id:'f044', base:'modify', forms:[
+      {w:'modify', pos:'v', vi:'sửa đổi'},
+      {w:'modification', pos:'n', vi:'sự sửa đổi'} ]},
+
+    { id:'f045', base:'depend', syn:['rely'], note:'depend on = rely on = phụ thuộc vào', forms:[
+      {w:'depend', pos:'v', vi:'phụ thuộc'},
+      {w:'dependent', pos:'adj', vi:'phụ thuộc'},
+      {w:'dependence', pos:'n', vi:'sự phụ thuộc'},
+      {w:'dependable', pos:'adj', vi:'đáng tin cậy'} ]},
+
+    { id:'f046', base:'rely', syn:['depend'], forms:[
+      {w:'rely', pos:'v', vi:'dựa vào, tin cậy'},
+      {w:'reliable', pos:'adj', vi:'đáng tin cậy'},
+      {w:'reliability', pos:'n', vi:'độ tin cậy'},
+      {w:'reliance', pos:'n', vi:'sự phụ thuộc, tin cậy'} ]},
+
+    { id:'f047', base:'solve', syn:['resolve','handle','deal with','take care of'], forms:[
+      {w:'solve', pos:'v', vi:'giải quyết'},
+      {w:'solution', pos:'n', vi:'giải pháp'} ]},
+
+    { id:'f048', base:'resolve', syn:['solve'], forms:[
+      {w:'resolve', pos:'v', vi:'giải quyết, quyết tâm'},
+      {w:'resolution', pos:'n', vi:'giải pháp, quyết tâm'} ]},
+
+    { id:'f049', base:'confirm', syn:['verify'], forms:[
+      {w:'confirm', pos:'v', vi:'xác nhận'},
+      {w:'confirmation', pos:'n', vi:'sự xác nhận'} ]},
+
+    { id:'f050', base:'verify', syn:['confirm'], forms:[
+      {w:'verify', pos:'v', vi:'xác minh, kiểm chứng'},
+      {w:'verification', pos:'n', vi:'sự xác minh'} ]},
+
+    { id:'f051', base:'contact', syn:['reach'], forms:[
+      {w:'contact', pos:'v', vi:'liên hệ'},
+      {w:'contact', pos:'n', vi:'sự liên hệ, đầu mối'} ]},
+
+    { id:'f052', base:'achieve', syn:['reach'], forms:[
+      {w:'achieve', pos:'v', vi:'đạt được'},
+      {w:'achievement', pos:'n', vi:'thành tựu'} ]},
+
+    { id:'f053', base:'period', syn:['stage','phase'], forms:[
+      {w:'period', pos:'n', vi:'giai đoạn, thời kỳ'},
+      {w:'periodic', pos:'adj', vi:'định kỳ'},
+      {w:'periodical', pos:'adj', vi:'định kỳ; (n) tạp chí ra định kỳ'},
+      {w:'periodically', pos:'adv', vi:'một cách định kỳ'} ]},
+
+    { id:'f054', base:'monitor', syn:['supervise','manage','inspect'], forms:[
+      {w:'monitor', pos:'v', vi:'giám sát, theo dõi'},
+      {w:'monitor', pos:'n', vi:'màn hình; người giám sát'} ]},
+
+    { id:'f055', base:'supervise', syn:['monitor','manage','inspect'], forms:[
+      {w:'supervise', pos:'v', vi:'giám sát, quản lý'},
+      {w:'supervisor', pos:'n', vi:'người giám sát, quản lý'},
+      {w:'supervision', pos:'n', vi:'sự giám sát'} ]},
+
+    { id:'f056', base:'manage', syn:['monitor','supervise'], forms:[
+      {w:'manage', pos:'v', vi:'quản lý; xoay xở'},
+      {w:'management', pos:'n', vi:'sự quản lý, ban quản lý'},
+      {w:'manager', pos:'n', vi:'người quản lý'},
+      {w:'manageable', pos:'adj', vi:'có thể quản lý được'} ]},
+
+    { id:'f057', base:'inspect', syn:['monitor','supervise'], forms:[
+      {w:'inspect', pos:'v', vi:'thanh tra, kiểm tra'},
+      {w:'inspection', pos:'n', vi:'sự thanh tra'},
+      {w:'inspector', pos:'n', vi:'thanh tra viên'} ]},
+
+    { id:'f058', base:'process', syn:['progress','procedure'], forms:[
+      {w:'process', pos:'n', vi:'tiến trình, quy trình'},
+      {w:'process', pos:'v', vi:'xử lý'} ]},
+
+    { id:'f059', base:'progress', syn:['process'], forms:[
+      {w:'progress', pos:'n', vi:'sự tiến bộ, tiến độ'},
+      {w:'progress', pos:'v', vi:'tiến triển'},
+      {w:'progressive', pos:'adj', vi:'tiến bộ, dần dần'} ]},
+
+    { id:'f060', base:'procedure', syn:['process'], forms:[
+      {w:'procedure', pos:'n', vi:'quy trình, thủ tục'},
+      {w:'procedural', pos:'adj', vi:'thuộc về thủ tục'} ]},
+
+    { id:'f061', base:'launch', forms:[
+      {w:'launch', pos:'v', vi:'khai trương, ra mắt'},
+      {w:'launch', pos:'n', vi:'sự ra mắt'} ]},
+
+    { id:'f062', base:'publish', syn:['release'], forms:[
+      {w:'publish', pos:'v', vi:'xuất bản, công bố'},
+      {w:'publication', pos:'n', vi:'ấn phẩm, sự xuất bản'},
+      {w:'publisher', pos:'n', vi:'nhà xuất bản'} ]},
+
+    { id:'f063', base:'release', syn:['publish'], forms:[
+      {w:'release', pos:'v', vi:'tung ra, phát hành, phóng thích'},
+      {w:'release', pos:'n', vi:'sự phát hành'} ]},
+
+    { id:'f064', base:'outstanding', forms:[
+      {w:'outstanding', pos:'adj', vi:'nổi bật, xuất sắc; (nợ) chưa thanh toán'} ]},
+
+    { id:'f065', base:'consist', forms:[
+      {w:'consist', pos:'v', vi:'bao gồm (consist of)'},
+      {w:'consistent', pos:'adj', vi:'nhất quán, kiên định'},
+      {w:'consistency', pos:'n', vi:'sự nhất quán'} ]},
+
+    { id:'f066', base:'advise', forms:[
+      {w:'advise', pos:'v', vi:'tư vấn, khuyên bảo'},
+      {w:'advice', pos:'n', vi:'lời khuyên'},
+      {w:'adviser', pos:'n', vi:'cố vấn (advisor)'},
+      {w:'advisable', pos:'adj', vi:'nên làm, khôn ngoan'} ]},
+
+    { id:'f067', base:'represent', forms:[
+      {w:'represent', pos:'v', vi:'đại diện, tượng trưng'},
+      {w:'representative', pos:'n', vi:'người đại diện'},
+      {w:'representation', pos:'n', vi:'sự đại diện, biểu diễn'} ]},
+
+    { id:'f068', base:'recommend', syn:['suggest','offer'], forms:[
+      {w:'recommend', pos:'v', vi:'đề xuất, gợi ý, giới thiệu'},
+      {w:'recommendation', pos:'n', vi:'sự đề xuất, thư giới thiệu'} ]},
+
+    { id:'f069', base:'suggest', syn:['recommend','offer'], forms:[
+      {w:'suggest', pos:'v', vi:'đề xuất, gợi ý'},
+      {w:'suggestion', pos:'n', vi:'lời đề xuất'} ]},
+
+    { id:'f070', base:'offer', syn:['recommend','suggest'], forms:[
+      {w:'offer', pos:'v', vi:'đề nghị, cung cấp'},
+      {w:'offer', pos:'n', vi:'lời đề nghị, ưu đãi'} ]},
+
+    { id:'f071', base:'request', syn:['inquire','ask for'], forms:[
+      {w:'request', pos:'v', vi:'yêu cầu'},
+      {w:'request', pos:'n', vi:'lời yêu cầu'} ]},
+
+    { id:'f072', base:'inquire', syn:['request','ask for'], forms:[
+      {w:'inquire', pos:'v', vi:'hỏi, thăm dò (enquire)'},
+      {w:'inquiry', pos:'n', vi:'câu hỏi, sự điều tra'} ]},
+
+    { id:'f073', base:'appoint', forms:[
+      {w:'appoint', pos:'v', vi:'bổ nhiệm'},
+      {w:'appointment', pos:'n', vi:'cuộc hẹn; sự bổ nhiệm'} ]},
+
+    { id:'f074', base:'lead', syn:['chief'], forms:[
+      {w:'lead', pos:'v', vi:'dẫn dắt, lãnh đạo'},
+      {w:'leader', pos:'n', vi:'người đứng đầu, trưởng'},
+      {w:'leadership', pos:'n', vi:'sự lãnh đạo, khả năng lãnh đạo'} ]},
+
+    { id:'f075', base:'casual', forms:[
+      {w:'casual', pos:'adj', vi:'thông thường, thân mật, tùy tiện'},
+      {w:'casually', pos:'adv', vi:'một cách thoải mái, tình cờ'} ]},
+
+    { id:'f076', base:'replace', syn:['substitute'], forms:[
+      {w:'replace', pos:'v', vi:'thay thế'},
+      {w:'replacement', pos:'n', vi:'sự thay thế, người/vật thay thế'} ]},
+
+    { id:'f077', base:'substitute', syn:['replace'], forms:[
+      {w:'substitute', pos:'v', vi:'thay thế'},
+      {w:'substitute', pos:'n', vi:'vật/người thay thế'},
+      {w:'substitution', pos:'n', vi:'sự thay thế'} ]},
+
+    { id:'f078', base:'decline', syn:['decrease','turn down','reduce','fall'], forms:[
+      {w:'decline', pos:'v', vi:'giảm; từ chối'},
+      {w:'decline', pos:'n', vi:'sự suy giảm'} ]},
+
+    { id:'f079', base:'decrease', syn:['decline','reduce','fall'], forms:[
+      {w:'decrease', pos:'v', vi:'giảm'},
+      {w:'decrease', pos:'n', vi:'sự giảm'} ]},
+
+    { id:'f080', base:'reduce', syn:['decrease','decline'], forms:[
+      {w:'reduce', pos:'v', vi:'giảm bớt, cắt giảm'},
+      {w:'reduction', pos:'n', vi:'sự cắt giảm'} ]},
+
+    { id:'f081', base:'expense', syn:['charge','fee','cost','rate','price'], forms:[
+      {w:'expense', pos:'n', vi:'chi phí'},
+      {w:'expend', pos:'v', vi:'tiêu, chi tiêu'},
+      {w:'expensive', pos:'adj', vi:'đắt đỏ'},
+      {w:'expenditure', pos:'n', vi:'khoản chi tiêu'} ]},
+
+    { id:'f082', base:'international', syn:['global'], note:'>< domestic (nội địa)', forms:[
+      {w:'international', pos:'adj', vi:'quốc tế'},
+      {w:'internationally', pos:'adv', vi:'trên phạm vi quốc tế'},
+      {w:'global', pos:'adj', vi:'toàn cầu'},
+      {w:'domestic', pos:'adj', vi:'nội địa, trong nước'} ]},
+
+    { id:'f083', base:'occupy', forms:[
+      {w:'occupy', pos:'v', vi:'chiếm giữ, sử dụng, cư ngụ'},
+      {w:'occupation', pos:'n', vi:'nghề nghiệp; sự chiếm đóng'},
+      {w:'occupant', pos:'n', vi:'người cư ngụ, người sử dụng'},
+      {w:'occupied', pos:'adj', vi:'đang bận, đã có người'} ]},
+
+    { id:'f084', base:'surround', forms:[
+      {w:'surround', pos:'v', vi:'bao quanh'},
+      {w:'surrounding', pos:'adj', vi:'xung quanh'},
+      {w:'surrounded', pos:'adj', vi:'bị bao quanh'},
+      {w:'surroundings', pos:'n', vi:'môi trường xung quanh'} ]},
+
+    { id:'f085', base:'firm', syn:['company'], forms:[
+      {w:'firm', pos:'n', vi:'công ty, hãng'},
+      {w:'firm', pos:'adj', vi:'chắc chắn, kiên định'} ]},
+
+    { id:'f086', base:'track', forms:[
+      {w:'track', pos:'v', vi:'theo dõi, lần theo'},
+      {w:'track', pos:'n', vi:'đường ray, dấu vết'} ]},
+
+    { id:'f087', base:'borrow', forms:[
+      {w:'borrow', pos:'v', vi:'vay mượn'},
+      {w:'loan', pos:'n', vi:'khoản vay'},
+      {w:'borrower', pos:'n', vi:'người đi vay'} ]},
+
+    { id:'f088', base:'structure', forms:[
+      {w:'structure', pos:'n', vi:'cấu trúc'},
+      {w:'structural', pos:'adj', vi:'thuộc về cấu trúc'} ]},
+
+    { id:'f089', base:'construct', forms:[
+      {w:'construct', pos:'v', vi:'xây dựng'},
+      {w:'construction', pos:'n', vi:'công trình, việc xây dựng'},
+      {w:'constructive', pos:'adj', vi:'mang tính xây dựng'} ]},
+
+    { id:'f090', base:'instruct', syn:['educate'], forms:[
+      {w:'instruct', pos:'v', vi:'hướng dẫn, chỉ dẫn'},
+      {w:'instruction', pos:'n', vi:'sự hướng dẫn'},
+      {w:'instructor', pos:'n', vi:'người hướng dẫn'},
+      {w:'instructive', pos:'adj', vi:'mang tính giáo dục'} ]},
+
+    { id:'f091', base:'supply', syn:['provide'], forms:[
+      {w:'supply', pos:'v', vi:'cung cấp'},
+      {w:'supply', pos:'n', vi:'nguồn cung'},
+      {w:'supplier', pos:'n', vi:'nhà cung cấp'} ]},
+
+    { id:'f092', base:'provide', syn:['supply'], forms:[
+      {w:'provide', pos:'v', vi:'cung cấp'},
+      {w:'provider', pos:'n', vi:'nhà cung cấp'},
+      {w:'provision', pos:'n', vi:'sự cung cấp, điều khoản'} ]},
+
+    { id:'f093', base:'invoice', syn:['receipt'], forms:[
+      {w:'invoice', pos:'n', vi:'hóa đơn'} ]},
+
+    { id:'f094', base:'shift', forms:[
+      {w:'shift', pos:'n', vi:'ca làm việc; sự chuyển dịch'},
+      {w:'shift', pos:'v', vi:'chuyển, dịch chuyển'} ]},
+
+    { id:'f095', base:'recall', forms:[
+      {w:'recall', pos:'v', vi:'nhớ lại; thu hồi'} ]},
+
+    { id:'f096', base:'complain', forms:[
+      {w:'complain', pos:'v', vi:'phàn nàn'},
+      {w:'complaint', pos:'n', vi:'lời phàn nàn, đơn khiếu nại'} ]},
+
+    { id:'f097', base:'receive', syn:['get'], forms:[
+      {w:'receive', pos:'v', vi:'nhận được'},
+      {w:'reception', pos:'n', vi:'sự tiếp nhận; quầy lễ tân'},
+      {w:'receptionist', pos:'n', vi:'nhân viên lễ tân'},
+      {w:'recipient', pos:'n', vi:'người nhận'} ]},
+
+    { id:'f098', base:'register', syn:['enroll','sign up','apply for','subscribe'], forms:[
+      {w:'register', pos:'v', vi:'đăng ký, ghi danh'},
+      {w:'registration', pos:'n', vi:'sự đăng ký'} ]},
+
+    { id:'f099', base:'enroll', syn:['register','sign up'], forms:[
+      {w:'enroll', pos:'v', vi:'ghi danh, nhập học'},
+      {w:'enrollment', pos:'n', vi:'sự ghi danh'} ]},
+
+    { id:'f100', base:'subscribe', syn:['register'], forms:[
+      {w:'subscribe', pos:'v', vi:'đăng ký (dài hạn), theo dõi'},
+      {w:'subscription', pos:'n', vi:'sự đăng ký thuê bao'},
+      {w:'subscriber', pos:'n', vi:'người đăng ký'} ]},
+
+    { id:'f101', base:'submit', syn:['file','hand in'], forms:[
+      {w:'submit', pos:'v', vi:'nộp, trình'},
+      {w:'submission', pos:'n', vi:'sự nộp, bài nộp'} ]},
+
+    { id:'f102', base:'apply', forms:[
+      {w:'apply', pos:'v', vi:'nộp đơn; áp dụng'},
+      {w:'application', pos:'n', vi:'đơn xin; ứng dụng'},
+      {w:'applicant', pos:'n', vi:'ứng viên, người nộp đơn'},
+      {w:'applicable', pos:'adj', vi:'có thể áp dụng'} ]},
+
+    { id:'f103', base:'candidate', syn:['applicant'], forms:[
+      {w:'candidate', pos:'n', vi:'ứng viên, thí sinh'} ]},
+
+    { id:'f104', base:'fragile', syn:['delicate'], forms:[
+      {w:'fragile', pos:'adj', vi:'dễ vỡ, dễ tổn thương'},
+      {w:'fragility', pos:'n', vi:'sự mong manh'} ]},
+
+    { id:'f105', base:'entire', syn:['whole','all'], forms:[
+      {w:'entire', pos:'adj', vi:'toàn bộ'},
+      {w:'entirely', pos:'adv', vi:'hoàn toàn'} ]},
+
+    { id:'f106', base:'among', forms:[
+      {w:'among', pos:'prep', vi:'ở giữa, trong số (nhiều hơn 2)'} ]},
+
+    { id:'f107', base:'fortunate', forms:[
+      {w:'fortunate', pos:'adj', vi:'may mắn'},
+      {w:'fortunately', pos:'adv', vi:'may thay'},
+      {w:'fortune', pos:'n', vi:'vận may; tài sản lớn'} ]},
+
+    { id:'f108', base:'prior', note:'prior to + N/V-ing = before + S+V', forms:[
+      {w:'prior', pos:'adj', vi:'trước, ưu tiên'} ]},
+
+    { id:'f109', base:'permanent', forms:[
+      {w:'permanent', pos:'adj', vi:'vĩnh viễn, lâu dài, cố định'},
+      {w:'permanently', pos:'adv', vi:'một cách vĩnh viễn'} ]},
+
+    { id:'f110', base:'depart', forms:[
+      {w:'depart', pos:'v', vi:'khởi hành, rời đi'},
+      {w:'departure', pos:'n', vi:'sự rời đi, khởi hành'} ]},
+
+    { id:'f111', base:'toward', forms:[
+      {w:'toward', pos:'prep', vi:'về phía, hướng về (towards)'} ]},
+
+    { id:'f112', base:'alternative', forms:[
+      {w:'alternative', pos:'adj', vi:'thay thế, thay đổi được'},
+      {w:'alternative', pos:'n', vi:'phương án thay thế'},
+      {w:'alternatively', pos:'adv', vi:'hoặc là, một cách khác'},
+      {w:'alternate', pos:'v', vi:'luân phiên'} ]},
+
+    { id:'f113', base:'contract', forms:[
+      {w:'contract', pos:'n', vi:'hợp đồng'},
+      {w:'contractor', pos:'n', vi:'nhà thầu'},
+      {w:'contractual', pos:'adj', vi:'thuộc về hợp đồng'} ]},
+
+    { id:'f114', base:'initial', forms:[
+      {w:'initial', pos:'adj', vi:'ban đầu, thời đầu'},
+      {w:'initially', pos:'adv', vi:'ban đầu'},
+      {w:'initiate', pos:'v', vi:'khởi xướng, bắt đầu'},
+      {w:'initiative', pos:'n', vi:'sáng kiến; sự chủ động'} ]},
+
+    { id:'f115', base:'counter', forms:[
+      {w:'counter', pos:'n', vi:'quầy'} ]},
+
+    { id:'f116', base:'encounter', forms:[
+      {w:'encounter', pos:'v', vi:'gặp phải, tình cờ gặp, đối mặt'},
+      {w:'encounter', pos:'n', vi:'cuộc chạm trán'} ]},
+
+    { id:'f117', base:'patience', forms:[
+      {w:'patience', pos:'n', vi:'sự kiên nhẫn'},
+      {w:'patient', pos:'adj', vi:'kiên nhẫn'},
+      {w:'patient', pos:'n', vi:'bệnh nhân'},
+      {w:'patiently', pos:'adv', vi:'một cách kiên nhẫn'} ]},
+
+    { id:'f118', base:'milestone', forms:[
+      {w:'milestone', pos:'n', vi:'cột mốc quan trọng'} ]},
+
+    { id:'f119', base:'consider', forms:[
+      {w:'consider', pos:'v', vi:'cân nhắc, xem xét'},
+      {w:'considerate', pos:'adj', vi:'ân cần, chu đáo'},
+      {w:'considerable', pos:'adj', vi:'đáng kể, lớn'},
+      {w:'consideration', pos:'n', vi:'sự cân nhắc'} ]},
+
+    { id:'f120', base:'probable', forms:[
+      {w:'probable', pos:'adj', vi:'có khả năng xảy ra'},
+      {w:'probably', pos:'adv', vi:'có lẽ'},
+      {w:'probability', pos:'n', vi:'xác suất, khả năng'} ]},
+
+    { id:'f121', base:'remarkable', forms:[
+      {w:'remark', pos:'v', vi:'nhận xét'},
+      {w:'remark', pos:'n', vi:'lời nhận xét'},
+      {w:'remarkable', pos:'adj', vi:'đáng chú ý, phi thường'},
+      {w:'remarkably', pos:'adv', vi:'đáng kể'} ]},
+
+    { id:'f122', base:'acquire', forms:[
+      {w:'acquire', pos:'v', vi:'mua lại, thâu tóm, giành được'},
+      {w:'acquisition', pos:'n', vi:'sự mua lại, thâu tóm'} ]},
+
+    { id:'f123', base:'divide', forms:[
+      {w:'divide', pos:'v', vi:'chia ra, phân chia'},
+      {w:'division', pos:'n', vi:'sự phân chia; bộ phận'},
+      {w:'divisible', pos:'adj', vi:'có thể chia được'} ]},
+
+    { id:'f124', base:'present', syn:['pitch'], forms:[
+      {w:'present', pos:'v', vi:'trình bày, giới thiệu'},
+      {w:'presentation', pos:'n', vi:'bài thuyết trình'},
+      {w:'presenter', pos:'n', vi:'người thuyết trình'},
+      {w:'pitch', pos:'n', vi:'bài thuyết trình, sự chào hàng'} ]},
+
+    { id:'f125', base:'relevant', forms:[
+      {w:'relevant', pos:'adj', vi:'có liên quan, thích hợp'},
+      {w:'relevance', pos:'n', vi:'sự liên quan'} ]},
+
+    { id:'f126', base:'capable', forms:[
+      {w:'capable', pos:'adj', vi:'có năng lực, có thể'},
+      {w:'capability', pos:'n', vi:'năng lực, khả năng'},
+      {w:'capably', pos:'adv', vi:'một cách có năng lực'} ]},
+
+    { id:'f127', base:'fund', forms:[
+      {w:'fund', pos:'n', vi:'quỹ, ngân quỹ'},
+      {w:'fund', pos:'v', vi:'tài trợ, cấp vốn'},
+      {w:'funding', pos:'n', vi:'nguồn vốn, tiền tài trợ'} ]},
+
+    { id:'f128', base:'approach', forms:[
+      {w:'approach', pos:'v', vi:'tiếp cận, đến gần'},
+      {w:'approach', pos:'n', vi:'cách tiếp cận'},
+      {w:'approachable', pos:'adj', vi:'dễ gần, dễ tiếp cận'} ]},
+
+    { id:'f129', base:'brief', forms:[
+      {w:'brief', pos:'adj', vi:'ngắn gọn, vắn tắt'},
+      {w:'briefly', pos:'adv', vi:'một cách ngắn gọn'},
+      {w:'briefing', pos:'n', vi:'buổi báo cáo tóm tắt'} ]},
+
+    /* ---- HỌ TỪ CHO CÁC TRẠNG TỪ THƯỜNG GẶP ---- */
+    { id:'f130', base:'present (time)', forms:[
+      {w:'presently', pos:'adv', vi:'hiện nay, ngay bây giờ'} ]},
+
+    { id:'f131', base:'certain', forms:[
+      {w:'certain', pos:'adj', vi:'chắc chắn, nào đó'},
+      {w:'certainly', pos:'adv', vi:'chắc chắn'},
+      {w:'certainty', pos:'n', vi:'sự chắc chắn'} ]},
+
+    { id:'f132', base:'significant', syn:['remarkable'], forms:[
+      {w:'significant', pos:'adj', vi:'đáng kể, quan trọng'},
+      {w:'significantly', pos:'adv', vi:'một cách đáng kể'},
+      {w:'significance', pos:'n', vi:'tầm quan trọng'} ]},
+
+    { id:'f133', base:'effective', forms:[
+      {w:'effective', pos:'adj', vi:'hiệu quả'},
+      {w:'effectively', pos:'adv', vi:'một cách hiệu quả'},
+      {w:'effect', pos:'n', vi:'tác động, hiệu ứng'},
+      {w:'effectiveness', pos:'n', vi:'tính hiệu quả'} ]},
+
+    { id:'f134', base:'regular', syn:['frequent'], forms:[
+      {w:'regular', pos:'adj', vi:'thường xuyên, đều đặn'},
+      {w:'regularly', pos:'adv', vi:'thường xuyên'},
+      {w:'regularity', pos:'n', vi:'sự đều đặn'} ]},
+
+    { id:'f135', base:'frequent', syn:['regular'], forms:[
+      {w:'frequent', pos:'adj', vi:'thường xuyên, hay xảy ra'},
+      {w:'frequently', pos:'adv', vi:'thường xuyên'},
+      {w:'frequency', pos:'n', vi:'tần suất'} ]},
+
+    { id:'f136', base:'recent', forms:[
+      {w:'recent', pos:'adj', vi:'gần đây'},
+      {w:'recently', pos:'adv', vi:'gần đây'} ]},
+
+    { id:'f137', base:'barely', forms:[
+      {w:'barely', pos:'adv', vi:'hầu như không, vừa đủ'} ]},
+
+    { id:'f138', base:'roughly', forms:[
+      {w:'roughly', pos:'adv', vi:'xấp xỉ, đại khái'} ]},
+
+    { id:'f139', base:'separate', forms:[
+      {w:'separate', pos:'v', vi:'tách ra'},
+      {w:'separate', pos:'adj', vi:'riêng biệt'},
+      {w:'separately', pos:'adv', vi:'một cách riêng lẻ'},
+      {w:'separation', pos:'n', vi:'sự tách biệt'} ]},
+
+    { id:'f140', base:'reasonable', forms:[
+      {w:'reasonable', pos:'adj', vi:'hợp lý, phải chăng'},
+      {w:'reasonably', pos:'adv', vi:'một cách hợp lý'},
+      {w:'reason', pos:'n', vi:'lý do'} ]}
+  ],
+
+  /* ---- CẤU TRÚC / LIÊN TỪ / TRẠNG TỪ LIÊN KẾT ---- */
+  /* after: đáp án đúng cho câu hỏi "theo sau bởi gì?" */
+  structures: [
+    // Từ vựng đi kèm giới từ / dạng
+    { id:'s001', group:'Từ vựng', pattern:'instead of', after:'V-ing', vi:'thay vì', example:'instead of going out' },
+    { id:'s002', group:'Từ vựng', pattern:'in addition to', after:'N / V-ing', vi:'ngoài ra, thêm vào đó', example:'in addition to the fee' },
+    { id:'s003', group:'Từ vựng', pattern:'an instance of', after:'N', vi:'một ví dụ / trường hợp về', example:'an instance of success' },
+    { id:'s004', group:'Từ vựng', pattern:'prior to', after:'N / V-ing', vi:'trước khi (= before + S + V)', example:'prior to the meeting' },
+    { id:'s005', group:'Từ vựng', pattern:'as + adj/adv + as', after:'as', vi:'so sánh ngang bằng', example:'as fast as possible' },
+
+    // Nguyên nhân
+    { id:'s010', group:'Nguyên nhân (Bởi vì)', pattern:'because / since / as', after:'S + V', vi:'bởi vì', example:'because he was late' },
+    { id:'s011', group:'Nguyên nhân (Bởi vì)', pattern:'because of / due to / on account of / owing to', after:'N / V-ing', vi:'vì, do (bởi)', example:'due to the rain' },
+
+    // Kết quả
+    { id:'s020', group:'Kết quả (Vì vậy)', pattern:'therefore / thus / consequently / as a result', after:'S + V', vi:'vì vậy, do đó', example:'therefore, we cancelled it' },
+
+    // Điều kiện phủ định
+    { id:'s030', group:'Nếu không thì', pattern:'otherwise', after:'S + V', vi:'nếu không thì', example:'hurry, otherwise you will miss it' },
+
+    // Nhượng bộ
+    { id:'s040', group:'Nhượng bộ (Mặc dù)', pattern:'although / though / even though', after:'S + V', vi:'mặc dù', example:'although it was hard' },
+    { id:'s041', group:'Nhượng bộ (Mặc dù)', pattern:'despite / in spite of', after:'N / V-ing', vi:'mặc dù, bất chấp', example:'despite the delay' },
+
+    // Tương phản
+    { id:'s050', group:'Tương phản (Tuy nhiên)', pattern:'however / nevertheless', after:'S + V', vi:'tuy nhiên', example:'however, sales rose' },
+    { id:'s051', group:'Tương phản (Trong khi)', pattern:'while / whereas', after:'S + V', vi:'trong khi, trái lại', example:'while he agrees, she does not' },
+
+    // Bổ sung
+    { id:'s060', group:'Bổ sung (Ngoài ra)', pattern:'in addition / additionally / moreover / furthermore / besides', after:'S + V', vi:'ngoài ra, hơn nữa', example:'moreover, it is cheaper' },
+
+    // Điều kiện
+    { id:'s070', group:'Điều kiện (Miễn là)', pattern:'provided that / providing that / as long as / on condition that', after:'S + V', vi:'miễn là, với điều kiện là', example:'as long as you pay on time' },
+
+    // Các liên từ / trạng từ khác
+    { id:'s080', group:'Liên từ khác', pattern:'as soon as', after:'S + V', vi:'ngay khi', example:'as soon as it arrives' },
+    { id:'s081', group:'Liên từ khác', pattern:'whether ... or ...', after:'S + V', vi:'liệu rằng, cho dù', example:'whether it rains or not' },
+    { id:'s082', group:'Liên từ khác', pattern:'... as ...', after:'S + V', vi:'trong khi, trong lúc', example:'she called as I left' },
+    { id:'s083', group:'Liên từ khác', pattern:'... also ...', after:'S + V', vi:'cũng', example:'she also joined' },
+    { id:'s084', group:'Liên từ khác', pattern:'for instance', after:'S + V', vi:'ví dụ như', example:'for instance, apples are cheap' },
+    { id:'s085', group:'Liên từ khác', pattern:'alternatively', after:'S + V', vi:'hoặc là, ngoài ra', example:'alternatively, take the bus' },
+    { id:'s086', group:'Liên từ khác', pattern:'likewise', after:'S + V', vi:'tương tự như vậy', example:'likewise, prices fell' },
+    { id:'s087', group:'Liên từ khác', pattern:'originally', after:'S + V', vi:'ban đầu', example:'originally, it cost less' },
+    { id:'s088', group:'Liên từ khác', pattern:'regardless (of)', after:'N / V-ing', vi:'bất kể, bất chấp', example:'regardless of the cost' }
+  ],
+
+  /* Nhãn hiển thị cho từng loại từ */
+  posLabel: { n:'Danh từ', v:'Động từ', adj:'Tính từ', adv:'Trạng từ', prep:'Giới từ', phr:'Cụm từ' }
+};
+
+/* Cho phép dùng trong cả trình duyệt lẫn Node (để kiểm thử) */
+if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DATA; }
+
+</script>
+<script>
+/* ============================================================================
+   TOEIC VOCAB — LOGIC ỨNG DỤNG
+   Phụ thuộc: biến toàn cục TOEIC_DATA (được nhúng phía trên trong index.html)
+   Không dùng framework, không phụ thuộc mạng -> tải nhanh, chạy offline.
+   ============================================================================ */
+(function () {
+  'use strict';
+
+  /* ---------- Lớp lưu trữ (localStorage + dự phòng bộ nhớ tạm) ---------- */
+  var store = (function () {
+    var ok = true, mem = {};
+    try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); }
+    catch (e) { ok = false; }
+    return {
+      available: ok,
+      get: function (k) { try { return ok ? localStorage.getItem(k) : (k in mem ? mem[k] : null); } catch (e) { return (k in mem ? mem[k] : null); } },
+      set: function (k, v) { try { ok ? localStorage.setItem(k, v) : (mem[k] = v); } catch (e) { mem[k] = v; } },
+      remove: function (k) { try { ok ? localStorage.removeItem(k) : (delete mem[k]); } catch (e) { delete mem[k]; } }
+    };
+  })();
+
+  var K_USER = 'toeic_user_v1';
+  var K_KNOWN = 'toeic_known_v1';
+  var K_SET = 'toeic_settings_v1';
+
+  /* ---------- Trạng thái người dùng ---------- */
+  function loadJSON(k, fb) { try { var s = store.get(k); return s ? JSON.parse(s) : fb; } catch (e) { return fb; } }
+  var userData = loadJSON(K_USER, { families: [], structures: [] });
+  if (!userData.families) userData.families = [];
+  if (!userData.structures) userData.structures = [];
+  var known = new Set(loadJSON(K_KNOWN, []));
+  var settings = loadJSON(K_SET, { theme: 'light' });
+
+  function saveUser() { store.set(K_USER, JSON.stringify(userData)); }
+  function saveKnown() { store.set(K_KNOWN, JSON.stringify(Array.from(known))); }
+  function saveSettings() { store.set(K_SET, JSON.stringify(settings)); }
+
+  /* ---------- Trạng thái giao diện ---------- */
+  var state = {
+    view: 'study',        // study | quiz | add | backup
+    cat: 'all',           // all | n | v | adj | adv | struct
+    search: '',
+    onlyUnknown: false,
+    quizType: 'meaning',  // meaning | word | mixed | after | smeaning | smixed
+    quizCount: 10,
+    quizPreferUnknown: false,
+    quiz: null,
+    addType: 'word'
+  };
+
+  /* ---------- Nhãn & màu loại từ ---------- */
+  var POS = {
+    n:   { full: 'Danh từ',  cls: 'pos-n' },
+    v:   { full: 'Động từ',  cls: 'pos-v' },
+    adj: { full: 'Tính từ',  cls: 'pos-adj' },
+    adv: { full: 'Trạng từ', cls: 'pos-adv' },
+    prep:{ full: 'Giới từ',  cls: 'pos-prep' },
+    phr: { full: 'Cụm từ',   cls: 'pos-phr' }
+  };
+  var CATS = [
+    { id: 'all',    label: 'Tổng hợp' },
+    { id: 'v',      label: 'Động từ' },
+    { id: 'n',      label: 'Danh từ' },
+    { id: 'adj',    label: 'Tính từ' },
+    { id: 'adv',    label: 'Trạng từ' },
+    { id: 'struct', label: 'Cấu trúc' }
+  ];
+
+  /* ---------- Truy xuất dữ liệu gộp (gốc + người dùng thêm) ---------- */
+  function families() { return TOEIC_DATA.families.concat(userData.families); }
+  function structures() { return TOEIC_DATA.structures.concat(userData.structures); }
+
+  function wordItems() {
+    var out = [];
+    families().forEach(function (f) {
+      (f.forms || []).forEach(function (fm, i) {
+        out.push({
+          id: 'w:' + f.id + ':' + i,
+          kind: 'word', w: fm.w, pos: fm.pos, vi: fm.vi,
+          base: f.base, familyId: f.id, syn: f.syn || [], example: f.example || ''
+        });
+      });
+    });
+    return out;
+  }
+  function structItems() {
+    return structures().map(function (s) {
+      return {
+        id: 's:' + s.id, kind: 'struct', pattern: s.pattern, after: s.after,
+        vi: s.vi, group: s.group || 'Khác', example: s.example || ''
+      };
+    });
+  }
+
+  function itemsForCat(cat, includeAllStructs) {
+    if (cat === 'struct') return structItems();
+    if (cat === 'n' || cat === 'v' || cat === 'adj' || cat === 'adv') {
+      return wordItems().filter(function (it) { return it.pos === cat; });
+    }
+    // 'all'
+    return includeAllStructs ? wordItems().concat(structItems()) : wordItems();
+  }
+
+  /* ---------- Đã thuộc ---------- */
+  function isKnown(id) { return known.has(id); }
+  function toggleKnown(id) { if (known.has(id)) known.delete(id); else known.add(id); saveKnown(); }
+
+  /* ---------- Tiện ích ---------- */
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function norm(s) { return String(s || '').toLowerCase().normalize('NFC'); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function sampleDistinct(pool, n, key, exclude) {
+    var seen = {}, out = [];
+    if (exclude != null) seen[exclude] = true;
+    shuffle(pool).forEach(function (x) {
+      var k = key(x);
+      if (!seen[k]) { seen[k] = true; out.push(x); }
+    });
+    return out.slice(0, n);
+  }
+  function posPill(pos) { var p = POS[pos] || POS.phr; return '<span class="pill ' + p.cls + '">' + p.full + '</span>'; }
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 2200);
+  }
+
+  /* ---------- Điều hướng & khung ---------- */
+  var viewEl, navEls;
+  function nav(view) { state.view = view; state.quiz = null; render(); }
+  function setActiveNav() {
+    navEls.forEach(function (b) { b.classList.toggle('active', b.dataset.view === state.view); });
+  }
+
+  function catChips() {
+    return '<div class="chips" role="tablist" aria-label="Nhóm ôn tập">' + CATS.map(function (c) {
+      return '<button class="chip' + (state.cat === c.id ? ' active' : '') + '" data-action="setcat" data-cat="' + c.id + '" role="tab" aria-selected="' + (state.cat === c.id) + '">' + esc(c.label) + '</button>';
+    }).join('') + '</div>';
+  }
+
+  function render() {
+    setActiveNav();
+    if (state.view === 'study') renderStudy();
+    else if (state.view === 'quiz') renderQuiz();
+    else if (state.view === 'add') renderAdd();
+    else if (state.view === 'backup') renderBackup();
+    viewEl.scrollTop = 0;
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+
+  /* ============================ HỌC ============================ */
+  function catProgress(cat) {
+    var items = itemsForCat(cat, true);
+    var total = items.length, k = 0;
+    items.forEach(function (it) { if (isKnown(it.id)) k++; });
+    return { total: total, known: k };
+  }
+
+  function renderStudy() {
+    var pr = catProgress(state.cat);
+    var pct = pr.total ? Math.round(pr.known / pr.total * 100) : 0;
+    var html = '';
+    html += catChips();
+    html += '<div class="toolbar">' +
+      '<div class="search"><svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>' +
+      '<input id="search" type="search" inputmode="search" placeholder="Tìm từ hoặc nghĩa..." value="' + esc(state.search) + '" aria-label="Tìm kiếm"></div>' +
+      '<label class="switch"><input id="onlyUnknown" type="checkbox"' + (state.onlyUnknown ? ' checked' : '') + '><span>Chỉ từ chưa thuộc</span></label>' +
+      '</div>';
+    html += '<div class="progress-row"><div class="bar"><span style="width:' + pct + '%"></span></div>' +
+      '<div class="progress-label">Đã thuộc <b>' + pr.known + '</b>/' + pr.total + '</div></div>';
+
+    var content = state.cat === 'all' ? studyAll() : (state.cat === 'struct' ? studyStructs() : studyPos(state.cat));
+    html += '<div id="study-content">' + content + '</div>';
+
+    viewEl.innerHTML = html;
+  }
+
+  // Tổng hợp: hiển thị theo họ từ (bảng wordform) — dạng tra cứu
+  function studyAll() {
+    var q = norm(state.search);
+    var list = families().filter(function (f) {
+      if (state.onlyUnknown) {
+        var allK = (f.forms || []).every(function (fm, i) { return isKnown('w:' + f.id + ':' + i); });
+        if (allK && f.forms.length) return false;
+      }
+      if (!q) return true;
+      if (norm(f.base).indexOf(q) >= 0) return true;
+      if ((f.syn || []).some(function (s) { return norm(s).indexOf(q) >= 0; })) return true;
+      return (f.forms || []).some(function (fm) { return norm(fm.w).indexOf(q) >= 0 || norm(fm.vi).indexOf(q) >= 0; });
+    });
+    if (!list.length) return emptyState('Không tìm thấy họ từ nào khớp.');
+    var out = '<div class="hint-line">' + list.length + ' họ từ · chạm tiêu đề để thu gọn</div><div class="fam-list">';
+    out += list.map(function (f) {
+      var rows = (f.forms || []).map(function (fm, i) {
+        var id = 'w:' + f.id + ':' + i, kn = isKnown(id);
+        return '<div class="fam-row' + (kn ? ' known' : '') + '">' +
+          '<button class="mini-check' + (kn ? ' on' : '') + '" data-action="known" data-id="' + id + '" aria-label="Đánh dấu đã thuộc" title="Đã thuộc">' + checkIcon() + '</button>' +
+          posPill(fm.pos) +
+          '<span class="fam-word">' + esc(fm.w) + '</span>' +
+          '<span class="fam-vi">' + esc(fm.vi) + '</span></div>';
+      }).join('');
+      var syn = (f.syn && f.syn.length) ? '<div class="fam-syn">≈ ' + f.syn.map(esc).join(', ') + '</div>' : '';
+      var note = f.note ? '<div class="fam-note">' + esc(f.note) + '</div>' : '';
+      var tag = f.id.indexOf('uf_') === 0 ? '<span class="tag-user">bạn thêm</span>' : '';
+      return '<section class="fam-card"><button class="fam-head" data-action="fam-toggle">' +
+        '<span class="fam-base">' + esc(f.base) + '</span>' + tag +
+        '<span class="fam-count">' + (f.forms || []).length + ' dạng</span>' + chevronIcon() + '</button>' +
+        '<div class="fam-body">' + rows + syn + note + '</div></section>';
+    }).join('');
+    out += '</div>';
+    return out;
+  }
+
+  // Danh từ / Động từ / Tính từ / Trạng từ: thẻ ghi nhớ (chạm để lật nghĩa)
+  function studyPos(cat) {
+    var q = norm(state.search);
+    var items = itemsForCat(cat, false).filter(function (it) {
+      if (state.onlyUnknown && isKnown(it.id)) return false;
+      if (!q) return true;
+      return norm(it.w).indexOf(q) >= 0 || norm(it.vi).indexOf(q) >= 0;
+    });
+    // gộp trùng từ (cùng chữ + cùng nghĩa) để tránh lặp
+    var seen = {}, uniq = [];
+    items.forEach(function (it) { var k = it.w + '|' + it.vi; if (!seen[k]) { seen[k] = true; uniq.push(it); } });
+    if (!uniq.length) return emptyState('Chưa có từ nào ở mục này.');
+    return '<div class="hint-line">' + uniq.length + ' từ · chạm thẻ để xem nghĩa</div><div class="card-grid">' +
+      uniq.map(function (it) { return flashCard(it); }).join('') + '</div>';
+  }
+
+  function studyStructs() {
+    var q = norm(state.search);
+    var items = structItems().filter(function (it) {
+      if (state.onlyUnknown && isKnown(it.id)) return false;
+      if (!q) return true;
+      return norm(it.pattern).indexOf(q) >= 0 || norm(it.vi).indexOf(q) >= 0;
+    });
+    if (!items.length) return emptyState('Không có cấu trúc nào khớp.');
+    // nhóm theo group
+    var groups = {};
+    items.forEach(function (it) { (groups[it.group] = groups[it.group] || []).push(it); });
+    var out = '<div class="hint-line">' + items.length + ' cấu trúc · chạm thẻ để xem chi tiết</div>';
+    Object.keys(groups).forEach(function (g) {
+      out += '<h3 class="group-h">' + esc(g) + '</h3><div class="card-grid">' +
+        groups[g].map(function (it) { return structCard(it); }).join('') + '</div>';
+    });
+    return out;
+  }
+
+  function flashCard(it) {
+    var kn = isKnown(it.id), p = POS[it.pos] || POS.phr;
+    return '<div class="fcard ' + p.cls + (kn ? ' is-known' : '') + '" data-action="reveal" data-id="' + it.id + '">' +
+      '<div class="fcard-top">' + posPill(it.pos) +
+        '<button class="mini-check' + (kn ? ' on' : '') + '" data-action="known" data-id="' + it.id + '" aria-label="Đã thuộc">' + checkIcon() + '</button></div>' +
+      '<div class="fcard-term">' + esc(it.w) + '</div>' +
+      '<div class="fcard-meaning">' + esc(it.vi) +
+        ((it.syn && it.syn.length) ? '<div class="fcard-sub">≈ ' + it.syn.map(esc).join(', ') + '</div>' : '') +
+        (it.example ? '<div class="fcard-sub">“' + esc(it.example) + '”</div>' : '') +
+      '</div>' +
+      '<div class="fcard-hint">Chạm để xem nghĩa</div></div>';
+  }
+
+  function structCard(it) {
+    var kn = isKnown(it.id);
+    return '<div class="fcard pos-struct' + (kn ? ' is-known' : '') + '" data-action="reveal" data-id="' + it.id + '">' +
+      '<div class="fcard-top"><span class="pill pos-struct">Cấu trúc</span>' +
+        '<button class="mini-check' + (kn ? ' on' : '') + '" data-action="known" data-id="' + it.id + '" aria-label="Đã thuộc">' + checkIcon() + '</button></div>' +
+      '<div class="fcard-term struct-term">' + esc(it.pattern) + '</div>' +
+      '<div class="fcard-meaning"><div class="struct-after">theo sau bởi <b>' + esc(it.after) + '</b></div>' +
+        '<div>' + esc(it.vi) + '</div>' +
+        (it.example ? '<div class="fcard-sub">“' + esc(it.example) + '”</div>' : '') +
+      '</div>' +
+      '<div class="fcard-hint">Chạm để xem chi tiết</div></div>';
+  }
+
+  function emptyState(msg) { return '<div class="empty">' + esc(msg) + '</div>'; }
+
+  /* ============================ KIỂM TRA (QUIZ) ============================ */
+  function renderQuiz() {
+    if (state.quiz) return renderQuizRunner();
+    // màn hình thiết lập
+    var isStruct = state.cat === 'struct';
+    // đồng bộ loại quiz với nhóm
+    if (isStruct && ['meaning', 'word', 'mixed'].indexOf(state.quizType) >= 0) state.quizType = 'after';
+    if (!isStruct && ['after', 'smeaning', 'smixed'].indexOf(state.quizType) >= 0) state.quizType = 'meaning';
+
+    var types = isStruct
+      ? [{ id: 'after', label: 'Theo sau là gì?' }, { id: 'smeaning', label: 'Nghĩa cấu trúc' }, { id: 'smixed', label: 'Trộn cả hai' }]
+      : [{ id: 'meaning', label: 'Từ → nghĩa' }, { id: 'word', label: 'Nghĩa → từ' }, { id: 'mixed', label: 'Trộn cả hai' }];
+
+    var pool = itemsForCat(state.cat, true);
+    var counts = [10, 20, 30].filter(function (n) { return n < pool.length; });
+    counts.push(pool.length); // tất cả
+    if (state.quizCount > pool.length) state.quizCount = pool.length;
+
+    var html = catChips();
+    html += '<div class="setup">';
+    html += '<h2 class="setup-h">Chọn kiểu câu hỏi</h2>';
+    html += '<div class="seg">' + types.map(function (t) {
+      return '<button class="seg-btn' + (state.quizType === t.id ? ' active' : '') + '" data-action="qtype" data-qt="' + t.id + '">' + esc(t.label) + '</button>';
+    }).join('') + '</div>';
+
+    html += '<h2 class="setup-h">Số câu hỏi</h2>';
+    html += '<div class="seg">' + counts.map(function (n, i) {
+      var label = (n === pool.length ? 'Tất cả (' + n + ')' : String(n));
+      return '<button class="seg-btn' + (state.quizCount === n ? ' active' : '') + '" data-action="qcount" data-n="' + n + '">' + label + '</button>';
+    }).join('') + '</div>';
+
+    html += '<label class="switch big"><input id="preferUnknown" type="checkbox"' + (state.quizPreferUnknown ? ' checked' : '') + '><span>Ưu tiên hỏi từ chưa thuộc</span></label>';
+
+    html += '<button class="btn-primary block" data-action="start-quiz"' + (pool.length < 2 ? ' disabled' : '') + '>Bắt đầu ôn (' + Math.min(state.quizCount, pool.length) + ' câu)</button>';
+    if (pool.length < 2) html += '<div class="empty">Cần ít nhất 2 mục ở nhóm này để tạo quiz.</div>';
+    html += '</div>';
+    viewEl.innerHTML = html;
+  }
+
+  function buildQuestions() {
+    var cat = state.cat, type = state.quizType, count = state.quizCount, prefer = state.quizPreferUnknown;
+    var pool = itemsForCat(cat, true);
+    var wordPool = wordItems();
+    var afterValues = uniqueAfterValues();
+
+    // sắp xếp ưu tiên chưa thuộc
+    if (prefer) pool = pool.slice().sort(function (a, b) { return (isKnown(a.id) ? 1 : 0) - (isKnown(b.id) ? 1 : 0); });
+    else pool = shuffle(pool);
+    var picked = pool.slice(0, count);
+    if (prefer) picked = shuffle(picked);
+
+    return picked.map(function (it) {
+      var kind;
+      if (it.kind === 'struct') {
+        kind = (cat === 'struct') ? (type === 'smixed' ? pick(['after', 'smeaning']) : type) : 'after';
+      } else {
+        kind = (type === 'mixed') ? pick(['meaning', 'word']) : (type === 'word' ? 'word' : 'meaning');
+      }
+      return makeQuestion(it, kind, wordPool, afterValues);
+    });
+  }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function uniqueAfterValues() { var s = {}; structItems().forEach(function (x) { s[x.after] = true; }); return Object.keys(s); }
+
+  function makeQuestion(it, kind, wordPool, afterValues) {
+    var q = { ref: it.id, explain: '' };
+    if (kind === 'meaning') {
+      var d = sampleDistinct(wordPool.filter(function (x) { return x.pos === it.pos; }), 3, function (x) { return x.vi; }, it.vi);
+      var opts = shuffle([{ t: it.vi, ok: true }].concat(d.map(function (x) { return { t: x.vi, ok: false }; })));
+      q.prompt = esc(it.w); q.promptSub = (POS[it.pos] || POS.phr).full; q.promptCls = (POS[it.pos] || POS.phr).cls;
+      q.question = 'Từ này nghĩa là gì?';
+      q.options = opts.map(function (o) { return o.t; }); q.correct = opts.map(function (o) { return o.ok; }).indexOf(true);
+      q.explain = it.w + ' (' + (POS[it.pos] || POS.phr).full + ') = ' + it.vi + (it.syn && it.syn.length ? '  ·  ≈ ' + it.syn.join(', ') : '');
+    } else if (kind === 'word') {
+      var d2 = sampleDistinct(wordPool.filter(function (x) { return x.pos === it.pos; }), 3, function (x) { return x.w; }, it.w);
+      var opts2 = shuffle([{ t: it.w, ok: true }].concat(d2.map(function (x) { return { t: x.w, ok: false }; })));
+      q.prompt = esc(it.vi); q.promptSub = 'Từ loại: ' + (POS[it.pos] || POS.phr).full;
+      q.question = 'Từ nào mang nghĩa này?';
+      q.options = opts2.map(function (o) { return o.t; }); q.correct = opts2.map(function (o) { return o.ok; }).indexOf(true);
+      q.explain = it.w + ' (' + (POS[it.pos] || POS.phr).full + ') = ' + it.vi;
+    } else if (kind === 'after') {
+      var others = afterValues.filter(function (v) { return v !== it.after; });
+      var d3 = shuffle(others).slice(0, 3);
+      var opts3 = shuffle([{ t: it.after, ok: true }].concat(d3.map(function (v) { return { t: v, ok: false }; })));
+      q.prompt = esc(it.pattern); q.promptSub = 'Cấu trúc'; q.promptCls = 'pos-struct';
+      q.question = 'Theo sau cấu trúc này là gì?';
+      q.options = opts3.map(function (o) { return o.t; }); q.correct = opts3.map(function (o) { return o.ok; }).indexOf(true);
+      q.explain = it.pattern + ' + ' + it.after + '  —  ' + it.vi + (it.example ? '  ·  vd: ' + it.example : '');
+    } else { // smeaning
+      var d4 = sampleDistinct(structItems(), 3, function (x) { return x.vi; }, it.vi);
+      var opts4 = shuffle([{ t: it.vi, ok: true }].concat(d4.map(function (x) { return { t: x.vi, ok: false }; })));
+      q.prompt = esc(it.pattern); q.promptSub = 'Cấu trúc'; q.promptCls = 'pos-struct';
+      q.question = 'Cấu trúc này nghĩa là gì?';
+      q.options = opts4.map(function (o) { return o.t; }); q.correct = opts4.map(function (o) { return o.ok; }).indexOf(true);
+      q.explain = it.pattern + ' + ' + it.after + ' = ' + it.vi;
+    }
+    return q;
+  }
+
+  function startQuiz() {
+    var qs = buildQuestions();
+    if (qs.length < 1) { toast('Không đủ dữ liệu để tạo quiz.'); return; }
+    state.quiz = { qs: qs, i: 0, score: 0, answered: false, chosen: -1, wrong: [] };
+    render();
+  }
+
+  function renderQuizRunner() {
+    var qz = state.quiz, q = qz.qs[qz.i];
+    var html = '<div class="quiz-bar"><button class="btn-ghost" data-action="quiz-exit">✕ Thoát</button>' +
+      '<div class="quiz-count">Câu ' + (qz.i + 1) + '/' + qz.qs.length + '</div>' +
+      '<div class="quiz-score">' + qz.score + ' đúng</div></div>';
+    var qpct = Math.round(qz.i / qz.qs.length * 100);
+    html += '<div class="bar quiz-progress"><span style="width:' + qpct + '%"></span></div>';
+
+    html += '<div class="q-prompt">' +
+      '<div class="q-sub' + (q.promptCls ? ' ' + q.promptCls + '-ink' : '') + '">' + esc(q.promptSub) + '</div>' +
+      '<div class="q-term' + (q.promptCls ? ' ' + q.promptCls + '-ink' : '') + '">' + q.prompt + '</div>' +
+      '<div class="q-ask">' + esc(q.question) + '</div></div>';
+
+    html += '<div class="opts">';
+    q.options.forEach(function (opt, idx) {
+      var cls = 'opt';
+      if (qz.answered) {
+        if (idx === q.correct) cls += ' correct';
+        else if (idx === qz.chosen) cls += ' wrong';
+        else cls += ' dim';
+      }
+      html += '<button class="' + cls + '" data-action="answer" data-idx="' + idx + '"' + (qz.answered ? ' disabled' : '') + '>' + esc(opt) + '</button>';
+    });
+    html += '</div>';
+
+    if (qz.answered) {
+      var right = qz.chosen === q.correct;
+      html += '<div class="feedback ' + (right ? 'good' : 'bad') + '">' +
+        '<b>' + (right ? 'Chính xác!' : 'Chưa đúng.') + '</b> ' + esc(q.explain) + '</div>';
+      var last = qz.i === qz.qs.length - 1;
+      html += '<button class="btn-primary block" data-action="quiz-next">' + (last ? 'Xem kết quả' : 'Câu tiếp →') + '</button>';
+    }
+    viewEl.innerHTML = html;
+  }
+
+  function answerQuiz(idx) {
+    var qz = state.quiz; if (qz.answered) return;
+    qz.answered = true; qz.chosen = idx;
+    var q = qz.qs[qz.i];
+    if (idx === q.correct) { qz.score++; known.add(q.ref); saveKnown(); }
+    else { qz.wrong.push(q); }
+    renderQuizRunner();
+  }
+  function nextQuiz() {
+    var qz = state.quiz;
+    if (qz.i < qz.qs.length - 1) { qz.i++; qz.answered = false; qz.chosen = -1; renderQuizRunner(); }
+    else renderQuizResult();
+  }
+
+  function renderQuizResult() {
+    var qz = state.quiz, total = qz.qs.length, pct = Math.round(qz.score / total * 100);
+    var msg = pct >= 90 ? 'Xuất sắc!' : pct >= 70 ? 'Tốt lắm!' : pct >= 50 ? 'Khá ổn, ôn thêm nhé.' : 'Cần luyện thêm.';
+    var html = '<div class="result"><div class="result-ring" style="--p:' + pct + '"><div class="result-pct">' + pct + '%</div></div>' +
+      '<div class="result-msg">' + esc(msg) + '</div>' +
+      '<div class="result-score">' + qz.score + '/' + total + ' câu đúng</div></div>';
+    if (qz.wrong.length) {
+      html += '<h3 class="group-h">Cần ôn lại (' + qz.wrong.length + ')</h3><div class="wrong-list">';
+      html += qz.wrong.map(function (q) {
+        return '<div class="wrong-item"><div class="wrong-term">' + q.prompt + '</div><div class="wrong-ans">' + esc(q.explain) + '</div></div>';
+      }).join('');
+      html += '</div>';
+    } else {
+      html += '<div class="empty">Bạn trả lời đúng tất cả 🎉</div>';
+    }
+    html += '<div class="result-actions">';
+    if (qz.wrong.length) html += '<button class="btn-primary block" data-action="quiz-retry-wrong">Ôn lại ' + qz.wrong.length + ' từ sai</button>';
+    html += '<button class="btn-outline block" data-action="quiz-again">Làm bộ mới</button>';
+    html += '<button class="btn-ghost block" data-action="quiz-exit">Xong</button></div>';
+    state.quiz.done = true;
+    viewEl.innerHTML = html;
+  }
+  function retryWrong() {
+    var wrong = state.quiz.wrong.slice();
+    // dựng lại câu hỏi mới từ ref các từ sai để đảo đáp án
+    var byId = {}; wordItems().concat(structItems()).forEach(function (it) { byId[it.id] = it; });
+    var qs = wrong.map(function (q) {
+      var it = byId[q.ref]; if (!it) return q;
+      var kind = it.kind === 'struct' ? 'after' : 'meaning';
+      // cố gắng giữ nguyên kiểu câu hỏi ban đầu dựa trên câu hỏi
+      if (/nghĩa là gì/.test(q.question)) kind = it.kind === 'struct' ? 'smeaning' : 'meaning';
+      else if (/Từ nào/.test(q.question)) kind = 'word';
+      else if (/Theo sau/.test(q.question)) kind = 'after';
+      return makeQuestion(it, kind, wordItems(), uniqueAfterValues());
+    });
+    state.quiz = { qs: shuffle(qs), i: 0, score: 0, answered: false, chosen: -1, wrong: [] };
+    render();
+  }
+
+  /* ============================ THÊM TỪ ============================ */
+  function renderAdd() {
+    var isWord = state.addType === 'word';
+    var html = '<div class="setup">';
+    html += '<div class="seg"><button class="seg-btn' + (isWord ? ' active' : '') + '" data-action="addtype" data-t="word">Thêm từ vựng</button>' +
+      '<button class="seg-btn' + (!isWord ? ' active' : '') + '" data-action="addtype" data-t="struct">Thêm cấu trúc</button></div>';
+
+    if (isWord) {
+      html += '<div class="form">' +
+        field('add-w', 'Từ (tiếng Anh) *', '<input id="add-w" type="text" autocomplete="off" placeholder="vd: negotiate">') +
+        field('add-pos', 'Loại từ *',
+          '<select id="add-pos"><option value="v">Động từ</option><option value="n">Danh từ</option><option value="adj">Tính từ</option><option value="adv">Trạng từ</option><option value="prep">Giới từ</option><option value="phr">Cụm từ</option></select>') +
+        field('add-vi', 'Nghĩa (tiếng Việt) *', '<input id="add-vi" type="text" placeholder="vd: đàm phán, thương lượng">') +
+        field('add-base', 'Nhóm họ từ (tùy chọn)', '<input id="add-base" type="text" placeholder="Gõ từ gốc để gộp cùng họ, vd: negotiate">' ) +
+        field('add-syn', 'Từ đồng nghĩa (tùy chọn, cách nhau dấu phẩy)', '<input id="add-syn" type="text" placeholder="vd: bargain, discuss">') +
+        field('add-ex', 'Ví dụ (tùy chọn)', '<input id="add-ex" type="text" placeholder="vd: negotiate a contract">') +
+        '<button class="btn-primary block" data-action="save-word">Lưu từ</button></div>';
+    } else {
+      html += '<div class="form">' +
+        field('add-pat', 'Cấu trúc *', '<input id="add-pat" type="text" placeholder="vd: rather than">') +
+        field('add-after', 'Theo sau bởi *',
+          '<select id="add-after"><option value="S + V">S + V (mệnh đề)</option><option value="N">N (danh từ)</option><option value="V-ing">V-ing</option><option value="N / V-ing">N / V-ing</option><option value="to V">to V</option><option value="adj/adv">adj/adv</option></select>') +
+        field('add-svi', 'Nghĩa *', '<input id="add-svi" type="text" placeholder="vd: thay vì">') +
+        field('add-sgroup', 'Nhóm (tùy chọn)', '<input id="add-sgroup" type="text" placeholder="vd: Liên từ khác">') +
+        field('add-sex', 'Ví dụ (tùy chọn)', '<input id="add-sex" type="text" placeholder="vd: rather than complain">') +
+        '<button class="btn-primary block" data-action="save-struct">Lưu cấu trúc</button></div>';
+    }
+    html += '</div>';
+
+    // danh sách đã thêm
+    var uw = userData.families.reduce(function (a, f) { return a + (f.forms ? f.forms.length : 0); }, 0);
+    var us = userData.structures.length;
+    html += '<h3 class="group-h">Bạn đã thêm — ' + uw + ' từ, ' + us + ' cấu trúc</h3>';
+    if (!uw && !us) html += '<div class="empty">Chưa có mục nào bạn tự thêm.</div>';
+    else {
+      html += '<div class="user-list">';
+      userData.families.forEach(function (f) {
+        (f.forms || []).forEach(function (fm, i) {
+          html += '<div class="user-row">' + posPill(fm.pos) + '<span class="fam-word">' + esc(fm.w) + '</span><span class="fam-vi">' + esc(fm.vi) + '</span>' +
+            '<button class="del" data-action="del-word" data-fid="' + f.id + '" data-i="' + i + '" aria-label="Xóa">' + trashIcon() + '</button></div>';
+        });
+      });
+      userData.structures.forEach(function (s) {
+        html += '<div class="user-row"><span class="pill pos-struct">Cấu trúc</span><span class="fam-word">' + esc(s.pattern) + '</span><span class="fam-vi">+ ' + esc(s.after) + ' · ' + esc(s.vi) + '</span>' +
+          '<button class="del" data-action="del-struct" data-sid="' + s.id + '" aria-label="Xóa">' + trashIcon() + '</button></div>';
+      });
+      html += '</div>';
+    }
+    viewEl.innerHTML = html;
+  }
+  function field(id, label, input) {
+    return '<label class="fld"><span class="fld-label">' + esc(label) + '</span>' + input + '</label>';
+  }
+
+  function saveWord() {
+    var w = val('add-w'), pos = val('add-pos'), vi = val('add-vi'), base = val('add-base'), syn = val('add-syn'), ex = val('add-ex');
+    if (!w || !vi) { toast('Nhập ít nhất "Từ" và "Nghĩa".'); return; }
+    var synArr = syn ? syn.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : [];
+    var baseKey = (base || w).trim();
+    // tìm họ từ đã có (chỉ trong phần người dùng thêm) để gộp
+    var fam = userData.families.filter(function (f) { return norm(f.base) === norm(baseKey); })[0];
+    if (!fam) { fam = { id: 'uf_' + Date.now() + '_' + Math.floor(Math.random() * 1000), base: baseKey, syn: synArr, forms: [] }; userData.families.push(fam); }
+    else if (synArr.length) { fam.syn = Array.from(new Set((fam.syn || []).concat(synArr))); }
+    fam.forms.push({ w: w, pos: pos, vi: vi });
+    if (ex) fam.example = ex;
+    saveUser(); toast('Đã thêm “' + w + '”.'); renderAdd();
+  }
+  function saveStruct() {
+    var pat = val('add-pat'), after = val('add-after'), vi = val('add-svi'), g = val('add-sgroup'), ex = val('add-sex');
+    if (!pat || !vi) { toast('Nhập ít nhất "Cấu trúc" và "Nghĩa".'); return; }
+    userData.structures.push({ id: 'us_' + Date.now() + '_' + Math.floor(Math.random() * 1000), pattern: pat, after: after, vi: vi, group: g || 'Bạn tự thêm', example: ex });
+    saveUser(); toast('Đã thêm cấu trúc.'); renderAdd();
+  }
+  function delWord(fid, i) {
+    var fam = userData.families.filter(function (f) { return f.id === fid; })[0];
+    if (!fam) return;
+    known.delete('w:' + fid + ':' + i); saveKnown();
+    fam.forms.splice(i, 1);
+    if (!fam.forms.length) userData.families = userData.families.filter(function (f) { return f.id !== fid; });
+    saveUser(); renderAdd();
+  }
+  function delStruct(sid) {
+    known.delete('s:' + sid); saveKnown();
+    userData.structures = userData.structures.filter(function (s) { return s.id !== sid; });
+    saveUser(); renderAdd();
+  }
+  function val(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
+
+  /* ============================ SAO LƯU ============================ */
+  function renderBackup() {
+    var uw = userData.families.reduce(function (a, f) { return a + (f.forms ? f.forms.length : 0); }, 0);
+    var html = '<div class="setup">';
+    html += '<div class="info-card">Tiến độ và các từ bạn tự thêm được lưu <b>trên chính thiết bị này</b> (trình duyệt). ' +
+      'Để mang sang máy/điện thoại khác, hãy tải file sao lưu rồi khôi phục ở thiết bị kia.' +
+      (store.available ? '' : '<div class="warn">⚠ Trình duyệt đang chặn bộ nhớ cục bộ — dữ liệu sẽ mất khi đóng tab. Hãy tải sao lưu thường xuyên.</div>') + '</div>';
+
+    html += '<div class="stat-grid">' +
+      stat(uw, 'từ tự thêm') + stat(userData.structures.length, 'cấu trúc tự thêm') + stat(known.size, 'mục đã thuộc') + '</div>';
+
+    html += '<button class="btn-primary block" data-action="export">⬇ Tải file sao lưu (.json)</button>';
+    html += '<label class="btn-outline block file-btn">⬆ Khôi phục từ file<input id="importFile" type="file" accept="application/json,.json" hidden></label>';
+    html += '<button class="btn-ghost block" data-action="copy">Sao chép dữ liệu vào clipboard</button>';
+    html += '<button class="btn-danger block" data-action="reset">Xóa toàn bộ tiến độ & từ đã thêm</button>';
+    html += '</div>';
+    viewEl.innerHTML = html;
+  }
+  function stat(n, label) { return '<div class="stat"><div class="stat-n">' + n + '</div><div class="stat-l">' + esc(label) + '</div></div>'; }
+
+  function exportPayload() { return JSON.stringify({ app: 'toeic-vocab', version: 1, exportedAt: new Date().toISOString(), user: userData, known: Array.from(known), settings: settings }, null, 2); }
+  function exportData() {
+    var blob = new Blob([exportPayload()], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'toeic-vocab-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    toast('Đã tạo file sao lưu.');
+  }
+  function copyData() {
+    var text = exportPayload();
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast('Đã sao chép.'); }, function () { toast('Không sao chép được.'); });
+    else toast('Trình duyệt không hỗ trợ sao chép.');
+  }
+  function importData(file) {
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var d = JSON.parse(r.result);
+        var incUser = d.user || {};
+        userData.families = mergeFamilies(userData.families, incUser.families || []);
+        userData.structures = mergeById(userData.structures, incUser.structures || []);
+        (d.known || []).forEach(function (id) { known.add(id); });
+        if (d.settings && d.settings.theme) { settings.theme = d.settings.theme; applyTheme(); }
+        saveUser(); saveKnown(); saveSettings();
+        toast('Đã khôi phục dữ liệu.'); render();
+      } catch (e) { toast('File không hợp lệ.'); }
+    };
+    r.readAsText(file);
+  }
+  function mergeById(a, b) { var ids = {}; a.forEach(function (x) { ids[x.id] = true; }); b.forEach(function (x) { if (!ids[x.id]) a.push(x); }); return a; }
+  function mergeFamilies(a, b) {
+    var byId = {}; a.forEach(function (f) { byId[f.id] = f; });
+    b.forEach(function (f) { if (!byId[f.id]) { a.push(f); byId[f.id] = f; } });
+    return a;
+  }
+  function resetAll() {
+    if (!confirm('Xóa toàn bộ từ bạn đã thêm và mọi tiến độ đã thuộc? Không thể hoàn tác.')) return;
+    userData = { families: [], structures: [] }; known = new Set();
+    store.remove(K_USER); store.remove(K_KNOWN);
+    toast('Đã xóa dữ liệu.'); nav('study');
+  }
+
+  /* ---------- Chủ đề sáng/tối ---------- */
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', settings.theme === 'dark' ? 'dark' : 'light');
+    var b = document.getElementById('themeBtn');
+    if (b) b.setAttribute('aria-label', settings.theme === 'dark' ? 'Chuyển nền sáng' : 'Chuyển nền tối');
+  }
+  function toggleTheme() { settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; saveSettings(); applyTheme(); }
+
+  /* ---------- Biểu tượng SVG ---------- */
+  function checkIcon() { return '<svg viewBox="0 0 24 24" class="ic"><path d="M20 6L9 17l-5-5"/></svg>'; }
+  function chevronIcon() { return '<svg viewBox="0 0 24 24" class="ic chev"><path d="M6 9l6 6 6-6"/></svg>'; }
+  function trashIcon() { return '<svg viewBox="0 0 24 24" class="ic"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>'; }
+
+  /* ============================ SỰ KIỆN ============================ */
+  function onClick(e) {
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var a = t.dataset.action;
+    switch (a) {
+      case 'nav': nav(t.dataset.view); break;
+      case 'setcat': state.cat = t.dataset.cat; state.search = ''; render(); break;
+      case 'theme': toggleTheme(); break;
+      case 'fam-toggle': t.closest('.fam-card').classList.toggle('collapsed'); break;
+      case 'reveal':
+        if (e.target.closest('[data-action="known"]')) break;
+        t.classList.toggle('revealed'); break;
+      case 'known': e.stopPropagation(); toggleKnown(t.dataset.id);
+        t.classList.toggle('on');
+        var card = t.closest('.fcard'); if (card) card.classList.toggle('is-known');
+        var frow = t.closest('.fam-row'); if (frow) frow.classList.toggle('known');
+        updateProgressBar(); break;
+      case 'qtype': state.quizType = t.dataset.qt; renderQuiz(); break;
+      case 'qcount': state.quizCount = parseInt(t.dataset.n, 10); renderQuiz(); break;
+      case 'start-quiz': startQuiz(); break;
+      case 'answer': answerQuiz(parseInt(t.dataset.idx, 10)); break;
+      case 'quiz-next': nextQuiz(); break;
+      case 'quiz-exit': state.quiz = null; render(); break;
+      case 'quiz-again': state.quiz = null; renderQuiz(); break;
+      case 'quiz-retry-wrong': retryWrong(); break;
+      case 'addtype': state.addType = t.dataset.t; renderAdd(); break;
+      case 'save-word': saveWord(); break;
+      case 'save-struct': saveStruct(); break;
+      case 'del-word': delWord(t.dataset.fid, parseInt(t.dataset.i, 10)); break;
+      case 'del-struct': delStruct(t.dataset.sid); break;
+      case 'export': exportData(); break;
+      case 'copy': copyData(); break;
+      case 'reset': resetAll(); break;
+    }
+  }
+  function updateProgressBar() {
+    if (state.view !== 'study') return;
+    var pr = catProgress(state.cat), pct = pr.total ? Math.round(pr.known / pr.total * 100) : 0;
+    var bar = viewEl.querySelector('.progress-row .bar span'); if (bar) bar.style.width = pct + '%';
+    var lab = viewEl.querySelector('.progress-label'); if (lab) lab.innerHTML = 'Đã thuộc <b>' + pr.known + '</b>/' + pr.total;
+  }
+  function onInput(e) {
+    if (e.target.id === 'search') { state.search = e.target.value; renderStudyContentOnly(); }
+  }
+  function onChange(e) {
+    if (e.target.id === 'onlyUnknown') { state.onlyUnknown = e.target.checked; render(); }
+    else if (e.target.id === 'preferUnknown') { state.quizPreferUnknown = e.target.checked; }
+    else if (e.target.id === 'importFile' && e.target.files[0]) { importData(e.target.files[0]); }
+  }
+  // cập nhật riêng phần nội dung khi gõ tìm kiếm (giữ focus ô input)
+  function renderStudyContentOnly() {
+    var holder = document.getElementById('study-content');
+    if (!holder) { render(); return; }
+    holder.innerHTML = state.cat === 'all' ? studyAll() : (state.cat === 'struct' ? studyStructs() : studyPos(state.cat));
+  }
+
+  /* ---------- Khởi động ---------- */
+  function init() {
+    viewEl = document.getElementById('view');
+    navEls = Array.prototype.slice.call(document.querySelectorAll('.nav-btn'));
+    applyTheme();
+    document.addEventListener('click', onClick);
+    document.addEventListener('input', onInput);
+    document.addEventListener('change', onChange);
+    render();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+
+})();
+
+</script>
+</body>
+</html>
