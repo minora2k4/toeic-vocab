@@ -20,7 +20,6 @@
   })();
 
   var K_USER = 'toeic_user_v1';
-  var K_KNOWN = 'toeic_known_v1';
   var K_SET = 'toeic_settings_v1';
 
   /* ---------- Trạng thái người dùng ---------- */
@@ -28,11 +27,9 @@
   var userData = loadJSON(K_USER, { families: [], structures: [] });
   if (!userData.families) userData.families = [];
   if (!userData.structures) userData.structures = [];
-  var known = new Set(loadJSON(K_KNOWN, []));
   var settings = loadJSON(K_SET, { theme: 'light' });
 
   function saveUser() { store.set(K_USER, JSON.stringify(userData)); }
-  function saveKnown() { store.set(K_KNOWN, JSON.stringify(Array.from(known))); }
   function saveSettings() { store.set(K_SET, JSON.stringify(settings)); }
 
   /* ---------- Trạng thái giao diện ---------- */
@@ -40,10 +37,8 @@
     view: 'study',        // study | quiz | add | backup
     cat: 'all',           // all | n | v | adj | adv | struct
     search: '',
-    onlyUnknown: false,
     quizType: 'meaning',  // meaning | word | mixed | after | smeaning | smixed
     quizCount: 10,
-    quizPreferUnknown: false,
     quiz: null,
     addType: 'word'
   };
@@ -101,10 +96,6 @@
     return includeAllStructs ? wordItems().concat(structItems()) : wordItems();
   }
 
-  /* ---------- Đã thuộc ---------- */
-  function isKnown(id) { return known.has(id); }
-  function toggleKnown(id) { if (known.has(id)) known.delete(id); else known.add(id); saveKnown(); }
-
   /* ---------- Tiện ích ---------- */
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function norm(s) { return String(s || '').toLowerCase().normalize('NFC'); }
@@ -149,25 +140,13 @@
   }
 
   /* ============================ HỌC ============================ */
-  function catProgress(cat) {
-    var items = itemsForCat(cat, true);
-    var total = items.length, k = 0;
-    items.forEach(function (it) { if (isKnown(it.id)) k++; });
-    return { total: total, known: k };
-  }
-
   function renderStudy() {
-    var pr = catProgress(state.cat);
-    var pct = pr.total ? Math.round(pr.known / pr.total * 100) : 0;
     var html = '';
     html += catChips();
     html += '<div class="toolbar">' +
       '<div class="search"><svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>' +
       '<input id="search" type="search" inputmode="search" placeholder="Tìm từ hoặc nghĩa..." value="' + esc(state.search) + '" aria-label="Tìm kiếm"></div>' +
-      '<label class="switch"><input id="onlyUnknown" type="checkbox"' + (state.onlyUnknown ? ' checked' : '') + '><span>Chỉ từ chưa thuộc</span></label>' +
       '</div>';
-    html += '<div class="progress-row"><div class="bar"><span style="width:' + pct + '%"></span></div>' +
-      '<div class="progress-label">Đã thuộc <b>' + pr.known + '</b>/' + pr.total + '</div></div>';
 
     var content = state.cat === 'all' ? studyAll() : (state.cat === 'struct' ? studyStructs() : studyPos(state.cat));
     html += '<div id="study-content">' + content + '</div>';
@@ -179,10 +158,6 @@
   function studyAll() {
     var q = norm(state.search);
     var list = families().filter(function (f) {
-      if (state.onlyUnknown) {
-        var allK = (f.forms || []).every(function (fm, i) { return isKnown('w:' + f.id + ':' + i); });
-        if (allK && f.forms.length) return false;
-      }
       if (!q) return true;
       if (norm(f.base).indexOf(q) >= 0) return true;
       if ((f.syn || []).some(function (s) { return norm(s).indexOf(q) >= 0; })) return true;
@@ -191,10 +166,8 @@
     if (!list.length) return emptyState('Không tìm thấy họ từ nào khớp.');
     var out = '<div class="hint-line">' + list.length + ' họ từ · chạm tiêu đề để thu gọn</div><div class="fam-list">';
     out += list.map(function (f) {
-      var rows = (f.forms || []).map(function (fm, i) {
-        var id = 'w:' + f.id + ':' + i, kn = isKnown(id);
-        return '<div class="fam-row' + (kn ? ' known' : '') + '">' +
-          '<button class="mini-check' + (kn ? ' on' : '') + '" data-action="known" data-id="' + id + '" aria-label="Đánh dấu đã thuộc" title="Đã thuộc">' + checkIcon() + '</button>' +
+      var rows = (f.forms || []).map(function (fm) {
+        return '<div class="fam-row">' +
           posPill(fm.pos) +
           '<span class="fam-word">' + esc(fm.w) + '</span>' +
           '<span class="fam-vi">' + esc(fm.vi) + '</span></div>';
@@ -215,7 +188,6 @@
   function studyPos(cat) {
     var q = norm(state.search);
     var items = itemsForCat(cat, false).filter(function (it) {
-      if (state.onlyUnknown && isKnown(it.id)) return false;
       if (!q) return true;
       return norm(it.w).indexOf(q) >= 0 || norm(it.vi).indexOf(q) >= 0;
     });
@@ -230,7 +202,6 @@
   function studyStructs() {
     var q = norm(state.search);
     var items = structItems().filter(function (it) {
-      if (state.onlyUnknown && isKnown(it.id)) return false;
       if (!q) return true;
       return norm(it.pattern).indexOf(q) >= 0 || norm(it.vi).indexOf(q) >= 0;
     });
@@ -247,10 +218,9 @@
   }
 
   function flashCard(it) {
-    var kn = isKnown(it.id), p = POS[it.pos] || POS.phr;
-    return '<div class="fcard ' + p.cls + (kn ? ' is-known' : '') + '" data-action="reveal" data-id="' + it.id + '">' +
-      '<div class="fcard-top">' + posPill(it.pos) +
-        '<button class="mini-check' + (kn ? ' on' : '') + '" data-action="known" data-id="' + it.id + '" aria-label="Đã thuộc">' + checkIcon() + '</button></div>' +
+    var p = POS[it.pos] || POS.phr;
+    return '<div class="fcard ' + p.cls + '" data-action="reveal" data-id="' + it.id + '">' +
+      '<div class="fcard-top">' + posPill(it.pos) + '</div>' +
       '<div class="fcard-term">' + esc(it.w) + '</div>' +
       '<div class="fcard-meaning">' + esc(it.vi) +
         ((it.syn && it.syn.length) ? '<div class="fcard-sub">≈ ' + it.syn.map(esc).join(', ') + '</div>' : '') +
@@ -260,10 +230,8 @@
   }
 
   function structCard(it) {
-    var kn = isKnown(it.id);
-    return '<div class="fcard pos-struct' + (kn ? ' is-known' : '') + '" data-action="reveal" data-id="' + it.id + '">' +
-      '<div class="fcard-top"><span class="pill pos-struct">Cấu trúc</span>' +
-        '<button class="mini-check' + (kn ? ' on' : '') + '" data-action="known" data-id="' + it.id + '" aria-label="Đã thuộc">' + checkIcon() + '</button></div>' +
+    return '<div class="fcard pos-struct" data-action="reveal" data-id="' + it.id + '">' +
+      '<div class="fcard-top"><span class="pill pos-struct">Cấu trúc</span></div>' +
       '<div class="fcard-term struct-term">' + esc(it.pattern) + '</div>' +
       '<div class="fcard-meaning"><div class="struct-after">theo sau bởi <b>' + esc(it.after) + '</b></div>' +
         '<div>' + esc(it.vi) + '</div>' +
@@ -305,8 +273,6 @@
       return '<button class="seg-btn' + (state.quizCount === n ? ' active' : '') + '" data-action="qcount" data-n="' + n + '">' + label + '</button>';
     }).join('') + '</div>';
 
-    html += '<label class="switch big"><input id="preferUnknown" type="checkbox"' + (state.quizPreferUnknown ? ' checked' : '') + '><span>Ưu tiên hỏi từ chưa thuộc</span></label>';
-
     html += '<button class="btn-primary block" data-action="start-quiz"' + (pool.length < 2 ? ' disabled' : '') + '>Bắt đầu ôn (' + Math.min(state.quizCount, pool.length) + ' câu)</button>';
     if (pool.length < 2) html += '<div class="empty">Cần ít nhất 2 mục ở nhóm này để tạo quiz.</div>';
     html += '</div>';
@@ -314,16 +280,11 @@
   }
 
   function buildQuestions() {
-    var cat = state.cat, type = state.quizType, count = state.quizCount, prefer = state.quizPreferUnknown;
-    var pool = itemsForCat(cat, true);
+    var cat = state.cat, type = state.quizType, count = state.quizCount;
+    var pool = shuffle(itemsForCat(cat, true));
     var wordPool = wordItems();
     var afterValues = uniqueAfterValues();
-
-    // sắp xếp ưu tiên chưa thuộc
-    if (prefer) pool = pool.slice().sort(function (a, b) { return (isKnown(a.id) ? 1 : 0) - (isKnown(b.id) ? 1 : 0); });
-    else pool = shuffle(pool);
     var picked = pool.slice(0, count);
-    if (prefer) picked = shuffle(picked);
 
     return picked.map(function (it) {
       var kind;
@@ -419,7 +380,7 @@
     var qz = state.quiz; if (qz.answered) return;
     qz.answered = true; qz.chosen = idx;
     var q = qz.qs[qz.i];
-    if (idx === q.correct) { qz.score++; known.add(q.ref); saveKnown(); }
+    if (idx === q.correct) { qz.score++; }
     else { qz.wrong.push(q); }
     renderQuizRunner();
   }
@@ -544,13 +505,11 @@
   function delWord(fid, i) {
     var fam = userData.families.filter(function (f) { return f.id === fid; })[0];
     if (!fam) return;
-    known.delete('w:' + fid + ':' + i); saveKnown();
     fam.forms.splice(i, 1);
     if (!fam.forms.length) userData.families = userData.families.filter(function (f) { return f.id !== fid; });
     saveUser(); renderAdd();
   }
   function delStruct(sid) {
-    known.delete('s:' + sid); saveKnown();
     userData.structures = userData.structures.filter(function (s) { return s.id !== sid; });
     saveUser(); renderAdd();
   }
@@ -565,7 +524,7 @@
       (store.available ? '' : '<div class="warn">⚠ Trình duyệt đang chặn bộ nhớ cục bộ — dữ liệu sẽ mất khi đóng tab. Hãy tải sao lưu thường xuyên.</div>') + '</div>';
 
     html += '<div class="stat-grid">' +
-      stat(uw, 'từ tự thêm') + stat(userData.structures.length, 'cấu trúc tự thêm') + stat(known.size, 'mục đã thuộc') + '</div>';
+      stat(uw, 'từ tự thêm') + stat(userData.structures.length, 'cấu trúc tự thêm') + '</div>';
 
     html += '<button class="btn-primary block" data-action="export">⬇ Tải file sao lưu (.json)</button>';
     html += '<label class="btn-outline block file-btn">⬆ Khôi phục từ file<input id="importFile" type="file" accept="application/json,.json" hidden></label>';
@@ -576,7 +535,7 @@
   }
   function stat(n, label) { return '<div class="stat"><div class="stat-n">' + n + '</div><div class="stat-l">' + esc(label) + '</div></div>'; }
 
-  function exportPayload() { return JSON.stringify({ app: 'toeic-vocab', version: 1, exportedAt: new Date().toISOString(), user: userData, known: Array.from(known), settings: settings }, null, 2); }
+  function exportPayload() { return JSON.stringify({ app: 'toeic-vocab', version: 1, exportedAt: new Date().toISOString(), user: userData, settings: settings }, null, 2); }
   function exportData() {
     var blob = new Blob([exportPayload()], { type: 'application/json' });
     var a = document.createElement('a');
@@ -599,9 +558,8 @@
         var incUser = d.user || {};
         userData.families = mergeFamilies(userData.families, incUser.families || []);
         userData.structures = mergeById(userData.structures, incUser.structures || []);
-        (d.known || []).forEach(function (id) { known.add(id); });
         if (d.settings && d.settings.theme) { settings.theme = d.settings.theme; applyTheme(); }
-        saveUser(); saveKnown(); saveSettings();
+        saveUser(); saveSettings();
         toast('Đã khôi phục dữ liệu.'); render();
       } catch (e) { toast('File không hợp lệ.'); }
     };
@@ -614,9 +572,9 @@
     return a;
   }
   function resetAll() {
-    if (!confirm('Xóa toàn bộ từ bạn đã thêm và mọi tiến độ đã thuộc? Không thể hoàn tác.')) return;
-    userData = { families: [], structures: [] }; known = new Set();
-    store.remove(K_USER); store.remove(K_KNOWN);
+    if (!confirm('Xóa toàn bộ từ bạn đã thêm? Không thể hoàn tác.')) return;
+    userData = { families: [], structures: [] };
+    store.remove(K_USER);
     toast('Đã xóa dữ liệu.'); nav('study');
   }
 
@@ -629,7 +587,6 @@
   function toggleTheme() { settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; saveSettings(); applyTheme(); }
 
   /* ---------- Biểu tượng SVG ---------- */
-  function checkIcon() { return '<svg viewBox="0 0 24 24" class="ic"><path d="M20 6L9 17l-5-5"/></svg>'; }
   function chevronIcon() { return '<svg viewBox="0 0 24 24" class="ic chev"><path d="M6 9l6 6 6-6"/></svg>'; }
   function trashIcon() { return '<svg viewBox="0 0 24 24" class="ic"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>'; }
 
@@ -643,14 +600,7 @@
       case 'setcat': state.cat = t.dataset.cat; state.search = ''; render(); break;
       case 'theme': toggleTheme(); break;
       case 'fam-toggle': t.closest('.fam-card').classList.toggle('collapsed'); break;
-      case 'reveal':
-        if (e.target.closest('[data-action="known"]')) break;
-        t.classList.toggle('revealed'); break;
-      case 'known': e.stopPropagation(); toggleKnown(t.dataset.id);
-        t.classList.toggle('on');
-        var card = t.closest('.fcard'); if (card) card.classList.toggle('is-known');
-        var frow = t.closest('.fam-row'); if (frow) frow.classList.toggle('known');
-        updateProgressBar(); break;
+      case 'reveal': t.classList.toggle('revealed'); break;
       case 'qtype': state.quizType = t.dataset.qt; renderQuiz(); break;
       case 'qcount': state.quizCount = parseInt(t.dataset.n, 10); renderQuiz(); break;
       case 'start-quiz': startQuiz(); break;
@@ -669,19 +619,11 @@
       case 'reset': resetAll(); break;
     }
   }
-  function updateProgressBar() {
-    if (state.view !== 'study') return;
-    var pr = catProgress(state.cat), pct = pr.total ? Math.round(pr.known / pr.total * 100) : 0;
-    var bar = viewEl.querySelector('.progress-row .bar span'); if (bar) bar.style.width = pct + '%';
-    var lab = viewEl.querySelector('.progress-label'); if (lab) lab.innerHTML = 'Đã thuộc <b>' + pr.known + '</b>/' + pr.total;
-  }
   function onInput(e) {
     if (e.target.id === 'search') { state.search = e.target.value; renderStudyContentOnly(); }
   }
   function onChange(e) {
-    if (e.target.id === 'onlyUnknown') { state.onlyUnknown = e.target.checked; render(); }
-    else if (e.target.id === 'preferUnknown') { state.quizPreferUnknown = e.target.checked; }
-    else if (e.target.id === 'importFile' && e.target.files[0]) { importData(e.target.files[0]); }
+    if (e.target.id === 'importFile' && e.target.files[0]) { importData(e.target.files[0]); }
   }
   // cập nhật riêng phần nội dung khi gõ tìm kiếm (giữ focus ô input)
   function renderStudyContentOnly() {

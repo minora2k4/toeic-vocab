@@ -44,9 +44,9 @@ Tên file **phải là `index.html`** để Pages phục vụ mặc định.
 
 | Yêu cầu của bạn | Đã đáp ứng thế nào |
 |---|---|
-| 1. Nhẹ, mượt, hợp GitHub Pages, dùng điện thoại | 1 file ~92 KB, không phụ thuộc mạng, tải tức thì, offline được |
+| 1. Nhẹ, mượt, hợp GitHub Pages, dùng điện thoại | 1 file ~88 KB, không phụ thuộc mạng, tải tức thì, offline được |
 | 2. Đa nền tảng máy tính & điện thoại | Responsive: 1 cột trên điện thoại, 2 cột thẻ trên màn rộng; thanh điều hướng dưới cùng kiểu app |
-| 3. Ôn tập từ phù hợp | Thẻ ghi nhớ (chạm để lật nghĩa) + quiz + đánh dấu "đã thuộc" + thanh tiến độ |
+| 3. Ôn tập từ phù hợp | Thẻ ghi nhớ (chạm để lật nghĩa) + quiz trắc nghiệm |
 | 4. Một từ có nhiều loại; cấu trúc + theo sau là gì | Mỗi từ ghi rõ **loại từ** (mã màu); mỗi cấu trúc ghi rõ **theo sau bởi** `S+V` / `N` / `V-ing`… |
 | 5. Lấy hết wordform, phân loại rõ ràng | 140 họ từ → 369 dạng, tách sẵn theo Danh từ / Động từ / Tính từ / Trạng từ; tab **Tổng hợp** hiện cả họ từ theo bảng |
 | 6. Tự thêm từ mới (từ, nghĩa, loại) vào list | Tab **Thêm từ**: thêm từ vựng hoặc cấu trúc; tự gộp vào họ từ nếu trùng gốc; lưu vào máy |
@@ -54,16 +54,18 @@ Tên file **phải là `index.html`** để Pages phục vụ mặc định.
 | 8. Chia nhóm ôn: Tổng hợp, Trạng từ, Cấu trúc, Danh từ, Động từ, Tính từ | Đúng 6 nhóm này ở cả tab **Học** lẫn tab **Kiểm tra** |
 
 **Tính năng bổ sung tôi thêm cho trải nghiệm tốt hơn:**
-- Đánh dấu **"đã thuộc"** cho từng mục + **thanh tiến độ** theo nhóm.
-- Lọc **"chỉ hiện từ chưa thuộc"** để tập trung vào phần còn yếu.
-- Quiz có tùy chọn **"ưu tiên hỏi từ chưa thuộc"**, chọn số câu (10/20/30/tất cả),
-  màn hình **kết quả** kèm danh sách **từ sai để ôn lại** và nút **"Ôn lại từ sai"**.
+- Quiz chọn số câu (10/20/30/tất cả), màn hình **kết quả** kèm danh sách **từ sai để
+  ôn lại** và nút **"Ôn lại từ sai"** (tạo lại đúng những câu vừa trả lời sai, đảo đáp án).
 - **Tìm kiếm** nhanh theo từ hoặc nghĩa.
 - Hiển thị **từ đồng nghĩa** (các cụm `= …` trong sổ, ví dụ `location = venue = site…`).
 - **Nền tối** cho việc học ban đêm trên điện thoại.
 - **Sao lưu / khôi phục** dữ liệu bằng file `.json` (vì `localStorage` chỉ nằm trên
   1 thiết bị — xem mục 5).
-- Trả lời đúng trong quiz sẽ **tự đánh dấu "đã thuộc"** cho từ đó.
+
+> **Lưu ý:** App **không có** tính năng đánh dấu "đã thuộc"/lọc từ chưa thuộc — mọi từ và
+> cấu trúc luôn hiển thị đầy đủ ở tab Học, và quiz luôn lấy ngẫu nhiên từ toàn bộ nhóm đã
+> chọn, để người dùng vẫn ôn lại được cả những từ tưởng đã thuộc. Chỉ có kết quả quiz mới
+> phân biệt đúng/sai (qua tính năng "Ôn lại từ sai" ở trên).
 
 ---
 
@@ -110,17 +112,16 @@ thì nên dùng **tab Thêm từ** trong app (không cần đụng code).
 
 ## 5. Lưu trữ & sao lưu
 
-Dùng `localStorage` với 3 khóa:
+Dùng `localStorage` với 2 khóa:
 - `toeic_user_v1` — từ & cấu trúc **người dùng tự thêm** (`{ families, structures }`).
-- `toeic_known_v1` — mảng id các mục **đã thuộc**.
 - `toeic_settings_v1` — thiết lập (nền sáng/tối).
 
-Id của một mục để đánh dấu "đã thuộc":
+Id của một mục (dùng làm `ref` khi tạo câu hỏi quiz, không dùng để đánh dấu tiến độ):
 - Dạng từ: `w:<familyId>:<indexTrongForms>` (ví dụ `w:f001:2`).
 - Cấu trúc: `s:<structureId>` (ví dụ `s:s001`).
 
 **Lưu ý quan trọng:** `localStorage` gắn với **một trình duyệt trên một thiết bị**. Để
-mang từ đã thêm + tiến độ sang máy/điện thoại khác, dùng **tab Sao lưu → Tải file** rồi
+mang từ đã thêm sang máy/điện thoại khác, dùng **tab Sao lưu → Tải file** rồi
 **Khôi phục** ở thiết bị kia. Khôi phục là **gộp thêm** (không xóa dữ liệu đang có).
 
 ---
@@ -133,7 +134,8 @@ mang từ đã thêm + tiến độ sang máy/điện thoại khác, dùng **tab
 - `data.js` — biến `TOEIC_DATA` (dữ liệu từ vựng).
 - `app.js` — toàn bộ logic (IIFE).
 
-Ghép lại thành 1 file bằng Node:
+Ghép lại thành 1 file bằng Node (nếu máy chưa có Node.js, có thể dùng Python — xem ví dụ
+tương đương ở cuối mục này):
 ```bash
 node -e '
 const fs=require("fs");
@@ -141,6 +143,16 @@ let t=fs.readFileSync("index.template.html","utf8");
 t=t.replace("/*__DATA__*/","\n"+fs.readFileSync("data.js","utf8")+"\n");
 t=t.replace("/*__APP__*/","\n"+fs.readFileSync("app.js","utf8")+"\n");
 fs.writeFileSync("index.html",t);
+'
+```
+Tương đương bằng Python (không cần cài gì thêm nếu máy có sẵn Python 3):
+```bash
+python3 -c '
+data = open("data.js", encoding="utf-8").read()
+app = open("app.js", encoding="utf-8").read()
+tmpl = open("index.template.html", encoding="utf-8").read()
+t = tmpl.replace("/*__DATA__*/", "\n" + data + "\n", 1).replace("/*__APP__*/", "\n" + app + "\n", 1)
+open("index.html", "w", encoding="utf-8").write(t)
 '
 ```
 > Bạn không bắt buộc phải tách file — chỉ cần `index.html` là chạy được. Việc tách chỉ để

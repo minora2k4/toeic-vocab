@@ -68,16 +68,10 @@ body{
 .search{flex:1 1 200px; display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:0 12px; min-height:42px}
 .search .ic{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
 .search input{border:0; outline:0; background:transparent; color:var(--ink); font-size:15px; width:100%; padding:9px 0}
-.switch{display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); cursor:pointer; user-select:none}
-.switch input{width:18px;height:18px;accent-color:var(--brand)}
-.switch.big{font-size:15px; color:var(--ink); background:var(--surface); border:1px solid var(--line); padding:12px 14px; border-radius:12px; width:100%; margin:4px 0 8px}
 
-/* ---------- Progress ---------- */
-.progress-row{display:flex; align-items:center; gap:10px; margin:2px 0 14px}
+/* ---------- Progress (quiz) ---------- */
 .bar{flex:1; height:8px; background:var(--surface-2); border-radius:999px; overflow:hidden}
 .bar span{display:block; height:100%; background:linear-gradient(90deg,var(--brand),var(--brand-2)); border-radius:999px; transition:width .35s ease}
-.progress-label{font-size:12.5px; color:var(--muted); white-space:nowrap}
-.progress-label b{color:var(--ink)}
 .hint-line{font-size:12.5px; color:var(--muted); margin:2px 2px 10px}
 .group-h{font-size:13px; font-weight:700; color:var(--muted); margin:18px 2px 8px; letter-spacing:.01em}
 
@@ -107,13 +101,8 @@ body{
 .fam-row .pill{flex:0 0 auto}
 .fam-word{font-weight:700; font-size:15px; flex:0 0 auto}
 .fam-vi{color:var(--muted); font-size:13.5px; margin-left:auto; text-align:right}
-.fam-row.known .fam-word{text-decoration:line-through; opacity:.6}
 .fam-syn{margin-top:8px; font-size:13px; color:var(--pos-struct)}
 .fam-note{margin-top:6px; font-size:12.5px; color:var(--muted); font-style:italic}
-.mini-check{flex:0 0 auto; width:26px; height:26px; border-radius:8px; border:1.5px solid var(--line); background:var(--surface-2); display:grid; place-items:center; cursor:pointer; padding:0}
-.mini-check .ic{width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
-.mini-check.on{background:var(--ok); border-color:var(--ok)}
-.mini-check.on .ic{stroke:#fff; opacity:1}
 
 /* ---------- Flashcards (POS + Cấu trúc) ---------- */
 .card-grid{display:grid; grid-template-columns:1fr; gap:10px}
@@ -130,9 +119,6 @@ body{
 .struct-after{font-size:13px; color:var(--muted); margin-bottom:2px}
 .struct-after b{color:var(--pos-struct)}
 .fcard-hint{margin-top:8px; font-size:12px; color:var(--muted)}
-.fcard-top .mini-check{margin-left:auto}
-.fcard.is-known{opacity:.72}
-.fcard.is-known .fcard-term{text-decoration:line-through}
 @keyframes fade{from{opacity:0; transform:translateY(-2px)}to{opacity:1;transform:none}}
 
 /* ---------- Empty ---------- */
@@ -1020,7 +1006,6 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   })();
 
   var K_USER = 'toeic_user_v1';
-  var K_KNOWN = 'toeic_known_v1';
   var K_SET = 'toeic_settings_v1';
 
   /* ---------- Trạng thái người dùng ---------- */
@@ -1028,11 +1013,9 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   var userData = loadJSON(K_USER, { families: [], structures: [] });
   if (!userData.families) userData.families = [];
   if (!userData.structures) userData.structures = [];
-  var known = new Set(loadJSON(K_KNOWN, []));
   var settings = loadJSON(K_SET, { theme: 'light' });
 
   function saveUser() { store.set(K_USER, JSON.stringify(userData)); }
-  function saveKnown() { store.set(K_KNOWN, JSON.stringify(Array.from(known))); }
   function saveSettings() { store.set(K_SET, JSON.stringify(settings)); }
 
   /* ---------- Trạng thái giao diện ---------- */
@@ -1040,10 +1023,8 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
     view: 'study',        // study | quiz | add | backup
     cat: 'all',           // all | n | v | adj | adv | struct
     search: '',
-    onlyUnknown: false,
     quizType: 'meaning',  // meaning | word | mixed | after | smeaning | smixed
     quizCount: 10,
-    quizPreferUnknown: false,
     quiz: null,
     addType: 'word'
   };
@@ -1101,10 +1082,6 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
     return includeAllStructs ? wordItems().concat(structItems()) : wordItems();
   }
 
-  /* ---------- Đã thuộc ---------- */
-  function isKnown(id) { return known.has(id); }
-  function toggleKnown(id) { if (known.has(id)) known.delete(id); else known.add(id); saveKnown(); }
-
   /* ---------- Tiện ích ---------- */
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function norm(s) { return String(s || '').toLowerCase().normalize('NFC'); }
@@ -1149,25 +1126,13 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   }
 
   /* ============================ HỌC ============================ */
-  function catProgress(cat) {
-    var items = itemsForCat(cat, true);
-    var total = items.length, k = 0;
-    items.forEach(function (it) { if (isKnown(it.id)) k++; });
-    return { total: total, known: k };
-  }
-
   function renderStudy() {
-    var pr = catProgress(state.cat);
-    var pct = pr.total ? Math.round(pr.known / pr.total * 100) : 0;
     var html = '';
     html += catChips();
     html += '<div class="toolbar">' +
       '<div class="search"><svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>' +
       '<input id="search" type="search" inputmode="search" placeholder="Tìm từ hoặc nghĩa..." value="' + esc(state.search) + '" aria-label="Tìm kiếm"></div>' +
-      '<label class="switch"><input id="onlyUnknown" type="checkbox"' + (state.onlyUnknown ? ' checked' : '') + '><span>Chỉ từ chưa thuộc</span></label>' +
       '</div>';
-    html += '<div class="progress-row"><div class="bar"><span style="width:' + pct + '%"></span></div>' +
-      '<div class="progress-label">Đã thuộc <b>' + pr.known + '</b>/' + pr.total + '</div></div>';
 
     var content = state.cat === 'all' ? studyAll() : (state.cat === 'struct' ? studyStructs() : studyPos(state.cat));
     html += '<div id="study-content">' + content + '</div>';
@@ -1179,10 +1144,6 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   function studyAll() {
     var q = norm(state.search);
     var list = families().filter(function (f) {
-      if (state.onlyUnknown) {
-        var allK = (f.forms || []).every(function (fm, i) { return isKnown('w:' + f.id + ':' + i); });
-        if (allK && f.forms.length) return false;
-      }
       if (!q) return true;
       if (norm(f.base).indexOf(q) >= 0) return true;
       if ((f.syn || []).some(function (s) { return norm(s).indexOf(q) >= 0; })) return true;
@@ -1191,10 +1152,8 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
     if (!list.length) return emptyState('Không tìm thấy họ từ nào khớp.');
     var out = '<div class="hint-line">' + list.length + ' họ từ · chạm tiêu đề để thu gọn</div><div class="fam-list">';
     out += list.map(function (f) {
-      var rows = (f.forms || []).map(function (fm, i) {
-        var id = 'w:' + f.id + ':' + i, kn = isKnown(id);
-        return '<div class="fam-row' + (kn ? ' known' : '') + '">' +
-          '<button class="mini-check' + (kn ? ' on' : '') + '" data-action="known" data-id="' + id + '" aria-label="Đánh dấu đã thuộc" title="Đã thuộc">' + checkIcon() + '</button>' +
+      var rows = (f.forms || []).map(function (fm) {
+        return '<div class="fam-row">' +
           posPill(fm.pos) +
           '<span class="fam-word">' + esc(fm.w) + '</span>' +
           '<span class="fam-vi">' + esc(fm.vi) + '</span></div>';
@@ -1215,7 +1174,6 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   function studyPos(cat) {
     var q = norm(state.search);
     var items = itemsForCat(cat, false).filter(function (it) {
-      if (state.onlyUnknown && isKnown(it.id)) return false;
       if (!q) return true;
       return norm(it.w).indexOf(q) >= 0 || norm(it.vi).indexOf(q) >= 0;
     });
@@ -1230,7 +1188,6 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   function studyStructs() {
     var q = norm(state.search);
     var items = structItems().filter(function (it) {
-      if (state.onlyUnknown && isKnown(it.id)) return false;
       if (!q) return true;
       return norm(it.pattern).indexOf(q) >= 0 || norm(it.vi).indexOf(q) >= 0;
     });
@@ -1247,10 +1204,9 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   }
 
   function flashCard(it) {
-    var kn = isKnown(it.id), p = POS[it.pos] || POS.phr;
-    return '<div class="fcard ' + p.cls + (kn ? ' is-known' : '') + '" data-action="reveal" data-id="' + it.id + '">' +
-      '<div class="fcard-top">' + posPill(it.pos) +
-        '<button class="mini-check' + (kn ? ' on' : '') + '" data-action="known" data-id="' + it.id + '" aria-label="Đã thuộc">' + checkIcon() + '</button></div>' +
+    var p = POS[it.pos] || POS.phr;
+    return '<div class="fcard ' + p.cls + '" data-action="reveal" data-id="' + it.id + '">' +
+      '<div class="fcard-top">' + posPill(it.pos) + '</div>' +
       '<div class="fcard-term">' + esc(it.w) + '</div>' +
       '<div class="fcard-meaning">' + esc(it.vi) +
         ((it.syn && it.syn.length) ? '<div class="fcard-sub">≈ ' + it.syn.map(esc).join(', ') + '</div>' : '') +
@@ -1260,10 +1216,8 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   }
 
   function structCard(it) {
-    var kn = isKnown(it.id);
-    return '<div class="fcard pos-struct' + (kn ? ' is-known' : '') + '" data-action="reveal" data-id="' + it.id + '">' +
-      '<div class="fcard-top"><span class="pill pos-struct">Cấu trúc</span>' +
-        '<button class="mini-check' + (kn ? ' on' : '') + '" data-action="known" data-id="' + it.id + '" aria-label="Đã thuộc">' + checkIcon() + '</button></div>' +
+    return '<div class="fcard pos-struct" data-action="reveal" data-id="' + it.id + '">' +
+      '<div class="fcard-top"><span class="pill pos-struct">Cấu trúc</span></div>' +
       '<div class="fcard-term struct-term">' + esc(it.pattern) + '</div>' +
       '<div class="fcard-meaning"><div class="struct-after">theo sau bởi <b>' + esc(it.after) + '</b></div>' +
         '<div>' + esc(it.vi) + '</div>' +
@@ -1305,8 +1259,6 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
       return '<button class="seg-btn' + (state.quizCount === n ? ' active' : '') + '" data-action="qcount" data-n="' + n + '">' + label + '</button>';
     }).join('') + '</div>';
 
-    html += '<label class="switch big"><input id="preferUnknown" type="checkbox"' + (state.quizPreferUnknown ? ' checked' : '') + '><span>Ưu tiên hỏi từ chưa thuộc</span></label>';
-
     html += '<button class="btn-primary block" data-action="start-quiz"' + (pool.length < 2 ? ' disabled' : '') + '>Bắt đầu ôn (' + Math.min(state.quizCount, pool.length) + ' câu)</button>';
     if (pool.length < 2) html += '<div class="empty">Cần ít nhất 2 mục ở nhóm này để tạo quiz.</div>';
     html += '</div>';
@@ -1314,16 +1266,11 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   }
 
   function buildQuestions() {
-    var cat = state.cat, type = state.quizType, count = state.quizCount, prefer = state.quizPreferUnknown;
-    var pool = itemsForCat(cat, true);
+    var cat = state.cat, type = state.quizType, count = state.quizCount;
+    var pool = shuffle(itemsForCat(cat, true));
     var wordPool = wordItems();
     var afterValues = uniqueAfterValues();
-
-    // sắp xếp ưu tiên chưa thuộc
-    if (prefer) pool = pool.slice().sort(function (a, b) { return (isKnown(a.id) ? 1 : 0) - (isKnown(b.id) ? 1 : 0); });
-    else pool = shuffle(pool);
     var picked = pool.slice(0, count);
-    if (prefer) picked = shuffle(picked);
 
     return picked.map(function (it) {
       var kind;
@@ -1419,7 +1366,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
     var qz = state.quiz; if (qz.answered) return;
     qz.answered = true; qz.chosen = idx;
     var q = qz.qs[qz.i];
-    if (idx === q.correct) { qz.score++; known.add(q.ref); saveKnown(); }
+    if (idx === q.correct) { qz.score++; }
     else { qz.wrong.push(q); }
     renderQuizRunner();
   }
@@ -1544,13 +1491,11 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   function delWord(fid, i) {
     var fam = userData.families.filter(function (f) { return f.id === fid; })[0];
     if (!fam) return;
-    known.delete('w:' + fid + ':' + i); saveKnown();
     fam.forms.splice(i, 1);
     if (!fam.forms.length) userData.families = userData.families.filter(function (f) { return f.id !== fid; });
     saveUser(); renderAdd();
   }
   function delStruct(sid) {
-    known.delete('s:' + sid); saveKnown();
     userData.structures = userData.structures.filter(function (s) { return s.id !== sid; });
     saveUser(); renderAdd();
   }
@@ -1565,7 +1510,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
       (store.available ? '' : '<div class="warn">⚠ Trình duyệt đang chặn bộ nhớ cục bộ — dữ liệu sẽ mất khi đóng tab. Hãy tải sao lưu thường xuyên.</div>') + '</div>';
 
     html += '<div class="stat-grid">' +
-      stat(uw, 'từ tự thêm') + stat(userData.structures.length, 'cấu trúc tự thêm') + stat(known.size, 'mục đã thuộc') + '</div>';
+      stat(uw, 'từ tự thêm') + stat(userData.structures.length, 'cấu trúc tự thêm') + '</div>';
 
     html += '<button class="btn-primary block" data-action="export">⬇ Tải file sao lưu (.json)</button>';
     html += '<label class="btn-outline block file-btn">⬆ Khôi phục từ file<input id="importFile" type="file" accept="application/json,.json" hidden></label>';
@@ -1576,7 +1521,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   }
   function stat(n, label) { return '<div class="stat"><div class="stat-n">' + n + '</div><div class="stat-l">' + esc(label) + '</div></div>'; }
 
-  function exportPayload() { return JSON.stringify({ app: 'toeic-vocab', version: 1, exportedAt: new Date().toISOString(), user: userData, known: Array.from(known), settings: settings }, null, 2); }
+  function exportPayload() { return JSON.stringify({ app: 'toeic-vocab', version: 1, exportedAt: new Date().toISOString(), user: userData, settings: settings }, null, 2); }
   function exportData() {
     var blob = new Blob([exportPayload()], { type: 'application/json' });
     var a = document.createElement('a');
@@ -1599,9 +1544,8 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
         var incUser = d.user || {};
         userData.families = mergeFamilies(userData.families, incUser.families || []);
         userData.structures = mergeById(userData.structures, incUser.structures || []);
-        (d.known || []).forEach(function (id) { known.add(id); });
         if (d.settings && d.settings.theme) { settings.theme = d.settings.theme; applyTheme(); }
-        saveUser(); saveKnown(); saveSettings();
+        saveUser(); saveSettings();
         toast('Đã khôi phục dữ liệu.'); render();
       } catch (e) { toast('File không hợp lệ.'); }
     };
@@ -1614,9 +1558,9 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
     return a;
   }
   function resetAll() {
-    if (!confirm('Xóa toàn bộ từ bạn đã thêm và mọi tiến độ đã thuộc? Không thể hoàn tác.')) return;
-    userData = { families: [], structures: [] }; known = new Set();
-    store.remove(K_USER); store.remove(K_KNOWN);
+    if (!confirm('Xóa toàn bộ từ bạn đã thêm? Không thể hoàn tác.')) return;
+    userData = { families: [], structures: [] };
+    store.remove(K_USER);
     toast('Đã xóa dữ liệu.'); nav('study');
   }
 
@@ -1629,7 +1573,6 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   function toggleTheme() { settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; saveSettings(); applyTheme(); }
 
   /* ---------- Biểu tượng SVG ---------- */
-  function checkIcon() { return '<svg viewBox="0 0 24 24" class="ic"><path d="M20 6L9 17l-5-5"/></svg>'; }
   function chevronIcon() { return '<svg viewBox="0 0 24 24" class="ic chev"><path d="M6 9l6 6 6-6"/></svg>'; }
   function trashIcon() { return '<svg viewBox="0 0 24 24" class="ic"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>'; }
 
@@ -1643,14 +1586,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
       case 'setcat': state.cat = t.dataset.cat; state.search = ''; render(); break;
       case 'theme': toggleTheme(); break;
       case 'fam-toggle': t.closest('.fam-card').classList.toggle('collapsed'); break;
-      case 'reveal':
-        if (e.target.closest('[data-action="known"]')) break;
-        t.classList.toggle('revealed'); break;
-      case 'known': e.stopPropagation(); toggleKnown(t.dataset.id);
-        t.classList.toggle('on');
-        var card = t.closest('.fcard'); if (card) card.classList.toggle('is-known');
-        var frow = t.closest('.fam-row'); if (frow) frow.classList.toggle('known');
-        updateProgressBar(); break;
+      case 'reveal': t.classList.toggle('revealed'); break;
       case 'qtype': state.quizType = t.dataset.qt; renderQuiz(); break;
       case 'qcount': state.quizCount = parseInt(t.dataset.n, 10); renderQuiz(); break;
       case 'start-quiz': startQuiz(); break;
@@ -1669,19 +1605,11 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
       case 'reset': resetAll(); break;
     }
   }
-  function updateProgressBar() {
-    if (state.view !== 'study') return;
-    var pr = catProgress(state.cat), pct = pr.total ? Math.round(pr.known / pr.total * 100) : 0;
-    var bar = viewEl.querySelector('.progress-row .bar span'); if (bar) bar.style.width = pct + '%';
-    var lab = viewEl.querySelector('.progress-label'); if (lab) lab.innerHTML = 'Đã thuộc <b>' + pr.known + '</b>/' + pr.total;
-  }
   function onInput(e) {
     if (e.target.id === 'search') { state.search = e.target.value; renderStudyContentOnly(); }
   }
   function onChange(e) {
-    if (e.target.id === 'onlyUnknown') { state.onlyUnknown = e.target.checked; render(); }
-    else if (e.target.id === 'preferUnknown') { state.quizPreferUnknown = e.target.checked; }
-    else if (e.target.id === 'importFile' && e.target.files[0]) { importData(e.target.files[0]); }
+    if (e.target.id === 'importFile' && e.target.files[0]) { importData(e.target.files[0]); }
   }
   // cập nhật riêng phần nội dung khi gõ tìm kiếm (giữ focus ô input)
   function renderStudyContentOnly() {

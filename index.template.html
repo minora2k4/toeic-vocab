@@ -68,16 +68,10 @@ body{
 .search{flex:1 1 200px; display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:0 12px; min-height:42px}
 .search .ic{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
 .search input{border:0; outline:0; background:transparent; color:var(--ink); font-size:15px; width:100%; padding:9px 0}
-.switch{display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); cursor:pointer; user-select:none}
-.switch input{width:18px;height:18px;accent-color:var(--brand)}
-.switch.big{font-size:15px; color:var(--ink); background:var(--surface); border:1px solid var(--line); padding:12px 14px; border-radius:12px; width:100%; margin:4px 0 8px}
 
-/* ---------- Progress ---------- */
-.progress-row{display:flex; align-items:center; gap:10px; margin:2px 0 14px}
+/* ---------- Progress (quiz) ---------- */
 .bar{flex:1; height:8px; background:var(--surface-2); border-radius:999px; overflow:hidden}
 .bar span{display:block; height:100%; background:linear-gradient(90deg,var(--brand),var(--brand-2)); border-radius:999px; transition:width .35s ease}
-.progress-label{font-size:12.5px; color:var(--muted); white-space:nowrap}
-.progress-label b{color:var(--ink)}
 .hint-line{font-size:12.5px; color:var(--muted); margin:2px 2px 10px}
 .group-h{font-size:13px; font-weight:700; color:var(--muted); margin:18px 2px 8px; letter-spacing:.01em}
 
@@ -107,13 +101,8 @@ body{
 .fam-row .pill{flex:0 0 auto}
 .fam-word{font-weight:700; font-size:15px; flex:0 0 auto}
 .fam-vi{color:var(--muted); font-size:13.5px; margin-left:auto; text-align:right}
-.fam-row.known .fam-word{text-decoration:line-through; opacity:.6}
 .fam-syn{margin-top:8px; font-size:13px; color:var(--pos-struct)}
 .fam-note{margin-top:6px; font-size:12.5px; color:var(--muted); font-style:italic}
-.mini-check{flex:0 0 auto; width:26px; height:26px; border-radius:8px; border:1.5px solid var(--line); background:var(--surface-2); display:grid; place-items:center; cursor:pointer; padding:0}
-.mini-check .ic{width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0}
-.mini-check.on{background:var(--ok); border-color:var(--ok)}
-.mini-check.on .ic{stroke:#fff; opacity:1}
 
 /* ---------- Flashcards (POS + Cấu trúc) ---------- */
 .card-grid{display:grid; grid-template-columns:1fr; gap:10px}
@@ -130,9 +119,6 @@ body{
 .struct-after{font-size:13px; color:var(--muted); margin-bottom:2px}
 .struct-after b{color:var(--pos-struct)}
 .fcard-hint{margin-top:8px; font-size:12px; color:var(--muted)}
-.fcard-top .mini-check{margin-left:auto}
-.fcard.is-known{opacity:.72}
-.fcard.is-known .fcard-term{text-decoration:line-through}
 @keyframes fade{from{opacity:0; transform:translateY(-2px)}to{opacity:1;transform:none}}
 
 /* ---------- Empty ---------- */

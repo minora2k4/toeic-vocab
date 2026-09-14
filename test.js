@@ -23,16 +23,10 @@ setTimeout(() => {
   ok(q('.fam-card'), 'Tổng hợp hiển thị họ từ');
   console.log(`  Số họ từ hiển thị ban đầu: ${qa('.fam-card').length}`);
 
-  console.log('== ĐÁNH DẤU ĐÃ THUỘC (fam-row) ==');
-  const chk = q('.fam-row .mini-check');
-  ok(chk, 'có nút đánh dấu');
-  click(chk);
-  ok(q('.fam-row .mini-check.on'), 'đánh dấu bật lên on');
-  ok(window.localStorage.getItem('toeic_known_v1'), 'đã lưu known vào localStorage');
-
-  console.log('== LỌC "CHỈ TỪ CHƯA THUỘC" ==');
-  const only = q('#onlyUnknown'); only.checked = true; only.dispatchEvent(new window.Event('change', { bubbles: true }));
-  ok(true, 'toggle onlyUnknown không lỗi');
+  console.log('== KHÔNG CÒN TÍNH NĂNG ĐÁNH DẤU ĐÃ THUỘC ==');
+  ok(!q('.mini-check'), 'không còn nút đánh dấu đã thuộc');
+  ok(!q('#onlyUnknown'), 'không còn checkbox lọc chỉ từ chưa thuộc');
+  ok(window.localStorage.getItem('toeic_known_v1') === null, 'không lưu known vào localStorage');
 
   console.log('== TÌM KIẾM ==');
   const s = q('#search'); s.value = 'dedicate'; s.dispatchEvent(new window.Event('input', { bubbles: true }));
@@ -56,6 +50,7 @@ setTimeout(() => {
 
   console.log('== QUIZ: TỪ -> NGHĨA ==');
   navTo('quiz'); setCat('n');
+  ok(!q('#preferUnknown'), 'không còn checkbox ưu tiên hỏi từ chưa thuộc');
   click(qa('.seg-btn').find(b => b.dataset.qt === 'meaning'));
   const startBtn = qa('[data-action="start-quiz"]')[0];
   ok(startBtn, 'có nút bắt đầu');
@@ -63,18 +58,28 @@ setTimeout(() => {
   ok(q('.q-term'), 'quiz hiển thị câu hỏi');
   ok(qa('.opt').length >= 2 && qa('.opt').length <= 4, 'có 2-4 đáp án (' + qa('.opt').length + ')');
   ok(qa('.opt').filter(o => o.textContent.trim()).length === qa('.opt').length, 'đáp án đều có nội dung');
-  // chọn 1 đáp án
-  click(qa('.opt')[0]);
+  // luôn chọn đáp án cuối cùng: do đáp án được xáo trộn ngẫu nhiên mỗi câu, gần như chắc chắn
+  // sẽ có vài câu sai qua nhiều câu hỏi, đủ để kiểm tra tính năng "ôn lại từ sai"
+  const wrongPick = () => { const opts = qa('.opt'); click(opts[opts.length - 1]); };
+  wrongPick();
   ok(q('.opt.correct'), 'có đánh dấu đáp án đúng sau khi chọn');
   ok(q('.feedback'), 'hiện giải thích');
-  // đi hết quiz
+  // đi hết quiz, cố tình chọn sai vài câu để có dữ liệu ôn lại
   let guard = 0;
   while (q('[data-action="quiz-next"]') && guard++ < 60) {
     click(q('[data-action="quiz-next"]'));
-    if (q('.opt') && !q('.feedback')) click(qa('.opt')[0]);
+    if (q('.opt') && !q('.feedback')) wrongPick();
   }
   ok(q('.result-ring') || q('.result-pct'), 'kết thúc -> màn kết quả');
   console.log('  Kết quả: ' + (q('.result-score') ? q('.result-score').textContent : '(n/a)'));
+
+  console.log('== ÔN LẠI TỪ SAI ==');
+  const retryBtn = q('[data-action="quiz-retry-wrong"]');
+  ok(retryBtn, 'có nút ôn lại từ sai (vì đã cố tình trả lời sai)');
+  if (retryBtn) {
+    click(retryBtn);
+    ok(q('.q-term'), 'ôn lại từ sai -> quiz mới bắt đầu lại');
+  }
 
   console.log('== QUIZ CẤU TRÚC: THEO SAU LÀ GÌ ==');
   navTo('quiz'); setCat('struct');
