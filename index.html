@@ -911,7 +911,7 @@ var TOEIC_DATA = {
       {w:'recent', pos:'adj', vi:'gần đây'},
       {w:'recently', pos:'adv', vi:'gần đây'} ]},
 
-    { id:'f137', base:'barely', forms:[
+    { id:'f137', base:'barely', syn:['hardly'], forms:[
       {w:'barely', pos:'adv', vi:'hầu như không, vừa đủ'} ]},
 
     { id:'f138', base:'roughly', forms:[
@@ -926,7 +926,125 @@ var TOEIC_DATA = {
     { id:'f140', base:'reasonable', forms:[
       {w:'reasonable', pos:'adj', vi:'hợp lý, phải chăng'},
       {w:'reasonably', pos:'adv', vi:'một cách hợp lý'},
-      {w:'reason', pos:'n', vi:'lý do'} ]}
+      {w:'reason', pos:'n', vi:'lý do'} ]},
+
+    /* ---- BỔ SUNG TỪ SỔ TAY (đợt 2) ---- */
+    { id:'f141', base:'loyal', forms:[
+      {w:'loyal', pos:'adj', vi:'trung thành'},
+      {w:'loyalty', pos:'n', vi:'lòng trung thành'},
+      {w:'loyally', pos:'adv', vi:'một cách trung thành'} ]},
+
+    { id:'f142', base:'light', forms:[
+      {w:'light', pos:'adj', vi:'nhẹ'},
+      {w:'lightly', pos:'adv', vi:'nhẹ nhàng'},
+      {w:'lighten', pos:'v', vi:'làm nhẹ bớt, giảm bớt'} ]},
+
+    { id:'f143', base:'solicit', forms:[
+      {w:'solicit', pos:'v', vi:'xin, kêu gọi, vận động, mời chào'},
+      {w:'solicitation', pos:'n', vi:'sự kêu gọi, sự vận động'},
+      {w:'unsolicited', pos:'adj', vi:'không được yêu cầu, tự ý đưa ra'} ]},
+
+    { id:'f144', base:'engage', syn:['participate'], forms:[
+      {w:'engage', pos:'v', vi:'tham gia; thu hút'},
+      {w:'engagement', pos:'n', vi:'sự tham gia, sự gắn kết; sự đính hôn'},
+      {w:'engaging', pos:'adj', vi:'hấp dẫn, lôi cuốn'} ]},
+
+    { id:'f145', base:'cautious', syn:['careful'], forms:[
+      {w:'cautious', pos:'adj', vi:'cẩn trọng, thận trọng'},
+      {w:'cautiously', pos:'adv', vi:'một cách thận trọng'},
+      {w:'caution', pos:'n', vi:'sự thận trọng; lời cảnh báo'} ]},
+
+    { id:'f146', base:'compensate', forms:[
+      {w:'compensate', pos:'v', vi:'bù đắp, đền bù'},
+      {w:'compensation', pos:'n', vi:'khoản bồi thường, tiền đền bù'},
+      {w:'compensatory', pos:'adj', vi:'mang tính đền bù'} ]},
+
+    { id:'f147', base:'accumulate', forms:[
+      {w:'accumulate', pos:'v', vi:'tích lũy, tích tụ'},
+      {w:'accumulation', pos:'n', vi:'sự tích lũy'},
+      {w:'accumulated', pos:'adj', vi:'được tích lũy, dồn lại'} ]},
+
+    { id:'f148', base:'grateful', forms:[
+      {w:'grateful', pos:'adj', vi:'biết ơn'},
+      {w:'gratefully', pos:'adv', vi:'một cách biết ơn'},
+      {w:'gratitude', pos:'n', vi:'lòng biết ơn'} ]},
+
+    { id:'f149', base:'disrupt', forms:[
+      {w:'disrupt', pos:'v', vi:'làm gián đoạn, phá vỡ'},
+      {w:'disruption', pos:'n', vi:'sự gián đoạn, sự xáo trộn'},
+      {w:'disruptive', pos:'adj', vi:'gây gián đoạn, gây xáo trộn'} ]},
+
+    { id:'f150', base:'concern', forms:[
+      {w:'concern', pos:'v', vi:'liên quan đến; khiến lo ngại'},
+      {w:'concern', pos:'n', vi:'mối quan tâm, sự lo ngại; vấn đề liên quan'},
+      {w:'concerned', pos:'adj', vi:'lo ngại, quan tâm'},
+      {w:'concerning', pos:'prep', vi:'liên quan đến, về việc'} ]},
+
+    { id:'f151', base:'deduce', forms:[
+      {w:'deduce', pos:'v', vi:'suy luận, suy ra'},
+      {w:'deduct', pos:'v', vi:'khấu trừ, trừ đi'},
+      {w:'deduction', pos:'n', vi:'khoản khấu trừ; sự suy luận (logic)'} ]},
+
+    { id:'f152', base:'declare', forms:[
+      {w:'declare', pos:'v', vi:'tuyên bố; khai báo'},
+      {w:'declaration', pos:'n', vi:'lời tuyên bố; tờ khai'} ]},
+
+    { id:'f153', base:'promote', syn:['encourage'], forms:[
+      {w:'promote', pos:'v', vi:'thúc đẩy, quảng bá; thăng chức'},
+      {w:'promotion', pos:'n', vi:'sự thăng chức; chương trình khuyến mãi'},
+      {w:'promotional', pos:'adj', vi:'mang tính quảng cáo, khuyến mãi'} ]},
+
+    { id:'f154', base:'commercial', forms:[
+      {w:'commerce', pos:'n', vi:'thương mại'},
+      {w:'commercial', pos:'adj', vi:'thuộc về thương mại'},
+      {w:'commercially', pos:'adv', vi:'về mặt thương mại'} ]},
+
+    { id:'f155', base:'diagnose', forms:[
+      {w:'diagnose', pos:'v', vi:'chẩn đoán'},
+      {w:'diagnosis', pos:'n', vi:'sự chẩn đoán'},
+      {w:'diagnostic', pos:'adj', vi:'thuộc về chẩn đoán, dùng để chẩn đoán'} ]},
+
+    { id:'f156', base:'survey', forms:[
+      {w:'survey', pos:'n', vi:'cuộc khảo sát, bản khảo sát'},
+      {w:'survey', pos:'v', vi:'khảo sát, điều tra'} ]},
+
+    { id:'f157', base:'beyond', forms:[
+      {w:'beyond', pos:'prep', vi:'vượt quá, ngoài phạm vi'} ]},
+
+    { id:'f158', base:'hardly', syn:['barely'], forms:[
+      {w:'hardly', pos:'adv', vi:'hầu như không'} ]},
+
+    { id:'f159', base:'punctual', forms:[
+      {w:'punctual', pos:'adj', vi:'đúng giờ'},
+      {w:'punctuality', pos:'n', vi:'tính đúng giờ'},
+      {w:'punctually', pos:'adv', vi:'một cách đúng giờ'} ]},
+
+    { id:'f160', base:'determine', forms:[
+      {w:'determine', pos:'v', vi:'quyết định, xác định'},
+      {w:'determined', pos:'adj', vi:'quyết tâm, kiên quyết'},
+      {w:'determination', pos:'n', vi:'sự quyết tâm, sự xác định'} ]},
+
+    { id:'f161', base:'guarantee', forms:[
+      {w:'guarantee', pos:'n', vi:'sự bảo đảm'},
+      {w:'guarantee', pos:'v', vi:'bảo đảm'} ]},
+
+    { id:'f162', base:'occasion', forms:[
+      {w:'occasion', pos:'n', vi:'dịp, sự kiện'},
+      {w:'occasional', pos:'adj', vi:'thỉnh thoảng, không thường xuyên'},
+      {w:'occasionally', pos:'adv', vi:'thỉnh thoảng'} ]},
+
+    { id:'f163', base:'approximate', forms:[
+      {w:'approximate', pos:'adj', vi:'gần đúng, ước chừng'},
+      {w:'approximately', pos:'adv', vi:'khoảng chừng, xấp xỉ'} ]},
+
+    { id:'f164', base:'urgent', forms:[
+      {w:'urgent', pos:'adj', vi:'cấp bách, khẩn cấp'},
+      {w:'urgently', pos:'adv', vi:'một cách khẩn cấp'},
+      {w:'urgency', pos:'n', vi:'tính cấp bách'} ]},
+
+    { id:'f165', base:'retain', forms:[
+      {w:'retain', pos:'v', vi:'giữ lại, duy trì'},
+      {w:'retention', pos:'n', vi:'sự duy trì, khả năng giữ lại'} ]}
   ],
 
   /* ---- CẤU TRÚC / LIÊN TỪ / TRẠNG TỪ LIÊN KẾT ---- */
