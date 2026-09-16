@@ -44,14 +44,14 @@ Tên file **phải là `index.html`** để Pages phục vụ mặc định.
 
 | Yêu cầu của bạn | Đã đáp ứng thế nào |
 |---|---|
-| 1. Nhẹ, mượt, hợp GitHub Pages, dùng điện thoại | 1 file ~90 KB, không phụ thuộc mạng, tải tức thì, offline được |
+| 1. Nhẹ, mượt, hợp GitHub Pages, dùng điện thoại | 1 file ~95 KB, không phụ thuộc mạng, tải tức thì, offline được |
 | 2. Đa nền tảng máy tính & điện thoại | Responsive: 1 cột trên điện thoại, 2 cột thẻ trên màn rộng; thanh điều hướng dưới cùng kiểu app |
 | 3. Ôn tập từ phù hợp | Thẻ ghi nhớ (chạm để lật nghĩa) + quiz trắc nghiệm |
 | 4. Một từ có nhiều loại; cấu trúc + theo sau là gì | Mỗi từ ghi rõ **loại từ** (mã màu); mỗi cấu trúc ghi rõ **theo sau bởi** `S+V` / `N` / `V-ing`… |
-| 5. Lấy hết wordform, phân loại rõ ràng | 165 họ từ → 436 dạng, tách sẵn theo Danh từ / Động từ / Tính từ / Trạng từ; tab **Tổng hợp** hiện cả họ từ theo bảng |
+| 5. Lấy hết wordform, phân loại rõ ràng | 192 họ từ → 507 dạng, tách sẵn theo Danh từ / Động từ / Tính từ / Trạng từ / Giới từ; tab **Tổng hợp** hiện cả họ từ theo bảng |
 | 6. Tự thêm từ mới (từ, nghĩa, loại) vào list | Tab **Thêm từ**: thêm từ vựng hoặc cấu trúc; tự gộp vào họ từ nếu trùng gốc; lưu vào máy |
 | 7. Quiz hỏi nghĩa từ / cấu trúc theo sau | Quiz trắc nghiệm 4 đáp án: Từ→nghĩa, Nghĩa→từ, "Theo sau là gì?", Nghĩa cấu trúc |
-| 8. Chia nhóm ôn: Tổng hợp, Trạng từ, Cấu trúc, Danh từ, Động từ, Tính từ | Đúng 6 nhóm này ở cả tab **Học** lẫn tab **Kiểm tra** |
+| 8. Chia nhóm ôn: Tổng hợp, Trạng từ, Cấu trúc, Danh từ, Động từ, Tính từ | Đúng 7 nhóm này ở cả tab **Học** lẫn tab **Kiểm tra** (đã bổ sung thêm **Giới từ**) |
 
 **Tính năng bổ sung tôi thêm cho trải nghiệm tốt hơn:**
 - Quiz chọn số câu (10/20/30/tất cả), màn hình **kết quả** kèm danh sách **từ sai để
@@ -210,5 +210,16 @@ Khi số hóa, tôi sửa vài lỗi chính tả/từ loại để không học 
 - `solicit (v)` = **xin, kêu gọi, vận động, mời chào** (sổ ghi thêm "bỏ phiếu" — không đúng
   nghĩa gốc, đã bỏ).
 - `relevent` → **`relevant`** (lỗi chính tả).
+- `tenant` là **danh từ** (người thuê nhà/mặt bằng), sổ ghi nhầm là động từ "thuê" —
+  động từ "thuê" thực chất là `rent`/`lease`.
+- `claim (v)` = **khẳng định, tuyên bố; yêu cầu, đòi (quyền lợi/bồi thường)** (sổ ghi gọn
+  thành "bồi thường" — chỉ đúng trong ngữ cảnh bảo hiểm, đã bổ sung nghĩa đầy đủ).
+- `complimentary (adj)` có **2 nghĩa**: miễn phí *và* mang tính khen ngợi (sổ chỉ ghi
+  "miễn phí").
+- `neccessary` → **`necessary`** (lỗi chính tả).
+- `composed (adj)` (bình tĩnh, điềm tĩnh) khác nghĩa với `compose (v)`/`be composed of`
+  (sáng tác / được tạo thành từ) — đã tách rõ trong cùng họ từ để không nhầm lẫn.
+- `circular (adj)` chỉ giữ nghĩa **hình tròn** (nghĩa "thông tư, thông báo chung" là cách
+  dùng hiếm/trang trọng, không đưa vào để tránh gây nhầm khi ôn thi).
 
 Nếu muốn giữ đúng nguyên văn sổ tay ở điểm nào, cứ chỉnh lại trong `TOEIC_DATA`.

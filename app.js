@@ -58,6 +58,7 @@
     { id: 'n',      label: 'Danh từ' },
     { id: 'adj',    label: 'Tính từ' },
     { id: 'adv',    label: 'Trạng từ' },
+    { id: 'prep',   label: 'Giới từ' },
     { id: 'struct', label: 'Cấu trúc' }
   ];
 
@@ -89,7 +90,7 @@
 
   function itemsForCat(cat, includeAllStructs) {
     if (cat === 'struct') return structItems();
-    if (cat === 'n' || cat === 'v' || cat === 'adj' || cat === 'adv') {
+    if (cat === 'n' || cat === 'v' || cat === 'adj' || cat === 'adv' || cat === 'prep') {
       return wordItems().filter(function (it) { return it.pos === cat; });
     }
     // 'all'

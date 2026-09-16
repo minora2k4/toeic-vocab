@@ -85,6 +85,7 @@ body{
 }
 .pos-n-ink{color:var(--pos-n)} .pos-v-ink{color:var(--pos-v)} .pos-adj-ink{color:var(--pos-adj)}
 .pos-adv-ink{color:var(--pos-adv)} .pos-struct-ink{color:var(--pos-struct)}
+.pos-prep-ink{color:var(--pos-prep)} .pos-phr-ink{color:var(--pos-phr)}
 
 /* ---------- Family cards (Tổng hợp) ---------- */
 .fam-list{display:flex; flex-direction:column; gap:10px}
@@ -562,6 +563,7 @@ var TOEIC_DATA = {
 
     { id:'f060', base:'procedure', syn:['process'], forms:[
       {w:'procedure', pos:'n', vi:'quy trình, thủ tục'},
+      {w:'proceed', pos:'v', vi:'tiến hành, tiếp tục thực hiện'},
       {w:'procedural', pos:'adj', vi:'thuộc về thủ tục'} ]},
 
     { id:'f061', base:'launch', forms:[
@@ -1044,7 +1046,133 @@ var TOEIC_DATA = {
 
     { id:'f165', base:'retain', forms:[
       {w:'retain', pos:'v', vi:'giữ lại, duy trì'},
-      {w:'retention', pos:'n', vi:'sự duy trì, khả năng giữ lại'} ]}
+      {w:'retention', pos:'n', vi:'sự duy trì, khả năng giữ lại'} ]},
+
+    /* ---- BỔ SUNG TỪ SỔ TAY (đợt 3) ---- */
+    { id:'f166', base:'abrupt', forms:[
+      {w:'abrupt', pos:'adj', vi:'đột ngột, thình lình'},
+      {w:'abruptly', pos:'adv', vi:'một cách đột ngột'} ]},
+
+    { id:'f167', base:'thick', forms:[
+      {w:'thick', pos:'adj', vi:'dày, dày đặc'},
+      {w:'thickly', pos:'adv', vi:'một cách dày đặc'},
+      {w:'thickness', pos:'n', vi:'độ dày'} ]},
+
+    { id:'f168', base:'compose', forms:[
+      {w:'compose', pos:'v', vi:'sáng tác, soạn thảo; (be composed of) tạo thành từ, bao gồm'},
+      {w:'composed', pos:'adj', vi:'bình tĩnh, điềm tĩnh'},
+      {w:'composition', pos:'n', vi:'tác phẩm, bài soạn; thành phần cấu tạo'},
+      {w:'composer', pos:'n', vi:'nhà soạn nhạc'} ]},
+
+    { id:'f169', base:'necessary', forms:[
+      {w:'necessary', pos:'adj', vi:'cần thiết'},
+      {w:'necessarily', pos:'adv', vi:'một cách tất yếu (not necessarily = không nhất thiết)'},
+      {w:'necessity', pos:'n', vi:'sự cần thiết, nhu cầu thiết yếu'} ]},
+
+    { id:'f170', base:'revoke', forms:[
+      {w:'revoke', pos:'v', vi:'thu hồi, hủy bỏ'},
+      {w:'revocation', pos:'n', vi:'sự thu hồi, sự hủy bỏ'} ]},
+
+    { id:'f171', base:'individual', forms:[
+      {w:'individual', pos:'adj', vi:'cá nhân, riêng lẻ, cá thể'},
+      {w:'individual', pos:'n', vi:'cá nhân (con người)'},
+      {w:'individually', pos:'adv', vi:'một cách riêng lẻ, từng cái một'},
+      {w:'individuality', pos:'n', vi:'tính cá nhân, cá tính riêng'} ]},
+
+    { id:'f172', base:'abundant', forms:[
+      {w:'abundant', pos:'adj', vi:'dồi dào, phong phú'},
+      {w:'abundance', pos:'n', vi:'sự dồi dào, sự phong phú'},
+      {w:'abundantly', pos:'adv', vi:'một cách dồi dào; hoàn toàn (abundantly clear)'} ]},
+
+    { id:'f173', base:'claim', forms:[
+      {w:'claim', pos:'v', vi:'khẳng định, tuyên bố; yêu cầu, đòi (quyền lợi, bồi thường)'},
+      {w:'claim', pos:'n', vi:'lời khẳng định; đơn yêu cầu bồi thường, đơn khiếu nại'},
+      {w:'claimant', pos:'n', vi:'người khiếu nại, người yêu cầu bồi thường'} ]},
+
+    { id:'f174', base:'renew', forms:[
+      {w:'renew', pos:'v', vi:'gia hạn, làm mới, đổi mới'},
+      {w:'renewal', pos:'n', vi:'sự gia hạn'},
+      {w:'renewable', pos:'adj', vi:'có thể gia hạn được; (năng lượng) có thể tái tạo'} ]},
+
+    { id:'f175', base:'tenant', forms:[
+      {w:'tenant', pos:'n', vi:'người thuê (nhà, mặt bằng)'},
+      {w:'tenancy', pos:'n', vi:'thời hạn thuê, hợp đồng thuê'} ]},
+
+    { id:'f176', base:'measure', forms:[
+      {w:'measure', pos:'v', vi:'đo, đo lường'},
+      {w:'measure', pos:'n', vi:'biện pháp; thước đo, đơn vị đo'},
+      {w:'measurement', pos:'n', vi:'sự đo lường, số đo'} ]},
+
+    { id:'f177', base:'assign', forms:[
+      {w:'assign', pos:'v', vi:'phân công, chỉ định, giao (việc)'},
+      {w:'assignment', pos:'n', vi:'nhiệm vụ được giao, bài tập'},
+      {w:'assigned', pos:'adj', vi:'được phân công, được chỉ định'} ]},
+
+    { id:'f178', base:'banquet', forms:[
+      {w:'banquet', pos:'n', vi:'tiệc chiêu đãi, dạ tiệc'} ]},
+
+    { id:'f179', base:'compliment', forms:[
+      {w:'compliment', pos:'n', vi:'lời khen'},
+      {w:'compliment', pos:'v', vi:'khen ngợi'},
+      {w:'complimentary', pos:'adj', vi:'miễn phí; mang tính khen ngợi'} ]},
+
+    { id:'f180', base:'commend', forms:[
+      {w:'commend', pos:'v', vi:'khen ngợi, đánh giá cao'},
+      {w:'commendable', pos:'adj', vi:'đáng khen'},
+      {w:'commendation', pos:'n', vi:'lời khen, sự khen thưởng'} ]},
+
+    { id:'f181', base:'ladder', forms:[
+      {w:'ladder', pos:'n', vi:'cái thang'} ]},
+
+    { id:'f182', base:'anticipate', syn:['expect'], forms:[
+      {w:'anticipate', pos:'v', vi:'mong đợi, dự đoán trước'},
+      {w:'anticipation', pos:'n', vi:'sự mong đợi, sự dự đoán'},
+      {w:'anticipated', pos:'adj', vi:'được mong đợi, được dự kiến'} ]},
+
+    { id:'f183', base:'notice', forms:[
+      {w:'notice', pos:'v', vi:'chú ý, để ý, nhận thấy'},
+      {w:'notice', pos:'n', vi:'thông báo; sự chú ý'},
+      {w:'noticeable', pos:'adj', vi:'dễ nhận thấy, rõ rệt'},
+      {w:'noticeably', pos:'adv', vi:'một cách rõ rệt'} ]},
+
+    { id:'f184', base:'circulate', forms:[
+      {w:'circulate', pos:'v', vi:'lưu thông, lưu hành, luân chuyển'},
+      {w:'circulation', pos:'n', vi:'sự lưu thông; lượng phát hành (báo, tạp chí)'},
+      {w:'circular', pos:'adj', vi:'hình tròn'} ]},
+
+    { id:'f185', base:'as usual', forms:[
+      {w:'as usual', pos:'phr', vi:'như thường lệ'} ]},
+
+    { id:'f186', base:'crew', syn:['team'], forms:[
+      {w:'crew', pos:'n', vi:'đội, tổ, kíp làm việc (phi hành đoàn, đoàn làm phim...)'} ]},
+
+    { id:'f187', base:'distance', forms:[
+      {w:'distance', pos:'n', vi:'khoảng cách'},
+      {w:'distant', pos:'adj', vi:'xa xôi; xa cách, hờ hững'} ]},
+
+    { id:'f188', base:'afford', forms:[
+      {w:'afford', pos:'v', vi:'có khả năng chi trả, đủ khả năng (làm gì)'},
+      {w:'affordable', pos:'adj', vi:'có giá phải chăng'},
+      {w:'affordably', pos:'adv', vi:'với giá phải chăng'} ]},
+
+    { id:'f189', base:'designate', forms:[
+      {w:'designate', pos:'v', vi:'chỉ định'},
+      {w:'designated', pos:'adj', vi:'được chỉ định (cho mục đích riêng)'},
+      {w:'designation', pos:'n', vi:'sự chỉ định; chức danh'} ]},
+
+    { id:'f190', base:'nominate', forms:[
+      {w:'nominate', pos:'v', vi:'đề cử'},
+      {w:'nomination', pos:'n', vi:'sự đề cử'},
+      {w:'nominee', pos:'n', vi:'người được đề cử'} ]},
+
+    { id:'f191', base:'comply', forms:[
+      {w:'comply', pos:'v', vi:'tuân theo, tuân thủ'},
+      {w:'compliance', pos:'n', vi:'sự tuân thủ'},
+      {w:'compliant', pos:'adj', vi:'tuân thủ, phù hợp (quy định)'} ]},
+
+    /* ---- GIỚI TỪ (PREPOSITIONS) ---- */
+    { id:'f192', base:'under', forms:[
+      {w:'under', pos:'prep', vi:'dưới, theo, trong tình trạng (under construction/review)'} ]}
   ],
 
   /* ---- CẤU TRÚC / LIÊN TỪ / TRẠNG TỪ LIÊN KẾT ---- */
@@ -1056,6 +1184,8 @@ var TOEIC_DATA = {
     { id:'s003', group:'Từ vựng', pattern:'an instance of', after:'N', vi:'một ví dụ / trường hợp về', example:'an instance of success' },
     { id:'s004', group:'Từ vựng', pattern:'prior to', after:'N / V-ing', vi:'trước khi (= before + S + V)', example:'prior to the meeting' },
     { id:'s005', group:'Từ vựng', pattern:'as + adj/adv + as', after:'as', vi:'so sánh ngang bằng', example:'as fast as possible' },
+    { id:'s006', group:'Từ vựng', pattern:'by the end of', after:'N', vi:'cho đến cuối, trước khi kết thúc (mốc thời gian)', example:'by the end of this month' },
+    { id:'s007', group:'Từ vựng', pattern:'under', after:'N / V-ing', vi:'dưới sự, trong tình trạng', example:'under construction / under review' },
 
     // Nguyên nhân
     { id:'s010', group:'Nguyên nhân (Bởi vì)', pattern:'because / since / as', after:'S + V', vi:'bởi vì', example:'because he was late' },
@@ -1162,6 +1292,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
     { id: 'n',      label: 'Danh từ' },
     { id: 'adj',    label: 'Tính từ' },
     { id: 'adv',    label: 'Trạng từ' },
+    { id: 'prep',   label: 'Giới từ' },
     { id: 'struct', label: 'Cấu trúc' }
   ];
 
@@ -1193,7 +1324,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
 
   function itemsForCat(cat, includeAllStructs) {
     if (cat === 'struct') return structItems();
-    if (cat === 'n' || cat === 'v' || cat === 'adj' || cat === 'adv') {
+    if (cat === 'n' || cat === 'v' || cat === 'adj' || cat === 'adv' || cat === 'prep') {
       return wordItems().filter(function (it) { return it.pos === cat; });
     }
     // 'all'
