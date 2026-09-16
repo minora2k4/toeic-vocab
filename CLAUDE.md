@@ -44,16 +44,21 @@ Tên file **phải là `index.html`** để Pages phục vụ mặc định.
 
 | Yêu cầu của bạn | Đã đáp ứng thế nào |
 |---|---|
-| 1. Nhẹ, mượt, hợp GitHub Pages, dùng điện thoại | 1 file ~95 KB, không phụ thuộc mạng, tải tức thì, offline được |
+| 1. Nhẹ, mượt, hợp GitHub Pages, dùng điện thoại | 1 file ~145 KB, không phụ thuộc mạng, tải tức thì, offline được |
 | 2. Đa nền tảng máy tính & điện thoại | Responsive: 1 cột trên điện thoại, 2 cột thẻ trên màn rộng; thanh điều hướng dưới cùng kiểu app |
 | 3. Ôn tập từ phù hợp | Thẻ ghi nhớ (chạm để lật nghĩa) + quiz trắc nghiệm |
 | 4. Một từ có nhiều loại; cấu trúc + theo sau là gì | Mỗi từ ghi rõ **loại từ** (mã màu); mỗi cấu trúc ghi rõ **theo sau bởi** `S+V` / `N` / `V-ing`… |
-| 5. Lấy hết wordform, phân loại rõ ràng | 192 họ từ → 507 dạng, tách sẵn theo Danh từ / Động từ / Tính từ / Trạng từ / Giới từ; tab **Tổng hợp** hiện cả họ từ theo bảng |
+| 5. Lấy hết wordform, phân loại rõ ràng | 468 họ từ → 816 dạng, tách sẵn theo Danh từ / Động từ / Tính từ / Trạng từ / Giới từ; tab **Tổng hợp** hiện cả họ từ theo bảng |
 | 6. Tự thêm từ mới (từ, nghĩa, loại) vào list | Tab **Thêm từ**: thêm từ vựng hoặc cấu trúc; tự gộp vào họ từ nếu trùng gốc; lưu vào máy |
 | 7. Quiz hỏi nghĩa từ / cấu trúc theo sau | Quiz trắc nghiệm 4 đáp án: Từ→nghĩa, Nghĩa→từ, "Theo sau là gì?", Nghĩa cấu trúc |
 | 8. Chia nhóm ôn: Tổng hợp, Trạng từ, Cấu trúc, Danh từ, Động từ, Tính từ | Đúng 7 nhóm này ở cả tab **Học** lẫn tab **Kiểm tra** (đã bổ sung thêm **Giới từ**) |
 
 **Tính năng bổ sung tôi thêm cho trải nghiệm tốt hơn:**
+- Tab **Chủ đề**: học từ vựng theo 17 chủ đề TOEIC thực tế (Hợp đồng, Văn phòng, Tiếp thị,
+  Máy tính, Bảo hành, Thư tín, Lương & phúc lợi, Hội nghị, Hóa đơn, Hàng hóa, Việc làm &
+  tuyển dụng, Ứng tuyển & phỏng vấn, Ngân hàng, Kế toán, Nhà hàng, Mua sắm, **Du lịch**) —
+  349 lượt gắn nhãn chủ đề trên các dạng từ (một từ có thể thuộc nhiều chủ đề). Mỗi chủ đề
+  có ô tìm kiếm riêng và nút **"Ôn tập chủ đề này"** để làm quiz chỉ trong phạm vi chủ đề đó.
 - Quiz chọn số câu (10/20/30/tất cả), màn hình **kết quả** kèm danh sách **từ sai để
   ôn lại** và nút **"Ôn lại từ sai"** (tạo lại đúng những câu vừa trả lời sai, đảo đáp án).
 - **Tìm kiếm** nhanh theo từ hoặc nghĩa.
@@ -90,6 +95,19 @@ ban đầu là file `data.js`).
 ```
 `pos` chỉ nhận: `'n'` (danh từ) · `'v'` (động từ) · `'adj'` (tính từ) · `'adv'` (trạng từ)
 · `'prep'` (giới từ) · `'phr'` (cụm từ).
+
+Mỗi form có thể có thêm `topics: ['contract', 'invoice']` (tùy chọn) — mảng id chủ đề mà
+**đúng dạng từ đó** (không phải cả họ) thuộc về, dùng cho tab **Chủ đề**. Một dạng từ có thể
+thuộc nhiều chủ đề cùng lúc (ví dụ `payment` xuất hiện ở cả chủ đề `contract`, `invoice`,
+`shopping`). Không phải form nào cũng có `topics` — phần lớn từ vựng gốc (140 họ từ đầu)
+không gắn chủ đề.
+
+### 4.1b. Chủ đề (`topics`)
+```js
+{ id: 'contract', en: 'Contract', vi: 'Hợp đồng' }
+```
+Mảng `TOEIC_DATA.topics` liệt kê 16 chủ đề (nguồn: STUDY4 — tổng hợp chủ đề từ vựng TOEIC).
+`id` dùng làm khóa tra cứu trong `form.topics`, phải là chuỗi snake_case duy nhất.
 
 ### 4.2. Cấu trúc (`structures`)
 ```js
@@ -162,9 +180,14 @@ open("index.html", "w", encoding="utf-8").write(t)
 - `store` — lớp lưu trữ có dự phòng bộ nhớ tạm.
 - `families()`, `structures()`, `wordItems()`, `structItems()`, `itemsForCat(cat)` —
   gộp dữ liệu gốc + người dùng thêm.
+- `topicsList()`, `itemsForTopic(topicId)` — dữ liệu cho tab Chủ đề.
 - `renderStudy()` → `studyAll()` / `studyPos(cat)` / `studyStructs()` — tab Học.
+- `renderTopics()` → `renderTopicDetail()` / `topicContent(topic)` — tab Chủ đề (danh sách
+  chủ đề → chi tiết từ vựng theo chủ đề, có ô tìm kiếm riêng `#topicSearch`).
 - `renderQuiz()` → `buildQuestions()` / `makeQuestion()` / `renderQuizRunner()` /
-  `renderQuizResult()` — tab Kiểm tra.
+  `renderQuizResult()` — tab Kiểm tra. Khi `state.quizTopic` được set (bấm "Ôn tập chủ đề
+  này" từ tab Chủ đề), `renderQuizTopicSetup()` thay cho màn hình thiết lập theo nhóm từ
+  loại thường, và `buildQuestions()` lấy pool từ `itemsForTopic()` thay vì `itemsForCat()`.
 - `renderAdd()` / `saveWord()` / `saveStruct()` — tab Thêm từ.
 - `renderBackup()` / `exportData()` / `importData()` / `resetAll()` — tab Sao lưu.
 - `onClick()` — bộ điều phối sự kiện duy nhất qua thuộc tính `data-action` (không dùng

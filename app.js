@@ -34,11 +34,14 @@
 
   /* ---------- Trạng thái giao diện ---------- */
   var state = {
-    view: 'study',        // study | quiz | add | backup
+    view: 'study',        // study | topics | quiz | add | backup
     cat: 'all',           // all | n | v | adj | adv | struct
     search: '',
+    topic: null,          // id chủ đề đang mở trong tab Chủ đề (null = danh sách chủ đề)
+    topicSearch: '',
     quizType: 'meaning',  // meaning | word | mixed | after | smeaning | smixed
     quizCount: 10,
+    quizTopic: null,      // id chủ đề đang ôn trong Kiểm tra (null = ôn theo nhóm từ loại)
     quiz: null,
     addType: 'word'
   };
@@ -73,11 +76,18 @@
         out.push({
           id: 'w:' + f.id + ':' + i,
           kind: 'word', w: fm.w, pos: fm.pos, vi: fm.vi,
-          base: f.base, familyId: f.id, syn: f.syn || [], example: f.example || ''
+          base: f.base, familyId: f.id, syn: f.syn || [], example: f.example || '',
+          topics: fm.topics || []
         });
       });
     });
     return out;
+  }
+
+  /* ---------- Chủ đề (topic vocab) ---------- */
+  function topicsList() { return TOEIC_DATA.topics || []; }
+  function itemsForTopic(topicId) {
+    return wordItems().filter(function (it) { return it.topics.indexOf(topicId) >= 0; });
   }
   function structItems() {
     return structures().map(function (s) {
@@ -119,7 +129,7 @@
 
   /* ---------- Điều hướng & khung ---------- */
   var viewEl, navEls;
-  function nav(view) { state.view = view; state.quiz = null; render(); }
+  function nav(view) { state.view = view; state.quiz = null; state.quizTopic = null; render(); }
   function setActiveNav() {
     navEls.forEach(function (b) { b.classList.toggle('active', b.dataset.view === state.view); });
   }
@@ -133,6 +143,7 @@
   function render() {
     setActiveNav();
     if (state.view === 'study') renderStudy();
+    else if (state.view === 'topics') renderTopics();
     else if (state.view === 'quiz') renderQuiz();
     else if (state.view === 'add') renderAdd();
     else if (state.view === 'backup') renderBackup();
@@ -243,9 +254,50 @@
 
   function emptyState(msg) { return '<div class="empty">' + esc(msg) + '</div>'; }
 
+  /* ============================ CHỦ ĐỀ ============================ */
+  function renderTopics() {
+    if (state.topic) return renderTopicDetail();
+    var tps = topicsList();
+    var html = '<div class="hint-line">' + tps.length + ' chủ đề · chạm để học từ vựng theo chủ đề</div>';
+    html += '<div class="topic-grid">' + tps.map(function (t) {
+      var n = itemsForTopic(t.id).length;
+      return '<button class="topic-card" data-action="topic-open" data-topic="' + t.id + '">' +
+        '<span class="topic-vi">' + esc(t.vi) + '</span>' +
+        '<span class="topic-en">' + esc(t.en) + '</span>' +
+        '<span class="topic-count">' + n + ' từ</span></button>';
+    }).join('') + '</div>';
+    viewEl.innerHTML = html;
+  }
+
+  function renderTopicDetail() {
+    var topic = topicsList().filter(function (t) { return t.id === state.topic; })[0];
+    if (!topic) { state.topic = null; return renderTopics(); }
+    var html = '<div class="topic-head"><button class="btn-ghost" data-action="topic-back">← Chủ đề</button>' +
+      '<div class="topic-head-title"><div class="topic-head-vi">' + esc(topic.vi) + '</div>' +
+      '<div class="topic-head-en">' + esc(topic.en) + '</div></div></div>';
+    html += '<div class="toolbar"><div class="search"><svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>' +
+      '<input id="topicSearch" type="search" inputmode="search" placeholder="Tìm từ trong chủ đề..." value="' + esc(state.topicSearch) + '" aria-label="Tìm kiếm"></div></div>';
+    html += '<div id="topic-content">' + topicContent(topic) + '</div>';
+    viewEl.innerHTML = html;
+  }
+
+  function topicContent(topic) {
+    var q = norm(state.topicSearch);
+    var items = itemsForTopic(topic.id).filter(function (it) {
+      if (!q) return true;
+      return norm(it.w).indexOf(q) >= 0 || norm(it.vi).indexOf(q) >= 0;
+    });
+    if (!items.length) return emptyState('Không tìm thấy từ nào khớp trong chủ đề này.');
+    var out = '<div class="hint-line">' + items.length + ' từ · chạm thẻ để xem nghĩa</div>';
+    out += '<button class="btn-primary block" data-action="quiz-topic" data-topic="' + topic.id + '"' + (items.length < 2 ? ' disabled' : '') + '>Ôn tập chủ đề này (' + items.length + ' câu)</button>';
+    out += '<div class="card-grid" style="margin-top:12px">' + items.map(function (it) { return flashCard(it); }).join('') + '</div>';
+    return out;
+  }
+
   /* ============================ KIỂM TRA (QUIZ) ============================ */
   function renderQuiz() {
     if (state.quiz) return renderQuizRunner();
+    if (state.quizTopic) return renderQuizTopicSetup();
     // màn hình thiết lập
     var isStruct = state.cat === 'struct';
     // đồng bộ loại quiz với nhóm
@@ -280,9 +332,39 @@
     viewEl.innerHTML = html;
   }
 
+  function renderQuizTopicSetup() {
+    var topic = topicsList().filter(function (t) { return t.id === state.quizTopic; })[0];
+    if (!topic) { state.quizTopic = null; return renderQuiz(); }
+    if (['after', 'smeaning', 'smixed'].indexOf(state.quizType) >= 0) state.quizType = 'meaning';
+    var types = [{ id: 'meaning', label: 'Từ → nghĩa' }, { id: 'word', label: 'Nghĩa → từ' }, { id: 'mixed', label: 'Trộn cả hai' }];
+    var pool = itemsForTopic(topic.id);
+    var counts = [10, 20, 30].filter(function (n) { return n < pool.length; });
+    counts.push(pool.length);
+    if (state.quizCount > pool.length) state.quizCount = pool.length;
+
+    var html = '<div class="topic-quiz-banner">Đang ôn theo chủ đề: <b>' + esc(topic.vi) + '</b>' +
+      '<button data-action="quiz-clear-topic">✕ Bỏ chủ đề</button></div>';
+    html += '<div class="setup">';
+    html += '<h2 class="setup-h">Chọn kiểu câu hỏi</h2>';
+    html += '<div class="seg">' + types.map(function (t) {
+      return '<button class="seg-btn' + (state.quizType === t.id ? ' active' : '') + '" data-action="qtype" data-qt="' + t.id + '">' + esc(t.label) + '</button>';
+    }).join('') + '</div>';
+
+    html += '<h2 class="setup-h">Số câu hỏi</h2>';
+    html += '<div class="seg">' + counts.map(function (n) {
+      var label = (n === pool.length ? 'Tất cả (' + n + ')' : String(n));
+      return '<button class="seg-btn' + (state.quizCount === n ? ' active' : '') + '" data-action="qcount" data-n="' + n + '">' + label + '</button>';
+    }).join('') + '</div>';
+
+    html += '<button class="btn-primary block" data-action="start-quiz"' + (pool.length < 2 ? ' disabled' : '') + '>Bắt đầu ôn (' + Math.min(state.quizCount, pool.length) + ' câu)</button>';
+    if (pool.length < 2) html += '<div class="empty">Cần ít nhất 2 từ ở chủ đề này để tạo quiz.</div>';
+    html += '</div>';
+    viewEl.innerHTML = html;
+  }
+
   function buildQuestions() {
     var cat = state.cat, type = state.quizType, count = state.quizCount;
-    var pool = shuffle(itemsForCat(cat, true));
+    var pool = shuffle(state.quizTopic ? itemsForTopic(state.quizTopic) : itemsForCat(cat, true));
     var wordPool = wordItems();
     var afterValues = uniqueAfterValues();
     var picked = pool.slice(0, count);
@@ -602,12 +684,22 @@
       case 'theme': toggleTheme(); break;
       case 'fam-toggle': t.closest('.fam-card').classList.toggle('collapsed'); break;
       case 'reveal': t.classList.toggle('revealed'); break;
+      case 'topic-open': state.topic = t.dataset.topic; state.topicSearch = ''; render(); break;
+      case 'topic-back': state.topic = null; state.topicSearch = ''; render(); break;
+      case 'quiz-topic':
+        state.quizTopic = t.dataset.topic; state.quiz = null; state.quizType = 'meaning';
+        state.view = 'quiz'; render(); break;
+      case 'quiz-clear-topic': state.quizTopic = null; renderQuiz(); break;
       case 'qtype': state.quizType = t.dataset.qt; renderQuiz(); break;
       case 'qcount': state.quizCount = parseInt(t.dataset.n, 10); renderQuiz(); break;
       case 'start-quiz': startQuiz(); break;
       case 'answer': answerQuiz(parseInt(t.dataset.idx, 10)); break;
       case 'quiz-next': nextQuiz(); break;
-      case 'quiz-exit': state.quiz = null; render(); break;
+      case 'quiz-exit':
+        var fromTopic = state.quizTopic;
+        state.quiz = null; state.quizTopic = null;
+        if (fromTopic) state.view = 'topics';
+        render(); break;
       case 'quiz-again': state.quiz = null; renderQuiz(); break;
       case 'quiz-retry-wrong': retryWrong(); break;
       case 'addtype': state.addType = t.dataset.t; renderAdd(); break;
@@ -622,6 +714,7 @@
   }
   function onInput(e) {
     if (e.target.id === 'search') { state.search = e.target.value; renderStudyContentOnly(); }
+    else if (e.target.id === 'topicSearch') { state.topicSearch = e.target.value; renderTopicContentOnly(); }
   }
   function onChange(e) {
     if (e.target.id === 'importFile' && e.target.files[0]) { importData(e.target.files[0]); }
@@ -631,6 +724,13 @@
     var holder = document.getElementById('study-content');
     if (!holder) { render(); return; }
     holder.innerHTML = state.cat === 'all' ? studyAll() : (state.cat === 'struct' ? studyStructs() : studyPos(state.cat));
+  }
+  // cập nhật riêng phần nội dung chủ đề khi gõ tìm kiếm (giữ focus ô input)
+  function renderTopicContentOnly() {
+    var holder = document.getElementById('topic-content');
+    var topic = topicsList().filter(function (t) { return t.id === state.topic; })[0];
+    if (!holder || !topic) { render(); return; }
+    holder.innerHTML = topicContent(topic);
   }
 
   /* ---------- Khởi động ---------- */

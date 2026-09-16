@@ -89,6 +89,30 @@ setTimeout(() => {
   const afterOpts = qa('.opt').map(o => o.textContent);
   ok(afterOpts.length >= 2, 'đáp án cấu trúc >=2 (' + afterOpts.length + ')');
 
+  console.log('== CHỦ ĐỀ: DANH SÁCH ==');
+  navTo('topics');
+  ok(qa('.topic-card').length >= 16, 'có đủ chủ đề (' + qa('.topic-card').length + ')');
+  const contractCard = qa('.topic-card').find(c => c.dataset.topic === 'contract');
+  ok(contractCard, 'có chủ đề "contract"');
+
+  console.log('== CHỦ ĐỀ: CHI TIẾT + TÌM KIẾM ==');
+  click(contractCard);
+  ok(q('.topic-head-vi'), 'hiển thị tiêu đề chủ đề');
+  ok(qa('.fcard').length >= 15, 'chủ đề Hợp đồng có nhiều từ (' + qa('.fcard').length + ')');
+  const tSearch = q('#topicSearch'); tSearch.value = 'sign'; tSearch.dispatchEvent(new window.Event('input', { bubbles: true }));
+  ok(qa('.fcard-term').length === 1 && q('.fcard-term').textContent === 'sign', 'tìm kiếm trong chủ đề hoạt động');
+
+  console.log('== CHỦ ĐỀ: QUIZ THEO CHỦ ĐỀ ==');
+  const quizTopicBtn = q('[data-action="quiz-topic"]');
+  ok(quizTopicBtn, 'có nút "Ôn tập chủ đề này"');
+  click(quizTopicBtn);
+  ok(q('.topic-quiz-banner'), 'hiện banner chủ đề đang ôn trong Kiểm tra');
+  click(qa('[data-action="start-quiz"]')[0]);
+  ok(q('.q-term'), 'quiz theo chủ đề hiển thị câu hỏi');
+  click(qa('.opt')[0]);
+  click(q('[data-action="quiz-exit"]'));
+  ok(q('.topic-head-vi'), 'thoát quiz chủ đề -> quay lại trang chi tiết chủ đề');
+
   console.log('== THÊM TỪ MỚI ==');
   navTo('add');
   q('#add-w').value = 'negotiate';

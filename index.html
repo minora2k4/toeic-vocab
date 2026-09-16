@@ -125,6 +125,22 @@ body{
 /* ---------- Empty ---------- */
 .empty{text-align:center; color:var(--muted); padding:34px 16px; font-size:14px; background:var(--surface); border:1px dashed var(--line); border-radius:var(--r)}
 
+/* ---------- Chủ đề (Topics) ---------- */
+.topic-grid{display:grid; grid-template-columns:1fr; gap:10px}
+@media(min-width:560px){.topic-grid{grid-template-columns:1fr 1fr}}
+.topic-card{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--brand); border-radius:var(--r); padding:14px 16px; text-align:left; cursor:pointer; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:3px; color:inherit}
+.topic-card:active{transform:scale(.99)}
+.topic-vi{font-weight:800; font-size:16.5px; letter-spacing:-.01em}
+.topic-en{font-size:12.5px; color:var(--muted)}
+.topic-count{font-size:12px; color:var(--brand); margin-top:6px; font-weight:700}
+.topic-head{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+.topic-head-title{display:flex; flex-direction:column}
+.topic-head-vi{font-weight:800; font-size:18px}
+.topic-head-en{font-size:12.5px; color:var(--muted)}
+.topic-quiz-banner{display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--brand-soft); color:var(--brand); padding:10px 14px; border-radius:12px; margin-bottom:14px; font-size:14px}
+.topic-quiz-banner b{color:inherit}
+.topic-quiz-banner button{flex:0 0 auto; background:none; border:0; color:inherit; font-weight:700; font-size:12.5px; cursor:pointer; padding:4px 8px}
+
 /* ---------- Setup / forms ---------- */
 .setup{display:flex; flex-direction:column}
 .setup-h{font-size:13px; font-weight:700; color:var(--muted); margin:14px 2px 8px}
@@ -242,6 +258,10 @@ body{
         <svg viewBox="0 0 24 24"><path d="M4 5.5A2 2 0 0 1 6 4h6v16H6a2 2 0 0 0-2 1.2z"/><path d="M20 5.5A2 2 0 0 0 18 4h-6v16h6a2 2 0 0 1 2 1.2z"/></svg>
         <span>Học</span>
       </button>
+      <button class="nav-btn" data-action="nav" data-view="topics">
+        <svg viewBox="0 0 24 24"><path d="M20.59 13.41L11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+        <span>Chủ đề</span>
+      </button>
       <button class="nav-btn" data-action="nav" data-view="quiz">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg>
         <span>Kiểm tra</span>
@@ -276,6 +296,27 @@ body{
 
 var TOEIC_DATA = {
   version: 1,
+
+  /* ---- CHỦ ĐỀ (dùng cho tab Chủ đề) ---- */
+  topics: [
+    { id:'contract', en:'Contract', vi:'Hợp đồng' },
+    { id:'office', en:'Office', vi:'Văn phòng' },
+    { id:'marketing', en:'Marketing', vi:'Tiếp thị' },
+    { id:'computer', en:'Computer', vi:'Máy tính' },
+    { id:'warranties', en:'Warranties', vi:'Bảo hành' },
+    { id:'correspondence', en:'Correspondence', vi:'Thư tín' },
+    { id:'salaries_and_benefits', en:'Salaries and Benefits', vi:'Lương và phúc lợi' },
+    { id:'conference', en:'Conference', vi:'Hội nghị' },
+    { id:'invoice', en:'Invoice', vi:'Hóa đơn' },
+    { id:'inventory', en:'Inventory', vi:'Hàng hóa' },
+    { id:'job_advertising_and_recruiting', en:'Job Advertising and Recruiting', vi:'Việc làm và tuyển dụng' },
+    { id:'applying_and_interviewing', en:'Applying and Interviewing', vi:'Ứng tuyển và phỏng vấn' },
+    { id:'banking', en:'Banking', vi:'Ngân hàng' },
+    { id:'accounting', en:'Accounting', vi:'Kế toán' },
+    { id:'restaurant', en:'Restaurant', vi:'Nhà hàng' },
+    { id:'shopping', en:'Shopping', vi:'Mua sắm' },
+    { id:'travel', en:'Travel', vi:'Du lịch' }
+  ],
 
   /* ---- HỌ TỪ VỰNG (WORD FAMILIES) ---- */
   families: [
@@ -312,15 +353,16 @@ var TOEIC_DATA = {
 
     { id:'f007', base:'charge', forms:[
       {w:'charge', pos:'v', vi:'tính phí; nạp (điện); phụ trách'},
-      {w:'charge', pos:'n', vi:'phí, tiền công; sự phụ trách'} ]},
+      {w:'charge', pos:'n', vi:'phí, tiền công; sự phụ trách', topics:['invoice']} ]},
 
     { id:'f008', base:'receipt', syn:['invoice'], forms:[
-      {w:'receipt', pos:'n', vi:'biên lai, hóa đơn'} ]},
+      {w:'receipt', pos:'n', vi:'biên lai, hóa đơn', topics:['accounting','inventory','invoice','shopping']} ]},
 
     { id:'f009', base:'payment', forms:[
-      {w:'pay', pos:'v', vi:'trả, thanh toán'},
-      {w:'payment', pos:'n', vi:'khoản thanh toán'},
-      {w:'payable', pos:'adj', vi:'phải trả, đến hạn trả'} ]},
+      {w:'pay', pos:'v', vi:'trả, thanh toán', topics:['contract']},
+      {w:'payment', pos:'n', vi:'khoản thanh toán', topics:['contract','invoice','shopping']},
+      {w:'payable', pos:'adj', vi:'phải trả, đến hạn trả', topics:['invoice']},
+      {w:'payment method', pos:'n', vi:'phương thức thanh toán', topics:['invoice']} ]},
 
     { id:'f010', base:'cash', forms:[
       {w:'cash', pos:'n', vi:'tiền mặt'} ]},
@@ -339,7 +381,7 @@ var TOEIC_DATA = {
       {w:'annually', pos:'adv', vi:'hàng năm'} ]},
 
     { id:'f014', base:'purchase', syn:['buy'], forms:[
-      {w:'purchase', pos:'v', vi:'mua'},
+      {w:'purchase', pos:'v', vi:'mua', topics:['shopping']},
       {w:'purchase', pos:'n', vi:'việc mua, món hàng đã mua'},
       {w:'purchaser', pos:'n', vi:'người mua'} ]},
 
@@ -369,7 +411,7 @@ var TOEIC_DATA = {
 
     { id:'f020', base:'refer', forms:[
       {w:'refer', pos:'v', vi:'giới thiệu, tham chiếu, đề cập'},
-      {w:'reference', pos:'n', vi:'sự tham khảo, tham chiếu'},
+      {w:'reference', pos:'n', vi:'sự tham khảo, tham chiếu', topics:['applying_and_interviewing','job_advertising_and_recruiting']},
       {w:'referral', pos:'n', vi:'sự giới thiệu (chuyển tiếp)'} ]},
 
     { id:'f021', base:'estimate', forms:[
@@ -379,8 +421,9 @@ var TOEIC_DATA = {
       {w:'estimation', pos:'n', vi:'sự ước lượng'} ]},
 
     { id:'f022', base:'deposit', forms:[
-      {w:'deposit', pos:'n', vi:'tiền đặt cọc'},
-      {w:'deposit', pos:'v', vi:'gửi tiền, đặt cọc'} ]},
+      {w:'deposit', pos:'n', vi:'tiền đặt cọc', topics:['banking']},
+      {w:'deposit', pos:'v', vi:'gửi tiền, đặt cọc'},
+      {w:'deposit slip', pos:'n', vi:'phiếu gửi tiền', topics:['banking']} ]},
 
     { id:'f023', base:'avoid', forms:[
       {w:'avoid', pos:'v', vi:'tránh'},
@@ -408,14 +451,14 @@ var TOEIC_DATA = {
       {w:'conductor', pos:'n', vi:'người chỉ huy, nhạc trưởng'} ]},
 
     { id:'f028', base:'destination', forms:[
-      {w:'destination', pos:'n', vi:'điểm đến'},
+      {w:'destination', pos:'n', vi:'điểm đến', topics:['travel']},
       {w:'destined', pos:'adj', vi:'được định để đến, dành cho'} ]},
 
     { id:'f029', base:'excursion', forms:[
-      {w:'excursion', pos:'n', vi:'chuyến tham quan'} ]},
+      {w:'excursion', pos:'n', vi:'chuyến tham quan', topics:['travel']} ]},
 
     { id:'f030', base:'attach', syn:['enclose'], forms:[
-      {w:'attach', pos:'v', vi:'đính kèm'},
+      {w:'attach', pos:'v', vi:'đính kèm', topics:['correspondence']},
       {w:'attachment', pos:'n', vi:'tệp đính kèm, sự gắn bó'},
       {w:'attached', pos:'adj', vi:'được đính kèm'} ]},
 
@@ -465,7 +508,7 @@ var TOEIC_DATA = {
       {w:'arrangement', pos:'n', vi:'sự sắp xếp'} ]},
 
     { id:'f040', base:'organize', syn:['arrange','set up','host'], forms:[
-      {w:'organize', pos:'v', vi:'tổ chức, sắp xếp'},
+      {w:'organize', pos:'v', vi:'tổ chức, sắp xếp', topics:['conference']},
       {w:'organization', pos:'n', vi:'tổ chức'},
       {w:'organizer', pos:'n', vi:'người tổ chức'},
       {w:'organized', pos:'adj', vi:'có tổ chức, ngăn nắp'} ]},
@@ -511,11 +554,11 @@ var TOEIC_DATA = {
       {w:'resolution', pos:'n', vi:'giải pháp, quyết tâm'} ]},
 
     { id:'f049', base:'confirm', syn:['verify'], forms:[
-      {w:'confirm', pos:'v', vi:'xác nhận'},
+      {w:'confirm', pos:'v', vi:'xác nhận', topics:['travel']},
       {w:'confirmation', pos:'n', vi:'sự xác nhận'} ]},
 
     { id:'f050', base:'verify', syn:['confirm'], forms:[
-      {w:'verify', pos:'v', vi:'xác minh, kiểm chứng'},
+      {w:'verify', pos:'v', vi:'xác minh, kiểm chứng', topics:['invoice']},
       {w:'verification', pos:'n', vi:'sự xác minh'} ]},
 
     { id:'f051', base:'contact', syn:['reach'], forms:[
@@ -527,7 +570,7 @@ var TOEIC_DATA = {
       {w:'achievement', pos:'n', vi:'thành tựu'} ]},
 
     { id:'f053', base:'period', syn:['stage','phase'], forms:[
-      {w:'period', pos:'n', vi:'giai đoạn, thời kỳ'},
+      {w:'period', pos:'n', vi:'giai đoạn, thời kỳ', topics:['warranties']},
       {w:'periodic', pos:'adj', vi:'định kỳ'},
       {w:'periodical', pos:'adj', vi:'định kỳ; (n) tạp chí ra định kỳ'},
       {w:'periodically', pos:'adv', vi:'một cách định kỳ'} ]},
@@ -567,7 +610,7 @@ var TOEIC_DATA = {
       {w:'procedural', pos:'adj', vi:'thuộc về thủ tục'} ]},
 
     { id:'f061', base:'launch', forms:[
-      {w:'launch', pos:'v', vi:'khai trương, ra mắt'},
+      {w:'launch', pos:'v', vi:'khai trương, ra mắt', topics:['marketing']},
       {w:'launch', pos:'n', vi:'sự ra mắt'} ]},
 
     { id:'f062', base:'publish', syn:['release'], forms:[
@@ -608,7 +651,7 @@ var TOEIC_DATA = {
 
     { id:'f070', base:'offer', syn:['recommend','suggest'], forms:[
       {w:'offer', pos:'v', vi:'đề nghị, cung cấp'},
-      {w:'offer', pos:'n', vi:'lời đề nghị, ưu đãi'} ]},
+      {w:'offer', pos:'n', vi:'lời đề nghị, ưu đãi', topics:['contract']} ]},
 
     { id:'f071', base:'request', syn:['inquire','ask for'], forms:[
       {w:'request', pos:'v', vi:'yêu cầu'},
@@ -620,7 +663,7 @@ var TOEIC_DATA = {
 
     { id:'f073', base:'appoint', forms:[
       {w:'appoint', pos:'v', vi:'bổ nhiệm'},
-      {w:'appointment', pos:'n', vi:'cuộc hẹn; sự bổ nhiệm'} ]},
+      {w:'appointment', pos:'n', vi:'cuộc hẹn; sự bổ nhiệm', topics:['office']} ]},
 
     { id:'f074', base:'lead', syn:['chief'], forms:[
       {w:'lead', pos:'v', vi:'dẫn dắt, lãnh đạo'},
@@ -632,7 +675,7 @@ var TOEIC_DATA = {
       {w:'casually', pos:'adv', vi:'một cách thoải mái, tình cờ'} ]},
 
     { id:'f076', base:'replace', syn:['substitute'], forms:[
-      {w:'replace', pos:'v', vi:'thay thế'},
+      {w:'replace', pos:'v', vi:'thay thế', topics:['warranties']},
       {w:'replacement', pos:'n', vi:'sự thay thế, người/vật thay thế'} ]},
 
     { id:'f077', base:'substitute', syn:['replace'], forms:[
@@ -653,10 +696,11 @@ var TOEIC_DATA = {
       {w:'reduction', pos:'n', vi:'sự cắt giảm'} ]},
 
     { id:'f081', base:'expense', syn:['charge','fee','cost','rate','price'], forms:[
-      {w:'expense', pos:'n', vi:'chi phí'},
+      {w:'expense', pos:'n', vi:'chi phí', topics:['accounting']},
       {w:'expend', pos:'v', vi:'tiêu, chi tiêu'},
       {w:'expensive', pos:'adj', vi:'đắt đỏ'},
-      {w:'expenditure', pos:'n', vi:'khoản chi tiêu'} ]},
+      {w:'expenditure', pos:'n', vi:'khoản chi tiêu'},
+      {w:'expense report', pos:'n', vi:'báo cáo chi phí', topics:['accounting']} ]},
 
     { id:'f082', base:'international', syn:['global'], note:'>< domestic (nội địa)', forms:[
       {w:'international', pos:'adj', vi:'quốc tế'},
@@ -686,7 +730,7 @@ var TOEIC_DATA = {
 
     { id:'f087', base:'borrow', forms:[
       {w:'borrow', pos:'v', vi:'vay mượn'},
-      {w:'loan', pos:'n', vi:'khoản vay'},
+      {w:'loan', pos:'n', vi:'khoản vay', topics:['banking']},
       {w:'borrower', pos:'n', vi:'người đi vay'} ]},
 
     { id:'f088', base:'structure', forms:[
@@ -706,7 +750,7 @@ var TOEIC_DATA = {
 
     { id:'f091', base:'supply', syn:['provide'], forms:[
       {w:'supply', pos:'v', vi:'cung cấp'},
-      {w:'supply', pos:'n', vi:'nguồn cung'},
+      {w:'supply', pos:'n', vi:'nguồn cung', topics:['inventory']},
       {w:'supplier', pos:'n', vi:'nhà cung cấp'} ]},
 
     { id:'f092', base:'provide', syn:['supply'], forms:[
@@ -715,7 +759,7 @@ var TOEIC_DATA = {
       {w:'provision', pos:'n', vi:'sự cung cấp, điều khoản'} ]},
 
     { id:'f093', base:'invoice', syn:['receipt'], forms:[
-      {w:'invoice', pos:'n', vi:'hóa đơn'} ]},
+      {w:'invoice', pos:'n', vi:'hóa đơn', topics:['accounting','invoice']} ]},
 
     { id:'f094', base:'shift', forms:[
       {w:'shift', pos:'n', vi:'ca làm việc; sự chuyển dịch'},
@@ -730,12 +774,12 @@ var TOEIC_DATA = {
 
     { id:'f097', base:'receive', syn:['get'], forms:[
       {w:'receive', pos:'v', vi:'nhận được'},
-      {w:'reception', pos:'n', vi:'sự tiếp nhận; quầy lễ tân'},
+      {w:'reception', pos:'n', vi:'sự tiếp nhận; quầy lễ tân', topics:['travel']},
       {w:'receptionist', pos:'n', vi:'nhân viên lễ tân'},
-      {w:'recipient', pos:'n', vi:'người nhận'} ]},
+      {w:'recipient', pos:'n', vi:'người nhận', topics:['correspondence']} ]},
 
     { id:'f098', base:'register', syn:['enroll','sign up','apply for','subscribe'], forms:[
-      {w:'register', pos:'v', vi:'đăng ký, ghi danh'},
+      {w:'register', pos:'v', vi:'đăng ký, ghi danh', topics:['conference']},
       {w:'registration', pos:'n', vi:'sự đăng ký'} ]},
 
     { id:'f099', base:'enroll', syn:['register','sign up'], forms:[
@@ -753,12 +797,12 @@ var TOEIC_DATA = {
 
     { id:'f102', base:'apply', forms:[
       {w:'apply', pos:'v', vi:'nộp đơn; áp dụng'},
-      {w:'application', pos:'n', vi:'đơn xin; ứng dụng'},
-      {w:'applicant', pos:'n', vi:'ứng viên, người nộp đơn'},
+      {w:'application', pos:'n', vi:'đơn xin; ứng dụng', topics:['applying_and_interviewing','computer']},
+      {w:'applicant', pos:'n', vi:'ứng viên, người nộp đơn', topics:['job_advertising_and_recruiting']},
       {w:'applicable', pos:'adj', vi:'có thể áp dụng'} ]},
 
     { id:'f103', base:'candidate', syn:['applicant'], forms:[
-      {w:'candidate', pos:'n', vi:'ứng viên, thí sinh'} ]},
+      {w:'candidate', pos:'n', vi:'ứng viên, thí sinh', topics:['applying_and_interviewing']} ]},
 
     { id:'f104', base:'fragile', syn:['delicate'], forms:[
       {w:'fragile', pos:'adj', vi:'dễ vỡ, dễ tổn thương'},
@@ -784,8 +828,8 @@ var TOEIC_DATA = {
       {w:'permanently', pos:'adv', vi:'một cách vĩnh viễn'} ]},
 
     { id:'f110', base:'depart', forms:[
-      {w:'depart', pos:'v', vi:'khởi hành, rời đi'},
-      {w:'departure', pos:'n', vi:'sự rời đi, khởi hành'} ]},
+      {w:'depart', pos:'v', vi:'khởi hành, rời đi', topics:['travel']},
+      {w:'departure', pos:'n', vi:'sự rời đi, khởi hành', topics:['travel']} ]},
 
     { id:'f111', base:'toward', forms:[
       {w:'toward', pos:'prep', vi:'về phía, hướng về (towards)'} ]},
@@ -797,7 +841,7 @@ var TOEIC_DATA = {
       {w:'alternate', pos:'v', vi:'luân phiên'} ]},
 
     { id:'f113', base:'contract', forms:[
-      {w:'contract', pos:'n', vi:'hợp đồng'},
+      {w:'contract', pos:'n', vi:'hợp đồng', topics:['contract','job_advertising_and_recruiting','salaries_and_benefits']},
       {w:'contractor', pos:'n', vi:'nhà thầu'},
       {w:'contractual', pos:'adj', vi:'thuộc về hợp đồng'} ]},
 
@@ -851,7 +895,7 @@ var TOEIC_DATA = {
 
     { id:'f124', base:'present', syn:['pitch'], forms:[
       {w:'present', pos:'v', vi:'trình bày, giới thiệu'},
-      {w:'presentation', pos:'n', vi:'bài thuyết trình'},
+      {w:'presentation', pos:'n', vi:'bài thuyết trình', topics:['conference']},
       {w:'presenter', pos:'n', vi:'người thuyết trình'},
       {w:'pitch', pos:'n', vi:'bài thuyết trình, sự chào hàng'} ]},
 
@@ -958,7 +1002,7 @@ var TOEIC_DATA = {
 
     { id:'f146', base:'compensate', forms:[
       {w:'compensate', pos:'v', vi:'bù đắp, đền bù'},
-      {w:'compensation', pos:'n', vi:'khoản bồi thường, tiền đền bù'},
+      {w:'compensation', pos:'n', vi:'khoản bồi thường, tiền đền bù', topics:['salaries_and_benefits']},
       {w:'compensatory', pos:'adj', vi:'mang tính đền bù'} ]},
 
     { id:'f147', base:'accumulate', forms:[
@@ -985,7 +1029,7 @@ var TOEIC_DATA = {
     { id:'f151', base:'deduce', forms:[
       {w:'deduce', pos:'v', vi:'suy luận, suy ra'},
       {w:'deduct', pos:'v', vi:'khấu trừ, trừ đi'},
-      {w:'deduction', pos:'n', vi:'khoản khấu trừ; sự suy luận (logic)'} ]},
+      {w:'deduction', pos:'n', vi:'khoản khấu trừ; sự suy luận (logic)', topics:['salaries_and_benefits']} ]},
 
     { id:'f152', base:'declare', forms:[
       {w:'declare', pos:'v', vi:'tuyên bố; khai báo'},
@@ -993,7 +1037,7 @@ var TOEIC_DATA = {
 
     { id:'f153', base:'promote', syn:['encourage'], forms:[
       {w:'promote', pos:'v', vi:'thúc đẩy, quảng bá; thăng chức'},
-      {w:'promotion', pos:'n', vi:'sự thăng chức; chương trình khuyến mãi'},
+      {w:'promotion', pos:'n', vi:'sự thăng chức; chương trình khuyến mãi', topics:['marketing']},
       {w:'promotional', pos:'adj', vi:'mang tính quảng cáo, khuyến mãi'} ]},
 
     { id:'f154', base:'commercial', forms:[
@@ -1027,7 +1071,7 @@ var TOEIC_DATA = {
       {w:'determination', pos:'n', vi:'sự quyết tâm, sự xác định'} ]},
 
     { id:'f161', base:'guarantee', forms:[
-      {w:'guarantee', pos:'n', vi:'sự bảo đảm'},
+      {w:'guarantee', pos:'n', vi:'sự bảo đảm', topics:['warranties']},
       {w:'guarantee', pos:'v', vi:'bảo đảm'} ]},
 
     { id:'f162', base:'occasion', forms:[
@@ -1086,11 +1130,11 @@ var TOEIC_DATA = {
 
     { id:'f173', base:'claim', forms:[
       {w:'claim', pos:'v', vi:'khẳng định, tuyên bố; yêu cầu, đòi (quyền lợi, bồi thường)'},
-      {w:'claim', pos:'n', vi:'lời khẳng định; đơn yêu cầu bồi thường, đơn khiếu nại'},
+      {w:'claim', pos:'n', vi:'lời khẳng định; đơn yêu cầu bồi thường, đơn khiếu nại', topics:['warranties']},
       {w:'claimant', pos:'n', vi:'người khiếu nại, người yêu cầu bồi thường'} ]},
 
     { id:'f174', base:'renew', forms:[
-      {w:'renew', pos:'v', vi:'gia hạn, làm mới, đổi mới'},
+      {w:'renew', pos:'v', vi:'gia hạn, làm mới, đổi mới', topics:['contract']},
       {w:'renewal', pos:'n', vi:'sự gia hạn'},
       {w:'renewable', pos:'adj', vi:'có thể gia hạn được; (năng lượng) có thể tái tạo'} ]},
 
@@ -1144,7 +1188,7 @@ var TOEIC_DATA = {
       {w:'as usual', pos:'phr', vi:'như thường lệ'} ]},
 
     { id:'f186', base:'crew', syn:['team'], forms:[
-      {w:'crew', pos:'n', vi:'đội, tổ, kíp làm việc (phi hành đoàn, đoàn làm phim...)'} ]},
+      {w:'crew', pos:'n', vi:'đội, tổ, kíp làm việc (phi hành đoàn, đoàn làm phim...)', topics:['travel']} ]},
 
     { id:'f187', base:'distance', forms:[
       {w:'distance', pos:'n', vi:'khoảng cách'},
@@ -1172,7 +1216,867 @@ var TOEIC_DATA = {
 
     /* ---- GIỚI TỪ (PREPOSITIONS) ---- */
     { id:'f192', base:'under', forms:[
-      {w:'under', pos:'prep', vi:'dưới, theo, trong tình trạng (under construction/review)'} ]}
+      {w:'under', pos:'prep', vi:'dưới, theo, trong tình trạng (under construction/review)'} ]},
+
+    /* ---- TỪ VỰNG THEO CHỦ ĐỀ (topic vocab) ---- */
+    { id:'f193', base:'address', forms:[
+      {w:'address', pos:'n', vi:'địa chỉ', topics:['correspondence']} ]},
+
+    { id:'f194', base:'advertise', forms:[
+      {w:'advertise', pos:'v', vi:'quảng cáo', topics:['marketing']},
+      {w:'advertisement', pos:'n', vi:'quảng cáo, thông báo tuyển dụng', topics:['job_advertising_and_recruiting']} ]},
+
+    { id:'f195', base:'agenda', forms:[
+      {w:'agenda', pos:'n', vi:'chương trình nghị sự', topics:['conference']} ]},
+
+    { id:'f196', base:'agreement', forms:[
+      {w:'agreement', pos:'n', vi:'thỏa thuận', topics:['contract']} ]},
+
+    { id:'f197', base:'allowance', forms:[
+      {w:'allowance', pos:'n', vi:'tiền trợ cấp', topics:['salaries_and_benefits']} ]},
+
+    { id:'f198', base:'amount', forms:[
+      {w:'amount', pos:'n', vi:'số tiền', topics:['invoice']} ]},
+
+    { id:'f199', base:'appetizer', forms:[
+      {w:'appetizer', pos:'n', vi:'món khai vị', topics:['restaurant']} ]},
+
+    { id:'f200', base:'assistant', forms:[
+      {w:'assistant', pos:'n', vi:'trợ lý', topics:['office']} ]},
+
+    { id:'f201', base:'attendee', forms:[
+      {w:'attendee', pos:'n', vi:'người tham dự', topics:['conference']} ]},
+
+    { id:'f202', base:'audience', forms:[
+      {w:'audience', pos:'n', vi:'khán giả, người tham dự; đối tượng khách hàng', topics:['conference','marketing']} ]},
+
+    { id:'f203', base:'audit', forms:[
+      {w:'audit', pos:'n', vi:'kiểm toán', topics:['accounting']} ]},
+
+    { id:'f204', base:'account', forms:[
+      {w:'account', pos:'n', vi:'tài khoản', topics:['accounting','banking','invoice']},
+      {w:'savings account', pos:'n', vi:'tài khoản tiết kiệm', topics:['banking']} ]},
+
+    { id:'f205', base:'balance', forms:[
+      {w:'balance', pos:'n', vi:'số dư', topics:['accounting','banking','invoice']} ]},
+
+    { id:'f206', base:'statement', forms:[
+      {w:'statement', pos:'n', vi:'bản báo cáo', topics:['accounting']},
+      {w:'bank statement', pos:'n', vi:'bảng sao kê ngân hàng', topics:['banking']} ]},
+
+    { id:'f207', base:'bargain', forms:[
+      {w:'bargain', pos:'n', vi:'món hời, món rẻ', topics:['shopping']} ]},
+
+    { id:'f208', base:'benefit', forms:[
+      {w:'benefit', pos:'n', vi:'phúc lợi', topics:['salaries_and_benefits']},
+      {w:'benefits', pos:'n', vi:'phúc lợi', topics:['applying_and_interviewing']} ]},
+
+    { id:'f209', base:'bill', forms:[
+      {w:'bill', pos:'n', vi:'hóa đơn, hóa đơn thanh toán', topics:['invoice','restaurant']} ]},
+
+    { id:'f210', base:'binding', forms:[
+      {w:'binding', pos:'adj', vi:'ràng buộc', topics:['contract']} ]},
+
+    { id:'f211', base:'bonus', forms:[
+      {w:'bonus', pos:'n', vi:'thưởng', topics:['salaries_and_benefits']} ]},
+
+    { id:'f212', base:'brand', forms:[
+      {w:'brand', pos:'n', vi:'thương hiệu', topics:['marketing']} ]},
+
+    { id:'f213', base:'break', forms:[
+      {w:'break', pos:'n', vi:'giải lao', topics:['conference']},
+      {w:'break', pos:'v', vi:'vi phạm, phá vỡ (hợp đồng)', topics:['contract']} ]},
+
+    { id:'f214', base:'browser', forms:[
+      {w:'browser', pos:'n', vi:'trình duyệt', topics:['computer']} ]},
+
+    { id:'f215', base:'budget', forms:[
+      {w:'budget', pos:'n', vi:'ngân sách', topics:['accounting']} ]},
+
+    { id:'f216', base:'buy', forms:[
+      {w:'buy', pos:'v', vi:'mua', topics:['inventory','shopping']} ]},
+
+    { id:'f217', base:'call', forms:[
+      {w:'call', pos:'v', vi:'gọi (điện)', topics:['office']} ]},
+
+    { id:'f218', base:'campaign', forms:[
+      {w:'campaign', pos:'n', vi:'chiến dịch', topics:['marketing']} ]},
+
+    { id:'f219', base:'cancel', forms:[
+      {w:'cancel', pos:'v', vi:'hủy bỏ', topics:['contract','travel']} ]},
+
+    { id:'f220', base:'cart', forms:[
+      {w:'cart', pos:'n', vi:'giỏ hàng', topics:['shopping']} ]},
+
+    { id:'f221', base:'chair', forms:[
+      {w:'chair', pos:'n', vi:'ghế', topics:['office']} ]},
+
+    { id:'f222', base:'change', forms:[
+      {w:'change', pos:'v', vi:'thay đổi', topics:['contract']} ]},
+
+    { id:'f223', base:'check', forms:[
+      {w:'check', pos:'n', vi:'séc', topics:['banking']} ]},
+
+    { id:'f224', base:'chef', forms:[
+      {w:'chef', pos:'n', vi:'bếp trưởng', topics:['restaurant']} ]},
+
+    { id:'f225', base:'clause', forms:[
+      {w:'clause', pos:'n', vi:'điều khoản (trong hợp đồng)', topics:['contract']} ]},
+
+    { id:'f226', base:'commission', forms:[
+      {w:'commission', pos:'n', vi:'hoa hồng', topics:['salaries_and_benefits']} ]},
+
+    { id:'f227', base:'competitor', forms:[
+      {w:'competitor', pos:'n', vi:'đối thủ cạnh tranh', topics:['marketing']} ]},
+
+    { id:'f228', base:'computer', forms:[
+      {w:'computer', pos:'n', vi:'máy tính', topics:['computer','office']} ]},
+
+    { id:'f229', base:'condition', forms:[
+      {w:'condition', pos:'n', vi:'điều kiện; tình trạng', topics:['contract','warranties']} ]},
+
+    { id:'f230', base:'conference', forms:[
+      {w:'conference', pos:'n', vi:'hội nghị', topics:['conference']} ]},
+
+    { id:'f231', base:'cook', forms:[
+      {w:'cook', pos:'n', vi:'đầu bếp', topics:['restaurant']} ]},
+
+    { id:'f232', base:'copy', forms:[
+      {w:'copy', pos:'n', vi:'bản sao', topics:['correspondence','office']} ]},
+
+    { id:'f233', base:'correspond', forms:[
+      {w:'correspond', pos:'v', vi:'thư tín, liên lạc', topics:['correspondence']} ]},
+
+    { id:'f234', base:'coverage', forms:[
+      {w:'coverage', pos:'n', vi:'phạm vi bảo hành, sự bảo vệ', topics:['warranties']} ]},
+
+    { id:'f235', base:'credit', forms:[
+      {w:'credit', pos:'n', vi:'tín dụng, khoản tín dụng', topics:['banking','invoice']} ]},
+
+    { id:'f236', base:'customer', forms:[
+      {w:'customer', pos:'n', vi:'khách hàng', topics:['marketing','shopping']} ]},
+
+    { id:'f237', base:'deadline', forms:[
+      {w:'deadline', pos:'n', vi:'hạn chót', topics:['contract']} ]},
+
+    { id:'f238', base:'debit', forms:[
+      {w:'debit', pos:'n', vi:'ghi nợ', topics:['banking']} ]},
+
+    { id:'f239', base:'debt', forms:[
+      {w:'debt', pos:'n', vi:'khoản nợ', topics:['accounting']} ]},
+
+    { id:'f240', base:'defect', forms:[
+      {w:'defect', pos:'n', vi:'lỗi, khuyết điểm', topics:['warranties']} ]},
+
+    { id:'f241', base:'delivery', forms:[
+      {w:'delivery', pos:'n', vi:'sự giao hàng', topics:['correspondence','inventory','shopping']} ]},
+
+    { id:'f242', base:'depreciation', forms:[
+      {w:'depreciation', pos:'n', vi:'khấu hao', topics:['accounting']} ]},
+
+    { id:'f243', base:'desk', forms:[
+      {w:'desk', pos:'n', vi:'bàn làm việc', topics:['office']} ]},
+
+    { id:'f244', base:'dessert', forms:[
+      {w:'dessert', pos:'n', vi:'món tráng miệng', topics:['restaurant']} ]},
+
+    { id:'f245', base:'discount', forms:[
+      {w:'discount', pos:'n', vi:'giảm giá', topics:['inventory','invoice','marketing','shopping']} ]},
+
+    { id:'f246', base:'discussion', forms:[
+      {w:'discussion', pos:'n', vi:'cuộc thảo luận', topics:['conference']} ]},
+
+    { id:'f247', base:'dish', forms:[
+      {w:'dish', pos:'n', vi:'món ăn', topics:['restaurant']} ]},
+
+    { id:'f248', base:'dispute', forms:[
+      {w:'dispute', pos:'n', vi:'tranh chấp', topics:['contract']} ]},
+
+    { id:'f249', base:'document', forms:[
+      {w:'document', pos:'n', vi:'tài liệu', topics:['office']} ]},
+
+    { id:'f250', base:'download', forms:[
+      {w:'download', pos:'v', vi:'tải xuống', topics:['computer']} ]},
+
+    { id:'f251', base:'drink', forms:[
+      {w:'drink', pos:'n', vi:'đồ uống', topics:['restaurant']} ]},
+
+    { id:'f252', base:'due', forms:[
+      {w:'due', pos:'adj', vi:'đến hạn', topics:['invoice']},
+      {w:'due date', pos:'n', vi:'ngày đáo hạn', topics:['invoice']},
+      {w:'due balance', pos:'n', vi:'số dư phải thanh toán', topics:['invoice']} ]},
+
+    { id:'f253', base:'email', forms:[
+      {w:'email', pos:'n', vi:'thư điện tử', topics:['correspondence','office']} ]},
+
+    { id:'f254', base:'employ', forms:[
+      {w:'employee', pos:'n', vi:'nhân viên', topics:['job_advertising_and_recruiting','salaries_and_benefits']},
+      {w:'employer', pos:'n', vi:'nhà tuyển dụng', topics:['applying_and_interviewing','job_advertising_and_recruiting']} ]},
+
+    { id:'f255', base:'envelope', forms:[
+      {w:'envelope', pos:'n', vi:'bao thư', topics:['correspondence']} ]},
+
+    { id:'f256', base:'exchange', forms:[
+      {w:'exchange', pos:'v', vi:'đổi, trao đổi', topics:['inventory','shopping']},
+      {w:'exchange rate', pos:'n', vi:'tỷ giá hối đoái', topics:['banking']} ]},
+
+    { id:'f257', base:'exclusion', forms:[
+      {w:'exclusion', pos:'n', vi:'điều khoản loại trừ', topics:['warranties']} ]},
+
+    { id:'f258', base:'experience', forms:[
+      {w:'experience', pos:'n', vi:'kinh nghiệm', topics:['applying_and_interviewing','job_advertising_and_recruiting']} ]},
+
+    { id:'f259', base:'extend', forms:[
+      {w:'extend', pos:'v', vi:'kéo dài, gia hạn', topics:['warranties','travel']} ]},
+
+    { id:'f260', base:'faulty', forms:[
+      {w:'faulty', pos:'adj', vi:'lỗi, hỏng', topics:['warranties']} ]},
+
+    { id:'f261', base:'fee', forms:[
+      {w:'fee', pos:'n', vi:'phí', topics:['banking']},
+      {w:'late fee', pos:'n', vi:'phí trễ', topics:['invoice']},
+      {w:'transaction fee', pos:'n', vi:'phí giao dịch', topics:['banking']} ]},
+
+    { id:'f262', base:'file', forms:[
+      {w:'file', pos:'n', vi:'tệp; hồ sơ, tài liệu', topics:['computer','office']} ]},
+
+    { id:'f263', base:'folder', forms:[
+      {w:'folder', pos:'n', vi:'túi đựng tài liệu', topics:['office']} ]},
+
+    { id:'f264', base:'formal', forms:[
+      {w:'formal', pos:'adj', vi:'chính thức', topics:['correspondence']},
+      {w:'informal', pos:'adj', vi:'thân mật, không chính thức', topics:['correspondence']} ]},
+
+    { id:'f265', base:'forward', forms:[
+      {w:'forward', pos:'v', vi:'chuyển tiếp', topics:['correspondence']} ]},
+
+    { id:'f266', base:'full-time', forms:[
+      {w:'full-time', pos:'adj', vi:'toàn thời gian', topics:['applying_and_interviewing','job_advertising_and_recruiting']} ]},
+
+    { id:'f267', base:'part-time', forms:[
+      {w:'part-time', pos:'adj', vi:'bán thời gian', topics:['applying_and_interviewing','job_advertising_and_recruiting']} ]},
+
+    { id:'f268', base:'goods', forms:[
+      {w:'goods', pos:'n', vi:'hàng hóa', topics:['inventory']} ]},
+
+    { id:'f269', base:'hardware', forms:[
+      {w:'hardware', pos:'n', vi:'phần cứng', topics:['computer']} ]},
+
+    { id:'f270', base:'health', forms:[
+      {w:'health', pos:'n', vi:'sức khỏe', topics:['salaries_and_benefits']} ]},
+
+    { id:'f271', base:'hiring', forms:[
+      {w:'hiring', pos:'n', vi:'tuyển dụng', topics:['applying_and_interviewing','job_advertising_and_recruiting']} ]},
+
+    { id:'f272', base:'influence', forms:[
+      {w:'influence', pos:'n', vi:'ảnh hưởng', topics:['marketing']} ]},
+
+    { id:'f273', base:'insurance', forms:[
+      {w:'insurance', pos:'n', vi:'bảo hiểm', topics:['salaries_and_benefits']} ]},
+
+    { id:'f274', base:'interest', forms:[
+      {w:'interest', pos:'n', vi:'lãi suất', topics:['banking']} ]},
+
+    { id:'f275', base:'interview', forms:[
+      {w:'interview', pos:'n', vi:'cuộc phỏng vấn', topics:['applying_and_interviewing','job_advertising_and_recruiting']},
+      {w:'interviewer', pos:'n', vi:'người phỏng vấn', topics:['applying_and_interviewing']} ]},
+
+    { id:'f276', base:'inventory', forms:[
+      {w:'inventory', pos:'n', vi:'hàng hóa, kiểm kê kho hàng', topics:['inventory']} ]},
+
+    { id:'f277', base:'item', forms:[
+      {w:'item', pos:'n', vi:'mặt hàng, món hàng', topics:['inventory']} ]},
+
+    { id:'f278', base:'job description', forms:[
+      {w:'job description', pos:'n', vi:'mô tả công việc', topics:['applying_and_interviewing']} ]},
+
+    { id:'f279', base:'job listing', forms:[
+      {w:'job listing', pos:'n', vi:'danh sách việc làm', topics:['job_advertising_and_recruiting']} ]},
+
+    { id:'f280', base:'job offer', forms:[
+      {w:'job offer', pos:'n', vi:'lời mời làm việc', topics:['applying_and_interviewing']} ]},
+
+    { id:'f281', base:'job opening', forms:[
+      {w:'job opening', pos:'n', vi:'cơ hội việc làm, vị trí tuyển dụng', topics:['applying_and_interviewing','job_advertising_and_recruiting']} ]},
+
+    { id:'f282', base:'keyboard', forms:[
+      {w:'keyboard', pos:'n', vi:'bàn phím', topics:['computer']} ]},
+
+    { id:'f283', base:'label', forms:[
+      {w:'label', pos:'n', vi:'nhãn, mác', topics:['inventory']} ]},
+
+    { id:'f284', base:'legal', forms:[
+      {w:'legal', pos:'adj', vi:'hợp pháp', topics:['contract']} ]},
+
+    { id:'f285', base:'sign', forms:[
+      {w:'sign', pos:'v', vi:'ký', topics:['contract']} ]},
+
+    { id:'f286', base:'ledger', forms:[
+      {w:'ledger', pos:'n', vi:'sổ cái', topics:['accounting']} ]},
+
+    { id:'f287', base:'total', forms:[
+      {w:'total', pos:'n', vi:'tổng cộng', topics:['invoice']} ]},
+
+    { id:'f288', base:'letter', forms:[
+      {w:'letter', pos:'n', vi:'thư', topics:['correspondence']} ]},
+
+    { id:'f289', base:'liability', forms:[
+      {w:'liability', pos:'n', vi:'nghĩa vụ, khoản nợ', topics:['accounting']} ]},
+
+    { id:'f290', base:'main course', forms:[
+      {w:'main course', pos:'n', vi:'món chính', topics:['restaurant']} ]},
+
+    { id:'f291', base:'maintenance', forms:[
+      {w:'maintenance', pos:'n', vi:'bảo dưỡng', topics:['warranties']} ]},
+
+    { id:'f292', base:'market', forms:[
+      {w:'market', pos:'n', vi:'thị trường', topics:['marketing']} ]},
+
+    { id:'f293', base:'media', forms:[
+      {w:'media', pos:'n', vi:'phương tiện truyền thông', topics:['marketing']} ]},
+
+    { id:'f294', base:'meeting', forms:[
+      {w:'meeting', pos:'n', vi:'cuộc họp', topics:['conference','office']} ]},
+
+    { id:'f295', base:'menu', forms:[
+      {w:'menu', pos:'n', vi:'thực đơn', topics:['restaurant']} ]},
+
+    { id:'f296', base:'message', forms:[
+      {w:'message', pos:'n', vi:'tin nhắn, thông điệp', topics:['correspondence']} ]},
+
+    { id:'f297', base:'moderator', forms:[
+      {w:'moderator', pos:'n', vi:'người điều hành', topics:['conference']} ]},
+
+    { id:'f298', base:'mortgage', forms:[
+      {w:'mortgage', pos:'n', vi:'vay thế chấp', topics:['banking']} ]},
+
+    { id:'f299', base:'mouse', forms:[
+      {w:'mouse', pos:'n', vi:'chuột (máy tính)', topics:['computer']} ]},
+
+    { id:'f300', base:'network', forms:[
+      {w:'network', pos:'n', vi:'mạng', topics:['computer']} ]},
+
+    { id:'f301', base:'networking', forms:[
+      {w:'networking', pos:'n', vi:'kết nối, giao lưu', topics:['conference']} ]},
+
+    { id:'f302', base:'office', forms:[
+      {w:'office', pos:'n', vi:'văn phòng', topics:['office']} ]},
+
+    { id:'f303', base:'order', forms:[
+      {w:'order', pos:'n', vi:'đơn hàng', topics:['inventory']},
+      {w:'order', pos:'v', vi:'gọi món', topics:['restaurant']},
+      {w:'order in', pos:'v', vi:'đặt đồ ăn mang về', topics:['restaurant']} ]},
+
+    { id:'f304', base:'overdraft', forms:[
+      {w:'overdraft', pos:'n', vi:'thấu chi', topics:['banking']} ]},
+
+    { id:'f305', base:'overtime', forms:[
+      {w:'overtime', pos:'n', vi:'làm thêm giờ', topics:['salaries_and_benefits']} ]},
+
+    { id:'f306', base:'package', forms:[
+      {w:'package', pos:'n', vi:'gói, kiện hàng', topics:['inventory']} ]},
+
+    { id:'f307', base:'paid leave', forms:[
+      {w:'paid leave', pos:'n', vi:'nghỉ phép có lương', topics:['salaries_and_benefits']} ]},
+
+    { id:'f308', base:'panel', forms:[
+      {w:'panel', pos:'n', vi:'ban hội thảo', topics:['conference']} ]},
+
+    { id:'f309', base:'party', forms:[
+      {w:'party', pos:'n', vi:'bên (trong hợp đồng)', topics:['contract']} ]},
+
+    { id:'f310', base:'password', forms:[
+      {w:'password', pos:'n', vi:'mật khẩu', topics:['computer']} ]},
+
+    { id:'f311', base:'pension', forms:[
+      {w:'pension', pos:'n', vi:'lương hưu', topics:['salaries_and_benefits']} ]},
+
+    { id:'f312', base:'phone', forms:[
+      {w:'phone', pos:'n', vi:'điện thoại', topics:['office']} ]},
+
+    { id:'f313', base:'policy', forms:[
+      {w:'policy', pos:'n', vi:'chính sách', topics:['warranties']} ]},
+
+    { id:'f314', base:'portion', forms:[
+      {w:'portion', pos:'n', vi:'phần ăn', topics:['restaurant']} ]},
+
+    { id:'f315', base:'position', forms:[
+      {w:'position', pos:'n', vi:'vị trí', topics:['job_advertising_and_recruiting']} ]},
+
+    { id:'f316', base:'post', forms:[
+      {w:'post', pos:'n', vi:'thư gửi qua bưu điện', topics:['correspondence']},
+      {w:'postman', pos:'n', vi:'người đưa thư', topics:['correspondence']} ]},
+
+    { id:'f317', base:'price', forms:[
+      {w:'price', pos:'n', vi:'giá', topics:['inventory','marketing','shopping']},
+      {w:'price tag', pos:'n', vi:'mác giá', topics:['shopping']} ]},
+
+    { id:'f318', base:'printer', forms:[
+      {w:'printer', pos:'n', vi:'máy in', topics:['office']} ]},
+
+    { id:'f319', base:'product', forms:[
+      {w:'product', pos:'n', vi:'sản phẩm', topics:['inventory','marketing']} ]},
+
+    { id:'f320', base:'profit', forms:[
+      {w:'profit', pos:'n', vi:'lợi nhuận', topics:['accounting']} ]},
+
+    { id:'f321', base:'program', forms:[
+      {w:'program', pos:'n', vi:'chương trình', topics:['computer']} ]},
+
+    { id:'f322', base:'qualification', forms:[
+      {w:'qualification', pos:'n', vi:'trình độ chuyên môn', topics:['applying_and_interviewing','job_advertising_and_recruiting']} ]},
+
+    { id:'f323', base:'raise', forms:[
+      {w:'raise', pos:'n', vi:'tăng lương', topics:['salaries_and_benefits']} ]},
+
+    { id:'f324', base:'reach', forms:[
+      {w:'reach', pos:'v', vi:'tiếp cận', topics:['marketing']} ]},
+
+    { id:'f325', base:'recruit', forms:[
+      {w:'recruit', pos:'v', vi:'tuyển dụng', topics:['job_advertising_and_recruiting']} ]},
+
+    { id:'f326', base:'refund', forms:[
+      {w:'refund', pos:'n', vi:'sự hoàn lại tiền', topics:['invoice','shopping','warranties']} ]},
+
+    { id:'f327', base:'repair', forms:[
+      {w:'repair', pos:'v', vi:'sửa chữa', topics:['warranties']} ]},
+
+    { id:'f328', base:'reply', forms:[
+      {w:'reply', pos:'v', vi:'trả lời', topics:['correspondence']} ]},
+
+    { id:'f329', base:'report', forms:[
+      {w:'report', pos:'n', vi:'báo cáo', topics:['accounting','office']} ]},
+
+    { id:'f330', base:'research', forms:[
+      {w:'research', pos:'n', vi:'nghiên cứu', topics:['marketing']} ]},
+
+    { id:'f331', base:'reservation', forms:[
+      {w:'reservation', pos:'n', vi:'đặt chỗ', topics:['restaurant','travel']} ]},
+
+    { id:'f332', base:'restock', forms:[
+      {w:'restock', pos:'v', vi:'cung cấp lại hàng hóa', topics:['inventory']} ]},
+
+    { id:'f333', base:'resume', forms:[
+      {w:'resume', pos:'n', vi:'sơ yếu lý lịch', topics:['applying_and_interviewing','job_advertising_and_recruiting']} ]},
+
+    { id:'f334', base:'retailer', forms:[
+      {w:'retailer', pos:'n', vi:'người bán lẻ', topics:['shopping']} ]},
+
+    { id:'f335', base:'return', forms:[
+      {w:'return', pos:'v', vi:'trả lại; trở về', topics:['inventory','travel']} ]},
+
+    { id:'f336', base:'revenue', forms:[
+      {w:'revenue', pos:'n', vi:'doanh thu', topics:['accounting']} ]},
+
+    { id:'f337', base:'salary', forms:[
+      {w:'salary', pos:'n', vi:'lương', topics:['applying_and_interviewing','job_advertising_and_recruiting','salaries_and_benefits']},
+      {w:'salary scale', pos:'n', vi:'thang lương', topics:['salaries_and_benefits']} ]},
+
+    { id:'f338', base:'sale', forms:[
+      {w:'sale', pos:'n', vi:'khuyến mãi, đợt bán hàng', topics:['shopping']} ]},
+
+    { id:'f339', base:'sales', forms:[
+      {w:'sales', pos:'n', vi:'doanh số bán hàng', topics:['marketing']} ]},
+
+    { id:'f340', base:'schedule', forms:[
+      {w:'schedule', pos:'n', vi:'lịch trình', topics:['conference','travel']},
+      {w:'schedule', pos:'v', vi:'lên lịch, sắp xếp', topics:['office']} ]},
+
+    { id:'f341', base:'screen', forms:[
+      {w:'screen', pos:'n', vi:'màn hình', topics:['computer']} ]},
+
+    { id:'f342', base:'search', forms:[
+      {w:'search', pos:'v', vi:'tìm kiếm', topics:['computer']} ]},
+
+    { id:'f343', base:'security', forms:[
+      {w:'security', pos:'n', vi:'an ninh, bảo mật', topics:['banking','computer']} ]},
+
+    { id:'f344', base:'sell', forms:[
+      {w:'sell', pos:'v', vi:'bán', topics:['inventory','marketing']} ]},
+
+    { id:'f345', base:'seminar', forms:[
+      {w:'seminar', pos:'n', vi:'hội thảo, lớp học', topics:['conference']} ]},
+
+    { id:'f346', base:'send', forms:[
+      {w:'send', pos:'v', vi:'gửi', topics:['correspondence']},
+      {w:'sender', pos:'n', vi:'người gửi', topics:['correspondence']} ]},
+
+    { id:'f347', base:'service', forms:[
+      {w:'service', pos:'n', vi:'dịch vụ', topics:['restaurant','warranties']} ]},
+
+    { id:'f348', base:'shop', forms:[
+      {w:'shop', pos:'n', vi:'cửa hàng', topics:['shopping']},
+      {w:'shopping mall', pos:'n', vi:'trung tâm mua sắm', topics:['shopping']} ]},
+
+    { id:'f349', base:'signature', forms:[
+      {w:'signature', pos:'n', vi:'chữ ký', topics:['correspondence']} ]},
+
+    { id:'f350', base:'skill', forms:[
+      {w:'skill', pos:'n', vi:'kỹ năng', topics:['applying_and_interviewing']} ]},
+
+    { id:'f351', base:'software', forms:[
+      {w:'software', pos:'n', vi:'phần mềm', topics:['computer']} ]},
+
+    { id:'f352', base:'speaker', forms:[
+      {w:'speaker', pos:'n', vi:'diễn giả, người phát biểu', topics:['conference']} ]},
+
+    { id:'f353', base:'special', forms:[
+      {w:'special', pos:'adj', vi:'đặc biệt', topics:['restaurant']} ]},
+
+    { id:'f354', base:'stock', forms:[
+      {w:'stock', pos:'n', vi:'hàng hóa, hàng tồn kho', topics:['inventory','shopping']} ]},
+
+    { id:'f355', base:'stockroom', forms:[
+      {w:'stockroom', pos:'n', vi:'phòng kho', topics:['inventory']} ]},
+
+    { id:'f356', base:'store', syn:['shop'], forms:[
+      {w:'store', pos:'n', vi:'cửa hàng', topics:['shopping']} ]},
+
+    { id:'f357', base:'strategy', forms:[
+      {w:'strategy', pos:'n', vi:'chiến lược', topics:['marketing']} ]},
+
+    { id:'f358', base:'subject', forms:[
+      {w:'subject', pos:'n', vi:'chủ đề (thư từ)', topics:['correspondence']} ]},
+
+    { id:'f359', base:'system', forms:[
+      {w:'system', pos:'n', vi:'hệ thống', topics:['computer']} ]},
+
+    { id:'f360', base:'table', forms:[
+      {w:'table', pos:'n', vi:'bàn ăn', topics:['restaurant']} ]},
+
+    { id:'f361', base:'takeout', forms:[
+      {w:'takeout', pos:'n', vi:'mang đi', topics:['restaurant']} ]},
+
+    { id:'f362', base:'target', forms:[
+      {w:'target', pos:'n', vi:'mục tiêu', topics:['marketing']} ]},
+
+    { id:'f363', base:'task', forms:[
+      {w:'task', pos:'n', vi:'nhiệm vụ', topics:['office']} ]},
+
+    { id:'f364', base:'tax', forms:[
+      {w:'tax', pos:'n', vi:'thuế', topics:['accounting','salaries_and_benefits']} ]},
+
+    { id:'f365', base:'team', forms:[
+      {w:'team', pos:'n', vi:'đội, nhóm', topics:['office']} ]},
+
+    { id:'f366', base:'term', forms:[
+      {w:'term', pos:'n', vi:'điều khoản', topics:['contract']},
+      {w:'terms', pos:'n', vi:'điều khoản (thường dùng số nhiều)', topics:['invoice','warranties']} ]},
+
+    { id:'f367', base:'terminate', forms:[
+      {w:'terminate', pos:'v', vi:'chấm dứt (hợp đồng)', topics:['contract']} ]},
+
+    { id:'f368', base:'tip', forms:[
+      {w:'tip', pos:'n', vi:'tiền boa', topics:['restaurant']} ]},
+
+    { id:'f369', base:'topic', forms:[
+      {w:'topic', pos:'n', vi:'chủ đề (hội nghị)', topics:['conference']} ]},
+
+    { id:'f370', base:'transaction', forms:[
+      {w:'transaction', pos:'n', vi:'giao dịch', topics:['accounting','banking']} ]},
+
+    { id:'f371', base:'transfer', forms:[
+      {w:'transfer', pos:'v', vi:'chuyển nhượng', topics:['warranties']} ]},
+
+    { id:'f372', base:'update', forms:[
+      {w:'update', pos:'v', vi:'cập nhật', topics:['computer']} ]},
+
+    { id:'f373', base:'upload', forms:[
+      {w:'upload', pos:'v', vi:'tải lên', topics:['computer']} ]},
+
+    { id:'f374', base:'vacancy', forms:[
+      {w:'vacancy', pos:'n', vi:'vị trí tuyển dụng; phòng trống', topics:['applying_and_interviewing','job_advertising_and_recruiting','travel']} ]},
+
+    { id:'f375', base:'vacation', forms:[
+      {w:'vacation', pos:'n', vi:'nghỉ phép', topics:['salaries_and_benefits']} ]},
+
+    { id:'f376', base:'valid', forms:[
+      {w:'valid', pos:'adj', vi:'hợp lệ, có giá trị', topics:['warranties']} ]},
+
+    { id:'f377', base:'vendor', forms:[
+      {w:'vendor', pos:'n', vi:'người bán hàng', topics:['shopping']} ]},
+
+    { id:'f378', base:'venue', forms:[
+      {w:'venue', pos:'n', vi:'địa điểm tổ chức', topics:['conference']} ]},
+
+    { id:'f379', base:'virus', forms:[
+      {w:'virus', pos:'n', vi:'vi-rút (máy tính)', topics:['computer']} ]},
+
+    { id:'f380', base:'wage', forms:[
+      {w:'wage', pos:'n', vi:'tiền công', topics:['salaries_and_benefits']} ]},
+
+    { id:'f381', base:'wait', forms:[
+      {w:'wait', pos:'v', vi:'chờ đợi', topics:['restaurant']} ]},
+
+    { id:'f382', base:'waiter', forms:[
+      {w:'waiter', pos:'n', vi:'bồi bàn (nam)', topics:['restaurant']},
+      {w:'waitress', pos:'n', vi:'bồi bàn (nữ)', topics:['restaurant']} ]},
+
+    { id:'f383', base:'warehouse', forms:[
+      {w:'warehouse', pos:'n', vi:'kho hàng', topics:['inventory']} ]},
+
+    { id:'f384', base:'warranty', forms:[
+      {w:'warranty', pos:'n', vi:'bảo hành', topics:['warranties']} ]},
+
+    { id:'f385', base:'website', forms:[
+      {w:'website', pos:'n', vi:'trang web', topics:['computer']} ]},
+
+    { id:'f386', base:'withdraw', forms:[
+      {w:'withdraw', pos:'v', vi:'rút tiền', topics:['banking']} ]},
+
+    { id:'f387', base:'witness', forms:[
+      {w:'witness', pos:'n', vi:'người chứng kiến', topics:['contract']} ]},
+
+    { id:'f388', base:'workshop', forms:[
+      {w:'workshop', pos:'n', vi:'hội thảo, lớp học', topics:['conference']} ]},
+
+    /* ---- TỪ VỰNG CHỦ ĐỀ DU LỊCH (travel) ---- */
+    { id:'f389', base:'delay', forms:[
+      {w:'delay', pos:'n', vi:'trì hoãn', topics:['travel']},
+      {w:'delay', pos:'v', vi:'hoãn lại', topics:['travel']} ]},
+
+    { id:'f390', base:'pack', forms:[
+      {w:'pack', pos:'v', vi:'xếp đồ', topics:['travel']},
+      {w:'unpack', pos:'v', vi:'mở đồ', topics:['travel']} ]},
+
+    { id:'f391', base:'check in', forms:[
+      {w:'check in', pos:'v', vi:'làm thủ tục', topics:['travel']},
+      {w:'check out', pos:'v', vi:'trả phòng', topics:['travel']} ]},
+
+    { id:'f392', base:'arrival', forms:[
+      {w:'arrival', pos:'n', vi:'đến nơi', topics:['travel']},
+      {w:'arrive', pos:'v', vi:'đến', topics:['travel']} ]},
+
+    { id:'f393', base:'ticket', forms:[
+      {w:'one way ticket', pos:'n', vi:'vé một chiều', topics:['travel']},
+      {w:'round-trip ticket', pos:'n', vi:'vé khứ hồi', topics:['travel']} ]},
+
+    { id:'f394', base:'room', forms:[
+      {w:'single room', pos:'n', vi:'phòng đơn', topics:['travel']},
+      {w:'double room', pos:'n', vi:'phòng đôi', topics:['travel']} ]},
+
+    { id:'f395', base:'get on', forms:[
+      {w:'get on', pos:'phr', vi:'lên (phương tiện)', topics:['travel']},
+      {w:'get off', pos:'phr', vi:'xuống (phương tiện)', topics:['travel']} ]},
+
+    { id:'f396', base:'airplane', forms:[
+      {w:'airplane', pos:'n', vi:'máy bay', topics:['travel']} ]},
+
+    { id:'f397', base:'amenities', forms:[
+      {w:'amenities', pos:'n', vi:'tiện nghi', topics:['travel']} ]},
+
+    { id:'f398', base:'baggage', syn:['luggage'], forms:[
+      {w:'baggage', pos:'n', vi:'hành lý', topics:['travel']} ]},
+
+    { id:'f399', base:'boarding pass', forms:[
+      {w:'boarding pass', pos:'n', vi:'thẻ lên máy bay', topics:['travel']} ]},
+
+    { id:'f400', base:'board', forms:[
+      {w:'board', pos:'v', vi:'lên (máy bay/tàu/xe)', topics:['travel']} ]},
+
+    { id:'f401', base:'book', forms:[
+      {w:'book', pos:'v', vi:'đặt trước', topics:['travel']} ]},
+
+    { id:'f402', base:'breakfast buffet', forms:[
+      {w:'breakfast buffet', pos:'n', vi:'bữa sáng tự chọn', topics:['travel']} ]},
+
+    { id:'f403', base:'check-in counter', forms:[
+      {w:'check-in counter', pos:'n', vi:'quầy làm thủ tục', topics:['travel']} ]},
+
+    { id:'f404', base:'concierge', forms:[
+      {w:'concierge', pos:'n', vi:'nhân viên hỗ trợ (khách sạn)', topics:['travel']} ]},
+
+    { id:'f405', base:'cruise', forms:[
+      {w:'cruise', pos:'n', vi:'du thuyền', topics:['travel']} ]},
+
+    { id:'f406', base:'customs', forms:[
+      {w:'customs', pos:'n', vi:'hải quan', topics:['travel']} ]},
+
+    { id:'f407', base:'drive', forms:[
+      {w:'drive', pos:'v', vi:'lái xe', topics:['travel']} ]},
+
+    { id:'f408', base:'enjoy', forms:[
+      {w:'enjoy', pos:'v', vi:'tận hưởng', topics:['travel']} ]},
+
+    { id:'f409', base:'explore', forms:[
+      {w:'explore', pos:'v', vi:'khám phá', topics:['travel']} ]},
+
+    { id:'f410', base:'ferry', forms:[
+      {w:'ferry', pos:'n', vi:'phà', topics:['travel']} ]},
+
+    { id:'f411', base:'find', forms:[
+      {w:'find', pos:'v', vi:'tìm thấy', topics:['travel']} ]},
+
+    { id:'f412', base:'flight', forms:[
+      {w:'flight', pos:'n', vi:'chuyến bay', topics:['travel']} ]},
+
+    { id:'f413', base:'fly', forms:[
+      {w:'fly', pos:'v', vi:'bay', topics:['travel']} ]},
+
+    { id:'f414', base:'front desk', forms:[
+      {w:'front desk', pos:'n', vi:'lễ tân', topics:['travel']} ]},
+
+    { id:'f415', base:'guest', forms:[
+      {w:'guest', pos:'n', vi:'khách', topics:['travel']} ]},
+
+    { id:'f416', base:'hostel', forms:[
+      {w:'hostel', pos:'n', vi:'nhà trọ', topics:['travel']} ]},
+
+    { id:'f417', base:'hotel', forms:[
+      {w:'hotel', pos:'n', vi:'khách sạn', topics:['travel']} ]},
+
+    { id:'f418', base:'itinerary', forms:[
+      {w:'itinerary', pos:'n', vi:'hành trình', topics:['travel']} ]},
+
+    { id:'f419', base:'journey', forms:[
+      {w:'journey', pos:'n', vi:'chuyến đi', topics:['travel']} ]},
+
+    { id:'f420', base:'laundry service', forms:[
+      {w:'laundry service', pos:'n', vi:'dịch vụ giặt ủi', topics:['travel']} ]},
+
+    { id:'f421', base:'lobby', forms:[
+      {w:'lobby', pos:'n', vi:'sảnh', topics:['travel']} ]},
+
+    { id:'f422', base:'lose', forms:[
+      {w:'lose', pos:'v', vi:'mất, làm mất', topics:['travel']} ]},
+
+    { id:'f423', base:'luggage claim', forms:[
+      {w:'luggage claim', pos:'n', vi:'khu nhận hành lý', topics:['travel']} ]},
+
+    { id:'f424', base:'package tour', forms:[
+      {w:'package tour', pos:'n', vi:'tour trọn gói', topics:['travel']} ]},
+
+    { id:'f425', base:'passport', forms:[
+      {w:'passport', pos:'n', vi:'hộ chiếu', topics:['travel']} ]},
+
+    { id:'f426', base:'plan', forms:[
+      {w:'plan', pos:'v', vi:'lên kế hoạch', topics:['travel']} ]},
+
+    { id:'f427', base:'platform', forms:[
+      {w:'platform', pos:'n', vi:'sân ga', topics:['travel']} ]},
+
+    { id:'f428', base:'rate', forms:[
+      {w:'rate', pos:'n', vi:'giá phòng, mức giá', topics:['travel']} ]},
+
+    { id:'f429', base:'rent', forms:[
+      {w:'rent', pos:'v', vi:'thuê', topics:['travel']} ]},
+
+    { id:'f430', base:'resort', forms:[
+      {w:'resort', pos:'n', vi:'khu nghỉ dưỡng', topics:['travel']} ]},
+
+    { id:'f431', base:'room service', forms:[
+      {w:'room service', pos:'n', vi:'dịch vụ phòng', topics:['travel']} ]},
+
+    { id:'f432', base:'route', forms:[
+      {w:'route', pos:'n', vi:'tuyến đường', topics:['travel']} ]},
+
+    { id:'f433', base:'sail', forms:[
+      {w:'sail', pos:'v', vi:'đi tàu, giong buồm', topics:['travel']} ]},
+
+    { id:'f434', base:'seat belt', forms:[
+      {w:'seat belt', pos:'n', vi:'dây an toàn', topics:['travel']} ]},
+
+    { id:'f435', base:'stay', forms:[
+      {w:'stay', pos:'v', vi:'lưu trú, ở lại', topics:['travel']} ]},
+
+    { id:'f436', base:'subway', forms:[
+      {w:'subway', pos:'n', vi:'tàu điện ngầm', topics:['travel']} ]},
+
+    { id:'f437', base:'suite', forms:[
+      {w:'suite', pos:'n', vi:'phòng hạng sang', topics:['travel']} ]},
+
+    { id:'f438', base:'taxi', forms:[
+      {w:'taxi', pos:'n', vi:'xe taxi', topics:['travel']} ]},
+
+    { id:'f439', base:'terminal', forms:[
+      {w:'terminal', pos:'n', vi:'nhà ga', topics:['travel']} ]},
+
+    { id:'f440', base:'tour guide', forms:[
+      {w:'tour guide', pos:'n', vi:'hướng dẫn viên', topics:['travel']} ]},
+
+    { id:'f441', base:'train', forms:[
+      {w:'train', pos:'n', vi:'tàu hỏa', topics:['travel']} ]},
+
+    { id:'f442', base:'travel', forms:[
+      {w:'travel', pos:'v', vi:'du lịch', topics:['travel']} ]},
+
+    { id:'f443', base:'visa', forms:[
+      {w:'visa', pos:'n', vi:'thị thực', topics:['travel']} ]},
+
+    { id:'f444', base:'visit', forms:[
+      {w:'visit', pos:'v', vi:'thăm, ghé thăm', topics:['travel']} ]},
+
+    { id:'f445', base:'voucher', forms:[
+      {w:'voucher', pos:'n', vi:'phiếu thanh toán, phiếu ưu đãi', topics:['travel']} ]},
+
+    { id:'f446', base:'ask for directions', forms:[
+      {w:'ask for directions', pos:'phr', vi:'hỏi đường', topics:['travel']} ]},
+
+    { id:'f447', base:'be fully booked', forms:[
+      {w:'be fully booked', pos:'phr', vi:'hết chỗ', topics:['travel']} ]},
+
+    { id:'f448', base:'buy souvenirs', forms:[
+      {w:'buy souvenirs', pos:'phr', vi:'mua quà lưu niệm', topics:['travel']} ]},
+
+    { id:'f449', base:'cancel the trip', forms:[
+      {w:'cancel the trip', pos:'phr', vi:'hủy chuyến đi', topics:['travel']} ]},
+
+    { id:'f450', base:'catch a taxi', forms:[
+      {w:'catch a taxi', pos:'phr', vi:'bắt taxi', topics:['travel']} ]},
+
+    { id:'f451', base:'change the schedule', forms:[
+      {w:'change the schedule', pos:'phr', vi:'thay đổi lịch trình', topics:['travel']} ]},
+
+    { id:'f452', base:'check the timetable', forms:[
+      {w:'check the timetable', pos:'phr', vi:'kiểm tra lịch trình', topics:['travel']} ]},
+
+    { id:'f453', base:'confirm the flight', forms:[
+      {w:'confirm the flight', pos:'phr', vi:'xác nhận chuyến bay', topics:['travel']} ]},
+
+    { id:'f454', base:'fill out the form', forms:[
+      {w:'fill out the form', pos:'phr', vi:'điền mẫu đơn', topics:['travel']} ]},
+
+    { id:'f455', base:'find the way', forms:[
+      {w:'find the way', pos:'phr', vi:'tìm đường', topics:['travel']} ]},
+
+    { id:'f456', base:'go abroad', forms:[
+      {w:'go abroad', pos:'phr', vi:'ra nước ngoài', topics:['travel']} ]},
+
+    { id:'f457', base:'go on a business trip', forms:[
+      {w:'go on a business trip', pos:'phr', vi:'đi công tác', topics:['travel']} ]},
+
+    { id:'f458', base:'go sightseeing', forms:[
+      {w:'go sightseeing', pos:'phr', vi:'đi tham quan', topics:['travel']} ]},
+
+    { id:'f459', base:'go through customs', forms:[
+      {w:'go through customs', pos:'phr', vi:'làm thủ tục hải quan', topics:['travel']} ]},
+
+    { id:'f460', base:'lose the luggage', forms:[
+      {w:'lose the luggage', pos:'phr', vi:'mất hành lý', topics:['travel']} ]},
+
+    { id:'f461', base:'make a reservation', forms:[
+      {w:'make a reservation', pos:'phr', vi:'đặt chỗ', topics:['travel']} ]},
+
+    { id:'f462', base:'miss the flight', forms:[
+      {w:'miss the flight', pos:'phr', vi:'lỡ chuyến bay', topics:['travel']} ]},
+
+    { id:'f463', base:'pick up the luggage', forms:[
+      {w:'pick up the luggage', pos:'phr', vi:'nhận hành lý', topics:['travel']} ]},
+
+    { id:'f464', base:'run out of time', forms:[
+      {w:'run out of time', pos:'phr', vi:'hết thời gian', topics:['travel']} ]},
+
+    { id:'f465', base:'stay overnight', forms:[
+      {w:'stay overnight', pos:'phr', vi:'ngủ qua đêm', topics:['travel']} ]},
+
+    { id:'f466', base:'take a photo', forms:[
+      {w:'take a photo', pos:'phr', vi:'chụp ảnh', topics:['travel']} ]},
+
+    { id:'f467', base:'take off', forms:[
+      {w:'take off', pos:'phr', vi:'cất cánh', topics:['travel']} ]},
+
+    { id:'f468', base:'travel abroad', forms:[
+      {w:'travel abroad', pos:'phr', vi:'du lịch nước ngoài', topics:['travel']} ]},
   ],
 
   /* ---- CẤU TRÚC / LIÊN TỪ / TRẠNG TỪ LIÊN KẾT ---- */
@@ -1268,11 +2172,14 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
 
   /* ---------- Trạng thái giao diện ---------- */
   var state = {
-    view: 'study',        // study | quiz | add | backup
+    view: 'study',        // study | topics | quiz | add | backup
     cat: 'all',           // all | n | v | adj | adv | struct
     search: '',
+    topic: null,          // id chủ đề đang mở trong tab Chủ đề (null = danh sách chủ đề)
+    topicSearch: '',
     quizType: 'meaning',  // meaning | word | mixed | after | smeaning | smixed
     quizCount: 10,
+    quizTopic: null,      // id chủ đề đang ôn trong Kiểm tra (null = ôn theo nhóm từ loại)
     quiz: null,
     addType: 'word'
   };
@@ -1307,11 +2214,18 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
         out.push({
           id: 'w:' + f.id + ':' + i,
           kind: 'word', w: fm.w, pos: fm.pos, vi: fm.vi,
-          base: f.base, familyId: f.id, syn: f.syn || [], example: f.example || ''
+          base: f.base, familyId: f.id, syn: f.syn || [], example: f.example || '',
+          topics: fm.topics || []
         });
       });
     });
     return out;
+  }
+
+  /* ---------- Chủ đề (topic vocab) ---------- */
+  function topicsList() { return TOEIC_DATA.topics || []; }
+  function itemsForTopic(topicId) {
+    return wordItems().filter(function (it) { return it.topics.indexOf(topicId) >= 0; });
   }
   function structItems() {
     return structures().map(function (s) {
@@ -1353,7 +2267,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
 
   /* ---------- Điều hướng & khung ---------- */
   var viewEl, navEls;
-  function nav(view) { state.view = view; state.quiz = null; render(); }
+  function nav(view) { state.view = view; state.quiz = null; state.quizTopic = null; render(); }
   function setActiveNav() {
     navEls.forEach(function (b) { b.classList.toggle('active', b.dataset.view === state.view); });
   }
@@ -1367,6 +2281,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   function render() {
     setActiveNav();
     if (state.view === 'study') renderStudy();
+    else if (state.view === 'topics') renderTopics();
     else if (state.view === 'quiz') renderQuiz();
     else if (state.view === 'add') renderAdd();
     else if (state.view === 'backup') renderBackup();
@@ -1477,9 +2392,50 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
 
   function emptyState(msg) { return '<div class="empty">' + esc(msg) + '</div>'; }
 
+  /* ============================ CHỦ ĐỀ ============================ */
+  function renderTopics() {
+    if (state.topic) return renderTopicDetail();
+    var tps = topicsList();
+    var html = '<div class="hint-line">' + tps.length + ' chủ đề · chạm để học từ vựng theo chủ đề</div>';
+    html += '<div class="topic-grid">' + tps.map(function (t) {
+      var n = itemsForTopic(t.id).length;
+      return '<button class="topic-card" data-action="topic-open" data-topic="' + t.id + '">' +
+        '<span class="topic-vi">' + esc(t.vi) + '</span>' +
+        '<span class="topic-en">' + esc(t.en) + '</span>' +
+        '<span class="topic-count">' + n + ' từ</span></button>';
+    }).join('') + '</div>';
+    viewEl.innerHTML = html;
+  }
+
+  function renderTopicDetail() {
+    var topic = topicsList().filter(function (t) { return t.id === state.topic; })[0];
+    if (!topic) { state.topic = null; return renderTopics(); }
+    var html = '<div class="topic-head"><button class="btn-ghost" data-action="topic-back">← Chủ đề</button>' +
+      '<div class="topic-head-title"><div class="topic-head-vi">' + esc(topic.vi) + '</div>' +
+      '<div class="topic-head-en">' + esc(topic.en) + '</div></div></div>';
+    html += '<div class="toolbar"><div class="search"><svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>' +
+      '<input id="topicSearch" type="search" inputmode="search" placeholder="Tìm từ trong chủ đề..." value="' + esc(state.topicSearch) + '" aria-label="Tìm kiếm"></div></div>';
+    html += '<div id="topic-content">' + topicContent(topic) + '</div>';
+    viewEl.innerHTML = html;
+  }
+
+  function topicContent(topic) {
+    var q = norm(state.topicSearch);
+    var items = itemsForTopic(topic.id).filter(function (it) {
+      if (!q) return true;
+      return norm(it.w).indexOf(q) >= 0 || norm(it.vi).indexOf(q) >= 0;
+    });
+    if (!items.length) return emptyState('Không tìm thấy từ nào khớp trong chủ đề này.');
+    var out = '<div class="hint-line">' + items.length + ' từ · chạm thẻ để xem nghĩa</div>';
+    out += '<button class="btn-primary block" data-action="quiz-topic" data-topic="' + topic.id + '"' + (items.length < 2 ? ' disabled' : '') + '>Ôn tập chủ đề này (' + items.length + ' câu)</button>';
+    out += '<div class="card-grid" style="margin-top:12px">' + items.map(function (it) { return flashCard(it); }).join('') + '</div>';
+    return out;
+  }
+
   /* ============================ KIỂM TRA (QUIZ) ============================ */
   function renderQuiz() {
     if (state.quiz) return renderQuizRunner();
+    if (state.quizTopic) return renderQuizTopicSetup();
     // màn hình thiết lập
     var isStruct = state.cat === 'struct';
     // đồng bộ loại quiz với nhóm
@@ -1514,9 +2470,39 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
     viewEl.innerHTML = html;
   }
 
+  function renderQuizTopicSetup() {
+    var topic = topicsList().filter(function (t) { return t.id === state.quizTopic; })[0];
+    if (!topic) { state.quizTopic = null; return renderQuiz(); }
+    if (['after', 'smeaning', 'smixed'].indexOf(state.quizType) >= 0) state.quizType = 'meaning';
+    var types = [{ id: 'meaning', label: 'Từ → nghĩa' }, { id: 'word', label: 'Nghĩa → từ' }, { id: 'mixed', label: 'Trộn cả hai' }];
+    var pool = itemsForTopic(topic.id);
+    var counts = [10, 20, 30].filter(function (n) { return n < pool.length; });
+    counts.push(pool.length);
+    if (state.quizCount > pool.length) state.quizCount = pool.length;
+
+    var html = '<div class="topic-quiz-banner">Đang ôn theo chủ đề: <b>' + esc(topic.vi) + '</b>' +
+      '<button data-action="quiz-clear-topic">✕ Bỏ chủ đề</button></div>';
+    html += '<div class="setup">';
+    html += '<h2 class="setup-h">Chọn kiểu câu hỏi</h2>';
+    html += '<div class="seg">' + types.map(function (t) {
+      return '<button class="seg-btn' + (state.quizType === t.id ? ' active' : '') + '" data-action="qtype" data-qt="' + t.id + '">' + esc(t.label) + '</button>';
+    }).join('') + '</div>';
+
+    html += '<h2 class="setup-h">Số câu hỏi</h2>';
+    html += '<div class="seg">' + counts.map(function (n) {
+      var label = (n === pool.length ? 'Tất cả (' + n + ')' : String(n));
+      return '<button class="seg-btn' + (state.quizCount === n ? ' active' : '') + '" data-action="qcount" data-n="' + n + '">' + label + '</button>';
+    }).join('') + '</div>';
+
+    html += '<button class="btn-primary block" data-action="start-quiz"' + (pool.length < 2 ? ' disabled' : '') + '>Bắt đầu ôn (' + Math.min(state.quizCount, pool.length) + ' câu)</button>';
+    if (pool.length < 2) html += '<div class="empty">Cần ít nhất 2 từ ở chủ đề này để tạo quiz.</div>';
+    html += '</div>';
+    viewEl.innerHTML = html;
+  }
+
   function buildQuestions() {
     var cat = state.cat, type = state.quizType, count = state.quizCount;
-    var pool = shuffle(itemsForCat(cat, true));
+    var pool = shuffle(state.quizTopic ? itemsForTopic(state.quizTopic) : itemsForCat(cat, true));
     var wordPool = wordItems();
     var afterValues = uniqueAfterValues();
     var picked = pool.slice(0, count);
@@ -1836,12 +2822,22 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
       case 'theme': toggleTheme(); break;
       case 'fam-toggle': t.closest('.fam-card').classList.toggle('collapsed'); break;
       case 'reveal': t.classList.toggle('revealed'); break;
+      case 'topic-open': state.topic = t.dataset.topic; state.topicSearch = ''; render(); break;
+      case 'topic-back': state.topic = null; state.topicSearch = ''; render(); break;
+      case 'quiz-topic':
+        state.quizTopic = t.dataset.topic; state.quiz = null; state.quizType = 'meaning';
+        state.view = 'quiz'; render(); break;
+      case 'quiz-clear-topic': state.quizTopic = null; renderQuiz(); break;
       case 'qtype': state.quizType = t.dataset.qt; renderQuiz(); break;
       case 'qcount': state.quizCount = parseInt(t.dataset.n, 10); renderQuiz(); break;
       case 'start-quiz': startQuiz(); break;
       case 'answer': answerQuiz(parseInt(t.dataset.idx, 10)); break;
       case 'quiz-next': nextQuiz(); break;
-      case 'quiz-exit': state.quiz = null; render(); break;
+      case 'quiz-exit':
+        var fromTopic = state.quizTopic;
+        state.quiz = null; state.quizTopic = null;
+        if (fromTopic) state.view = 'topics';
+        render(); break;
       case 'quiz-again': state.quiz = null; renderQuiz(); break;
       case 'quiz-retry-wrong': retryWrong(); break;
       case 'addtype': state.addType = t.dataset.t; renderAdd(); break;
@@ -1856,6 +2852,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
   }
   function onInput(e) {
     if (e.target.id === 'search') { state.search = e.target.value; renderStudyContentOnly(); }
+    else if (e.target.id === 'topicSearch') { state.topicSearch = e.target.value; renderTopicContentOnly(); }
   }
   function onChange(e) {
     if (e.target.id === 'importFile' && e.target.files[0]) { importData(e.target.files[0]); }
@@ -1865,6 +2862,13 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = TOEIC_DA
     var holder = document.getElementById('study-content');
     if (!holder) { render(); return; }
     holder.innerHTML = state.cat === 'all' ? studyAll() : (state.cat === 'struct' ? studyStructs() : studyPos(state.cat));
+  }
+  // cập nhật riêng phần nội dung chủ đề khi gõ tìm kiếm (giữ focus ô input)
+  function renderTopicContentOnly() {
+    var holder = document.getElementById('topic-content');
+    var topic = topicsList().filter(function (t) { return t.id === state.topic; })[0];
+    if (!holder || !topic) { render(); return; }
+    holder.innerHTML = topicContent(topic);
   }
 
   /* ---------- Khởi động ---------- */

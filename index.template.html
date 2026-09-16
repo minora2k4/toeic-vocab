@@ -125,6 +125,22 @@ body{
 /* ---------- Empty ---------- */
 .empty{text-align:center; color:var(--muted); padding:34px 16px; font-size:14px; background:var(--surface); border:1px dashed var(--line); border-radius:var(--r)}
 
+/* ---------- Chủ đề (Topics) ---------- */
+.topic-grid{display:grid; grid-template-columns:1fr; gap:10px}
+@media(min-width:560px){.topic-grid{grid-template-columns:1fr 1fr}}
+.topic-card{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--brand); border-radius:var(--r); padding:14px 16px; text-align:left; cursor:pointer; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:3px; color:inherit}
+.topic-card:active{transform:scale(.99)}
+.topic-vi{font-weight:800; font-size:16.5px; letter-spacing:-.01em}
+.topic-en{font-size:12.5px; color:var(--muted)}
+.topic-count{font-size:12px; color:var(--brand); margin-top:6px; font-weight:700}
+.topic-head{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+.topic-head-title{display:flex; flex-direction:column}
+.topic-head-vi{font-weight:800; font-size:18px}
+.topic-head-en{font-size:12.5px; color:var(--muted)}
+.topic-quiz-banner{display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--brand-soft); color:var(--brand); padding:10px 14px; border-radius:12px; margin-bottom:14px; font-size:14px}
+.topic-quiz-banner b{color:inherit}
+.topic-quiz-banner button{flex:0 0 auto; background:none; border:0; color:inherit; font-weight:700; font-size:12.5px; cursor:pointer; padding:4px 8px}
+
 /* ---------- Setup / forms ---------- */
 .setup{display:flex; flex-direction:column}
 .setup-h{font-size:13px; font-weight:700; color:var(--muted); margin:14px 2px 8px}
@@ -241,6 +257,10 @@ body{
       <button class="nav-btn" data-action="nav" data-view="study">
         <svg viewBox="0 0 24 24"><path d="M4 5.5A2 2 0 0 1 6 4h6v16H6a2 2 0 0 0-2 1.2z"/><path d="M20 5.5A2 2 0 0 0 18 4h-6v16h6a2 2 0 0 1 2 1.2z"/></svg>
         <span>Học</span>
+      </button>
+      <button class="nav-btn" data-action="nav" data-view="topics">
+        <svg viewBox="0 0 24 24"><path d="M20.59 13.41L11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+        <span>Chủ đề</span>
       </button>
       <button class="nav-btn" data-action="nav" data-view="quiz">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg>
