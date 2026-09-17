@@ -44,23 +44,31 @@ Tên file **phải là `index.html`** để Pages phục vụ mặc định.
 
 | Yêu cầu của bạn | Đã đáp ứng thế nào |
 |---|---|
-| 1. Nhẹ, mượt, hợp GitHub Pages, dùng điện thoại | 1 file ~145 KB, không phụ thuộc mạng, tải tức thì, offline được |
+| 1. Nhẹ, mượt, hợp GitHub Pages, dùng điện thoại | 1 file ~155 KB, không phụ thuộc mạng, tải tức thì, offline được |
 | 2. Đa nền tảng máy tính & điện thoại | Responsive: 1 cột trên điện thoại, 2 cột thẻ trên màn rộng; thanh điều hướng dưới cùng kiểu app |
-| 3. Ôn tập từ phù hợp | Thẻ ghi nhớ (chạm để lật nghĩa) + quiz trắc nghiệm |
+| 3. Ôn tập từ phù hợp | Thẻ ghi nhớ (chạm để lật nghĩa) + quiz trắc nghiệm + **quiz nối từ** |
 | 4. Một từ có nhiều loại; cấu trúc + theo sau là gì | Mỗi từ ghi rõ **loại từ** (mã màu); mỗi cấu trúc ghi rõ **theo sau bởi** `S+V` / `N` / `V-ing`… |
-| 5. Lấy hết wordform, phân loại rõ ràng | 468 họ từ → 816 dạng, tách sẵn theo Danh từ / Động từ / Tính từ / Trạng từ / Giới từ; tab **Tổng hợp** hiện cả họ từ theo bảng |
+| 5. Lấy hết wordform, phân loại rõ ràng | 474 họ từ → 829 dạng, tách sẵn theo Danh từ / Động từ / Tính từ / Trạng từ / Giới từ; tab **Tổng hợp** hiện cả họ từ theo bảng |
 | 6. Tự thêm từ mới (từ, nghĩa, loại) vào list | Tab **Thêm từ**: thêm từ vựng hoặc cấu trúc; tự gộp vào họ từ nếu trùng gốc; lưu vào máy |
-| 7. Quiz hỏi nghĩa từ / cấu trúc theo sau | Quiz trắc nghiệm 4 đáp án: Từ→nghĩa, Nghĩa→từ, "Theo sau là gì?", Nghĩa cấu trúc |
+| 7. Quiz hỏi nghĩa từ / cấu trúc theo sau | Quiz trắc nghiệm 4 đáp án: Từ→nghĩa, Nghĩa→từ, "Theo sau là gì?", Nghĩa cấu trúc, hoặc **Nối từ** |
 | 8. Chia nhóm ôn: Tổng hợp, Trạng từ, Cấu trúc, Danh từ, Động từ, Tính từ | Đúng 7 nhóm này ở cả tab **Học** lẫn tab **Kiểm tra** (đã bổ sung thêm **Giới từ**) |
 
 **Tính năng bổ sung tôi thêm cho trải nghiệm tốt hơn:**
 - Tab **Chủ đề**: học từ vựng theo 17 chủ đề TOEIC thực tế (Hợp đồng, Văn phòng, Tiếp thị,
   Máy tính, Bảo hành, Thư tín, Lương & phúc lợi, Hội nghị, Hóa đơn, Hàng hóa, Việc làm &
-  tuyển dụng, Ứng tuyển & phỏng vấn, Ngân hàng, Kế toán, Nhà hàng, Mua sắm, **Du lịch**) —
+  tuyển dụng, Ứng tuyển & phỏng vấn, Ngân hàng, Kế toán, Nhà hàng, Mua sắm, Du lịch) —
   349 lượt gắn nhãn chủ đề trên các dạng từ (một từ có thể thuộc nhiều chủ đề). Mỗi chủ đề
   có ô tìm kiếm riêng và nút **"Ôn tập chủ đề này"** để làm quiz chỉ trong phạm vi chủ đề đó.
+- **Quiz kiểu "Nối từ"** (thêm vào cạnh Từ→nghĩa/Nghĩa→từ/Trộn cả hai, áp dụng cho mọi
+  nhóm và cả quiz theo chủ đề): mỗi vòng hiện **5 từ bên trái + 5 nghĩa bên phải** (xáo trộn
+  độc lập hai cột). Chạm 1 mục trái rồi 1 mục phải để nối — đúng thì cả hai sáng xanh và
+  khóa lại, sai thì sáng đỏ trong chốc lát rồi tự đặt lại để nối lại từ đó (không giới hạn số
+  lần thử). Hết 5 cặp tự chuyển vòng tiếp theo cho đến khi đủ số câu đã chọn, rồi vào chung
+  màn hình **kết quả** với các kiểu quiz khác (điểm tính theo số cặp nối đúng ngay lần đầu;
+  cặp phải thử lại được đưa vào danh sách "từ sai" như bình thường).
 - Quiz chọn số câu (10/20/30/tất cả), màn hình **kết quả** kèm danh sách **từ sai để
-  ôn lại** và nút **"Ôn lại từ sai"** (tạo lại đúng những câu vừa trả lời sai, đảo đáp án).
+  ôn lại** và nút **"Ôn lại từ sai"** (tạo lại đúng những câu vừa trả lời sai, đảo đáp án;
+  với quiz Nối từ thì tạo lại đúng các cặp bị sai dưới dạng nối từ mới).
 - **Tìm kiếm** nhanh theo từ hoặc nghĩa.
 - Hiển thị **từ đồng nghĩa** (các cụm `= …` trong sổ, ví dụ `location = venue = site…`).
 - **Nền tối** cho việc học ban đêm trên điện thoại.
@@ -185,9 +193,18 @@ open("index.html", "w", encoding="utf-8").write(t)
 - `renderTopics()` → `renderTopicDetail()` / `topicContent(topic)` — tab Chủ đề (danh sách
   chủ đề → chi tiết từ vựng theo chủ đề, có ô tìm kiếm riêng `#topicSearch`).
 - `renderQuiz()` → `buildQuestions()` / `makeQuestion()` / `renderQuizRunner()` /
-  `renderQuizResult()` — tab Kiểm tra. Khi `state.quizTopic` được set (bấm "Ôn tập chủ đề
-  này" từ tab Chủ đề), `renderQuizTopicSetup()` thay cho màn hình thiết lập theo nhóm từ
-  loại thường, và `buildQuestions()` lấy pool từ `itemsForTopic()` thay vì `itemsForCat()`.
+  `renderQuizResult()` — tab Kiểm tra (kiểu trắc nghiệm 4 đáp án). Khi `state.quizTopic`
+  được set (bấm "Ôn tập chủ đề này" từ tab Chủ đề), `renderQuizTopicSetup()` thay cho màn
+  hình thiết lập theo nhóm từ loại thường, và `buildQuestions()` lấy pool từ
+  `itemsForTopic()` thay vì `itemsForCat()`.
+- Quiz kiểu **Nối từ** (`state.quizType === 'match'`): `startMatchQuiz(items)` khởi tạo
+  `state.quiz = { mode:'match', items, byId, roundIndex, roundSize:5, score, wrong, round }`;
+  `loadMatchRound()` dựng 1 vòng 5 cặp (xáo trộn 2 cột độc lập); `renderMatchRunner()` vẽ
+  giao diện; `matchPick(side, ref)` xử lý chạm chọn/nối cặp (so khớp `ref` hai bên — đúng
+  thì khóa thẻ màu xanh, sai thì chớp đỏ ~550ms rồi tự bỏ chọn để nối lại, không đếm là hết
+  lượt); `matchNextRound()` sang vòng kế hoặc gọi `renderQuizResult()` khi hết. Dùng chung
+  `renderQuizResult()` và cơ chế "Ôn lại từ sai" với quiz trắc nghiệm (đã sửa hai hàm này để
+  đọc `qz.mode` và nhánh phù hợp) — không cần màn hình kết quả hay logic ôn-lại riêng.
 - `renderAdd()` / `saveWord()` / `saveStruct()` — tab Thêm từ.
 - `renderBackup()` / `exportData()` / `importData()` / `resetAll()` — tab Sao lưu.
 - `onClick()` — bộ điều phối sự kiện duy nhất qua thuộc tính `data-action` (không dùng

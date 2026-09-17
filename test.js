@@ -14,9 +14,10 @@ function q(sel) { return doc.querySelector(sel); }
 function qa(sel) { return Array.from(doc.querySelectorAll(sel)); }
 function navTo(view) { click(qa('.nav-btn').find(b => b.dataset.view === view)); }
 function setCat(cat) { click(qa('.chip').find(c => c.dataset.cat === cat)); }
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 // đợi init (readyState). jsdom chạy đồng bộ sau load; dùng setTimeout để chắc chắn.
-setTimeout(() => {
+setTimeout(async () => {
   console.log('== KHỞI ĐỘNG ==');
   ok(q('#view'), 'có #view');
   ok(q('.chip.active'), 'có chip đang chọn');
@@ -88,6 +89,40 @@ setTimeout(() => {
   ok(/Theo sau/.test(q('.q-ask').textContent), 'câu hỏi hỏi "theo sau"');
   const afterOpts = qa('.opt').map(o => o.textContent);
   ok(afterOpts.length >= 2, 'đáp án cấu trúc >=2 (' + afterOpts.length + ')');
+
+  console.log('== QUIZ NỐI TỪ ==');
+  navTo('quiz'); setCat('n');
+  click(qa('.seg-btn').find(b => b.dataset.qt === 'match'));
+  click(qa('.seg-btn').find(b => b.dataset.n === '10'));
+  click(qa('[data-action="start-quiz"]')[0]);
+  ok(qa('[data-side="L"]').length === 5, '5 thẻ bên trái (' + qa('[data-side="L"]').length + ')');
+  ok(qa('[data-side="R"]').length === 5, '5 thẻ bên phải (' + qa('[data-side="R"]').length + ')');
+  const leftRefs1 = qa('[data-side="L"]').map(c => c.dataset.ref);
+  const rightRefs1 = qa('[data-side="R"]').map(c => c.dataset.ref);
+  ok(leftRefs1.every(r => rightRefs1.includes(r)), 'mọi ref bên trái đều có ở bên phải (cùng bộ 5 cặp)');
+  // cố tình nối sai một cặp
+  const wrongRight = qa('[data-side="R"]').find(c => c.dataset.ref !== leftRefs1[0]);
+  click(qa('[data-side="L"]').find(c => c.dataset.ref === leftRefs1[0]));
+  click(wrongRight);
+  ok(q('[data-side="L"][data-ref="' + leftRefs1[0] + '"]').classList.contains('wrong'), 'nối sai -> thẻ chuyển sang trạng thái wrong');
+  await sleep(650); // đợi hết thời gian khóa tạm (550ms) trước khi được nối lại
+  ok(!q('[data-side="L"][data-ref="' + leftRefs1[0] + '"]').classList.contains('wrong'), 'hết thời gian chớp đỏ -> thẻ trở lại bình thường, cho nối lại');
+  // nối đúng toàn bộ 2 vòng (10 câu / 5 mỗi vòng)
+  let roundGuard = 0;
+  while (q('.match-wrap') && roundGuard++ < 10) {
+    const lefts = qa('[data-side="L"]:not(.correct)');
+    if (!lefts.length) break;
+    lefts.forEach(l => { click(l); click(q('[data-side="R"][data-ref="' + l.dataset.ref + '"]')); });
+    const nextBtn = q('[data-action="match-next-round"]');
+    if (nextBtn) click(nextBtn); else break;
+  }
+  ok(q('.result-score'), 'nối từ xong -> hiện màn kết quả (dùng chung với trắc nghiệm)');
+  console.log('  Kết quả nối từ: ' + (q('.result-score') ? q('.result-score').textContent : '(n/a)'));
+  const matchRetryBtn = q('[data-action="quiz-retry-wrong"]');
+  if (matchRetryBtn) {
+    click(matchRetryBtn);
+    ok(q('.match-wrap'), '"Ôn lại từ sai" sau quiz nối từ -> mở lại đúng giao diện nối từ');
+  }
 
   console.log('== CHỦ ĐỀ: DANH SÁCH ==');
   navTo('topics');

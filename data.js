@@ -1795,6 +1795,32 @@ var TOEIC_DATA = {
 
     { id:'f468', base:'travel abroad', forms:[
       {w:'travel abroad', pos:'phr', vi:'du lịch nước ngoài', topics:['travel']} ]},
+
+    /* ---- BỔ SUNG TỪ SỔ TAY (đợt 4) ---- */
+    { id:'f469', base:'wide', forms:[
+      {w:'wide', pos:'adj', vi:'rộng'},
+      {w:'widely', pos:'adv', vi:'rộng rãi, phổ biến'},
+      {w:'width', pos:'n', vi:'chiều rộng'} ]},
+
+    { id:'f470', base:'loose', forms:[
+      {w:'loose', pos:'adj', vi:'lỏng lẻo'},
+      {w:'loosely', pos:'adv', vi:'một cách lỏng lẻo'},
+      {w:'loosen', pos:'v', vi:'làm lỏng, nới lỏng'} ]},
+
+    { id:'f471', base:'praise', forms:[
+      {w:'praise', pos:'v', vi:'khen, ca tụng'},
+      {w:'praise', pos:'n', vi:'lời khen'} ]},
+
+    { id:'f472', base:'alongside', forms:[
+      {w:'alongside', pos:'prep', vi:'bên cạnh'} ]},
+
+    { id:'f473', base:'degree', forms:[
+      {w:'degree', pos:'n', vi:'bằng cấp; mức độ, cấp độ'} ]},
+
+    { id:'f474', base:'combination', forms:[
+      {w:'combination', pos:'n', vi:'sự kết hợp'},
+      {w:'combine', pos:'v', vi:'kết hợp'},
+      {w:'combined', pos:'adj', vi:'được kết hợp'} ]}
   ],
 
   /* ---- CẤU TRÚC / LIÊN TỪ / TRẠNG TỪ LIÊN KẾT ---- */
@@ -1834,7 +1860,7 @@ var TOEIC_DATA = {
     { id:'s070', group:'Điều kiện (Miễn là)', pattern:'provided that / providing that / as long as / on condition that', after:'S + V', vi:'miễn là, với điều kiện là', example:'as long as you pay on time' },
 
     // Các liên từ / trạng từ khác
-    { id:'s080', group:'Liên từ khác', pattern:'as soon as', after:'S + V', vi:'ngay khi', example:'as soon as it arrives' },
+    { id:'s080', group:'Liên từ khác', pattern:'as soon as', after:'S + V', vi:'ngay khi, ngay lập tức', example:'as soon as it arrives' },
     { id:'s081', group:'Liên từ khác', pattern:'whether ... or ...', after:'S + V', vi:'liệu rằng, cho dù', example:'whether it rains or not' },
     { id:'s082', group:'Liên từ khác', pattern:'... as ...', after:'S + V', vi:'trong khi, trong lúc', example:'she called as I left' },
     { id:'s083', group:'Liên từ khác', pattern:'... also ...', after:'S + V', vi:'cũng', example:'she also joined' },
@@ -1842,7 +1868,8 @@ var TOEIC_DATA = {
     { id:'s085', group:'Liên từ khác', pattern:'alternatively', after:'S + V', vi:'hoặc là, ngoài ra', example:'alternatively, take the bus' },
     { id:'s086', group:'Liên từ khác', pattern:'likewise', after:'S + V', vi:'tương tự như vậy', example:'likewise, prices fell' },
     { id:'s087', group:'Liên từ khác', pattern:'originally', after:'S + V', vi:'ban đầu', example:'originally, it cost less' },
-    { id:'s088', group:'Liên từ khác', pattern:'regardless (of)', after:'N / V-ing', vi:'bất kể, bất chấp', example:'regardless of the cost' }
+    { id:'s088', group:'Liên từ khác', pattern:'regardless (of)', after:'N / V-ing', vi:'bất kể, bất chấp', example:'regardless of the cost' },
+    { id:'s089', group:'Liên từ khác', pattern:'as well as', after:'N / V-ing', vi:'cũng như', example:'speed as well as accuracy' }
   ],
 
   /* Nhãn hiển thị cho từng loại từ */

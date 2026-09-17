@@ -296,7 +296,7 @@
 
   /* ============================ KIỂM TRA (QUIZ) ============================ */
   function renderQuiz() {
-    if (state.quiz) return renderQuizRunner();
+    if (state.quiz) return state.quiz.mode === 'match' ? renderMatchRunner() : renderQuizRunner();
     if (state.quizTopic) return renderQuizTopicSetup();
     // màn hình thiết lập
     var isStruct = state.cat === 'struct';
@@ -305,8 +305,8 @@
     if (!isStruct && ['after', 'smeaning', 'smixed'].indexOf(state.quizType) >= 0) state.quizType = 'meaning';
 
     var types = isStruct
-      ? [{ id: 'after', label: 'Theo sau là gì?' }, { id: 'smeaning', label: 'Nghĩa cấu trúc' }, { id: 'smixed', label: 'Trộn cả hai' }]
-      : [{ id: 'meaning', label: 'Từ → nghĩa' }, { id: 'word', label: 'Nghĩa → từ' }, { id: 'mixed', label: 'Trộn cả hai' }];
+      ? [{ id: 'after', label: 'Theo sau là gì?' }, { id: 'smeaning', label: 'Nghĩa cấu trúc' }, { id: 'smixed', label: 'Trộn cả hai' }, { id: 'match', label: 'Nối từ' }]
+      : [{ id: 'meaning', label: 'Từ → nghĩa' }, { id: 'word', label: 'Nghĩa → từ' }, { id: 'mixed', label: 'Trộn cả hai' }, { id: 'match', label: 'Nối từ' }];
 
     var pool = itemsForCat(state.cat, true);
     var counts = [10, 20, 30].filter(function (n) { return n < pool.length; });
@@ -336,7 +336,7 @@
     var topic = topicsList().filter(function (t) { return t.id === state.quizTopic; })[0];
     if (!topic) { state.quizTopic = null; return renderQuiz(); }
     if (['after', 'smeaning', 'smixed'].indexOf(state.quizType) >= 0) state.quizType = 'meaning';
-    var types = [{ id: 'meaning', label: 'Từ → nghĩa' }, { id: 'word', label: 'Nghĩa → từ' }, { id: 'mixed', label: 'Trộn cả hai' }];
+    var types = [{ id: 'meaning', label: 'Từ → nghĩa' }, { id: 'word', label: 'Nghĩa → từ' }, { id: 'mixed', label: 'Trộn cả hai' }, { id: 'match', label: 'Nối từ' }];
     var pool = itemsForTopic(topic.id);
     var counts = [10, 20, 30].filter(function (n) { return n < pool.length; });
     counts.push(pool.length);
@@ -418,6 +418,13 @@
   }
 
   function startQuiz() {
+    if (state.quizType === 'match') {
+      var pool = shuffle(state.quizTopic ? itemsForTopic(state.quizTopic) : itemsForCat(state.cat, true));
+      var items = pool.slice(0, state.quizCount);
+      if (items.length < 2) { toast('Không đủ dữ liệu để tạo quiz.'); return; }
+      startMatchQuiz(items);
+      return;
+    }
     var qs = buildQuestions();
     if (qs.length < 1) { toast('Không đủ dữ liệu để tạo quiz.'); return; }
     state.quiz = { qs: qs, i: 0, score: 0, answered: false, chosen: -1, wrong: [] };
@@ -473,8 +480,105 @@
     else renderQuizResult();
   }
 
+  /* ---------- Nối từ (matching): 5 cặp mỗi vòng ---------- */
+  function matchTerm(it) { return it.kind === 'struct' ? it.pattern : it.w; }
+
+  function startMatchQuiz(items) {
+    var byId = {};
+    wordItems().concat(structItems()).forEach(function (it) { byId[it.id] = it; });
+    state.quiz = { mode: 'match', items: items, byId: byId, roundIndex: 0, roundSize: 5, score: 0, wrong: [], round: null };
+    loadMatchRound();
+    render();
+  }
+  function currentRoundItems() {
+    var qz = state.quiz, start = qz.roundIndex * qz.roundSize;
+    return qz.items.slice(start, start + qz.roundSize);
+  }
+  function loadMatchRound() {
+    var qz = state.quiz;
+    var roundItems = currentRoundItems();
+    var lefts = roundItems.map(function (it) { return { ref: it.id, text: matchTerm(it) }; });
+    var rights = roundItems.map(function (it) { return { ref: it.id, text: it.vi }; });
+    qz.round = { left: shuffle(lefts), right: shuffle(rights), matched: {}, selL: null, selR: null, wrongRefs: {}, flashWrong: null };
+  }
+
+  function renderMatchRunner() {
+    var qz = state.quiz, r = qz.round;
+    var totalRounds = Math.ceil(qz.items.length / qz.roundSize);
+    var html = '<div class="quiz-bar"><button class="btn-ghost" data-action="quiz-exit">✕ Thoát</button>' +
+      '<div class="quiz-count">Vòng ' + (qz.roundIndex + 1) + '/' + totalRounds + '</div>' +
+      '<div class="quiz-score">' + qz.score + '/' + qz.items.length + ' đúng</div></div>';
+    var doneBefore = qz.roundIndex * qz.roundSize;
+    var doneNow = Object.keys(r.matched).length;
+    var pct = Math.round((doneBefore + doneNow) / qz.items.length * 100);
+    html += '<div class="bar quiz-progress"><span style="width:' + pct + '%"></span></div>';
+    html += '<div class="hint-line">Chạm 1 mục bên trái rồi 1 mục bên phải để nối cặp. Nối sai sẽ được thử lại.</div>';
+
+    function cardHtml(cell, side) {
+      var cls = 'match-card';
+      var sel = side === 'L' ? r.selL : r.selR;
+      var isFlash = r.flashWrong && (side === 'L' ? r.flashWrong.L === cell.ref : r.flashWrong.R === cell.ref);
+      if (r.matched[cell.ref]) cls += ' correct';
+      else if (isFlash) cls += ' wrong';
+      else if (sel === cell.ref) cls += ' selected';
+      var disabled = r.matched[cell.ref] || r.flashWrong;
+      return '<button class="' + cls + '" data-action="match-pick" data-side="' + side + '" data-ref="' + cell.ref + '"' + (disabled ? ' disabled' : '') + '>' + esc(cell.text) + '</button>';
+    }
+
+    html += '<div class="match-wrap">';
+    html += '<div class="match-col">' + r.left.map(function (c) { return cardHtml(c, 'L'); }).join('') + '</div>';
+    html += '<div class="match-col">' + r.right.map(function (c) { return cardHtml(c, 'R'); }).join('') + '</div>';
+    html += '</div>';
+
+    if (doneNow === r.left.length) {
+      var isLast = (qz.roundIndex + 1) >= totalRounds;
+      html += '<button class="btn-primary block" data-action="match-next-round">' + (isLast ? 'Xem kết quả' : 'Vòng tiếp theo →') + '</button>';
+    }
+    viewEl.innerHTML = html;
+  }
+
+  function matchPick(side, ref) {
+    var qz = state.quiz; if (!qz || qz.mode !== 'match') return;
+    var r = qz.round;
+    if (r.matched[ref] || r.flashWrong) return;
+    if (side === 'L') r.selL = (r.selL === ref) ? null : ref;
+    else r.selR = (r.selR === ref) ? null : ref;
+    if (!r.selL || !r.selR) { renderMatchRunner(); return; }
+
+    if (r.selL === r.selR) {
+      var ref2 = r.selL;
+      r.matched[ref2] = true;
+      if (r.wrongRefs[ref2]) {
+        var it = qz.byId[ref2];
+        var posLabel = it.kind === 'struct' ? 'Cấu trúc' : (POS[it.pos] || POS.phr).full;
+        var term = matchTerm(it);
+        qz.wrong.push({ ref: ref2, prompt: esc(term), explain: term + ' (' + posLabel + ') = ' + it.vi });
+      } else {
+        qz.score++;
+      }
+      r.selL = null; r.selR = null;
+      renderMatchRunner();
+    } else {
+      r.wrongRefs[r.selL] = true; r.wrongRefs[r.selR] = true;
+      r.flashWrong = { L: r.selL, R: r.selR };
+      renderMatchRunner();
+      setTimeout(function () {
+        if (state.quiz !== qz) return;
+        r.flashWrong = null; r.selL = null; r.selR = null;
+        renderMatchRunner();
+      }, 550);
+    }
+  }
+
+  function matchNextRound() {
+    var qz = state.quiz;
+    var totalRounds = Math.ceil(qz.items.length / qz.roundSize);
+    if (qz.roundIndex + 1 < totalRounds) { qz.roundIndex++; loadMatchRound(); renderMatchRunner(); }
+    else renderQuizResult();
+  }
+
   function renderQuizResult() {
-    var qz = state.quiz, total = qz.qs.length, pct = Math.round(qz.score / total * 100);
+    var qz = state.quiz, total = qz.mode === 'match' ? qz.items.length : qz.qs.length, pct = Math.round(qz.score / total * 100);
     var msg = pct >= 90 ? 'Xuất sắc!' : pct >= 70 ? 'Tốt lắm!' : pct >= 50 ? 'Khá ổn, ôn thêm nhé.' : 'Cần luyện thêm.';
     var html = '<div class="result"><div class="result-ring" style="--p:' + pct + '"><div class="result-pct">' + pct + '%</div></div>' +
       '<div class="result-msg">' + esc(msg) + '</div>' +
@@ -497,8 +601,14 @@
   }
   function retryWrong() {
     var wrong = state.quiz.wrong.slice();
-    // dựng lại câu hỏi mới từ ref các từ sai để đảo đáp án
     var byId = {}; wordItems().concat(structItems()).forEach(function (it) { byId[it.id] = it; });
+    if (state.quiz.mode === 'match') {
+      var items = wrong.map(function (w) { return byId[w.ref]; }).filter(Boolean);
+      if (items.length < 2) { toast('Không đủ từ sai để nối lại.'); return; }
+      startMatchQuiz(shuffle(items));
+      return;
+    }
+    // dựng lại câu hỏi mới từ ref các từ sai để đảo đáp án
     var qs = wrong.map(function (q) {
       var it = byId[q.ref]; if (!it) return q;
       var kind = it.kind === 'struct' ? 'after' : 'meaning';
@@ -695,6 +805,8 @@
       case 'start-quiz': startQuiz(); break;
       case 'answer': answerQuiz(parseInt(t.dataset.idx, 10)); break;
       case 'quiz-next': nextQuiz(); break;
+      case 'match-pick': matchPick(t.dataset.side, t.dataset.ref); break;
+      case 'match-next-round': matchNextRound(); break;
       case 'quiz-exit':
         var fromTopic = state.quizTopic;
         state.quiz = null; state.quizTopic = null;
