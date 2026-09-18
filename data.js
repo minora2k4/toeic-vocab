@@ -708,8 +708,8 @@ var TOEIC_DATA = {
       {w:'solicitation', pos:'n', vi:'sự kêu gọi, sự vận động'},
       {w:'unsolicited', pos:'adj', vi:'không được yêu cầu, tự ý đưa ra'} ]},
 
-    { id:'f144', base:'engage', syn:['participate'], forms:[
-      {w:'engage', pos:'v', vi:'tham gia; thu hút'},
+    { id:'f144', base:'engage', syn:['participate','promise'], forms:[
+      {w:'engage', pos:'v', vi:'tham gia; thu hút; đính hôn; cam kết, hứa hẹn'},
       {w:'engagement', pos:'n', vi:'sự tham gia, sự gắn kết; sự đính hôn'},
       {w:'engaging', pos:'adj', vi:'hấp dẫn, lôi cuốn'} ]},
 
@@ -1820,7 +1820,41 @@ var TOEIC_DATA = {
     { id:'f474', base:'combination', forms:[
       {w:'combination', pos:'n', vi:'sự kết hợp'},
       {w:'combine', pos:'v', vi:'kết hợp'},
-      {w:'combined', pos:'adj', vi:'được kết hợp'} ]}
+      {w:'combined', pos:'adj', vi:'được kết hợp'} ]},
+
+    /* ---- BỔ SUNG TỪ SỔ TAY (đợt 5) ---- */
+    { id:'f475', base:'sincere', forms:[
+      {w:'sincere', pos:'adj', vi:'chân thành'},
+      {w:'sincerely', pos:'adv', vi:'một cách chân thành; trân trọng (dùng để kết thư)'} ]},
+
+    { id:'f476', base:'overwhelm', forms:[
+      {w:'overwhelm', pos:'v', vi:'áp đảo, làm choáng ngợp'},
+      {w:'overwhelmed', pos:'adj', vi:'cảm thấy choáng ngợp, quá tải'},
+      {w:'overwhelming', pos:'adj', vi:'áp đảo, quá sức, mạnh mẽ'} ]},
+
+    { id:'f477', base:'undergo', forms:[
+      {w:'undergo', pos:'v', vi:'trải qua, chịu đựng'} ]},
+
+    { id:'f478', base:'actual', forms:[
+      {w:'actual', pos:'adj', vi:'thực tế, có thật'},
+      {w:'actually', pos:'adv', vi:'thực ra, thực tế là'} ]},
+
+    { id:'f479', base:'forecast', forms:[
+      {w:'forecast', pos:'v', vi:'dự báo'},
+      {w:'forecast', pos:'n', vi:'dự báo, bản dự báo'} ]},
+
+    { id:'f480', base:'diverse', forms:[
+      {w:'diverse', pos:'adj', vi:'đa dạng'},
+      {w:'diversity', pos:'n', vi:'sự đa dạng'} ]},
+
+    { id:'f481', base:'tow', syn:['pull'], forms:[
+      {w:'tow', pos:'v', vi:'kéo (xe)'} ]},
+
+    { id:'f482', base:'favorable', forms:[
+      {w:'favorable', pos:'adj', vi:'thuận lợi'},
+      {w:'favor', pos:'n', vi:'thiện cảm, sự ưu ái'},
+      {w:'favor', pos:'v', vi:'ủng hộ, tán thành'},
+      {w:'favorably', pos:'adv', vi:'một cách thuận lợi'} ]}
   ],
 
   /* ---- CẤU TRÚC / LIÊN TỪ / TRẠNG TỪ LIÊN KẾT ---- */
@@ -1869,7 +1903,10 @@ var TOEIC_DATA = {
     { id:'s086', group:'Liên từ khác', pattern:'likewise', after:'S + V', vi:'tương tự như vậy', example:'likewise, prices fell' },
     { id:'s087', group:'Liên từ khác', pattern:'originally', after:'S + V', vi:'ban đầu', example:'originally, it cost less' },
     { id:'s088', group:'Liên từ khác', pattern:'regardless (of)', after:'N / V-ing', vi:'bất kể, bất chấp', example:'regardless of the cost' },
-    { id:'s089', group:'Liên từ khác', pattern:'as well as', after:'N / V-ing', vi:'cũng như', example:'speed as well as accuracy' }
+    { id:'s089', group:'Liên từ khác', pattern:'as well as', after:'N / V-ing', vi:'cũng như', example:'speed as well as accuracy' },
+    { id:'s090', group:'Từ vựng', pattern:'demand for', after:'N', vi:'nhu cầu về, đối với', example:'demand for the product' },
+    { id:'s091', group:'Từ vựng', pattern:'lead to', after:'N / V-ing', vi:'dẫn đến, gây ra', example:'lead to success' },
+    { id:'s092', group:'Từ vựng', pattern:'be able to', after:'V (nguyên mẫu)', vi:'có thể', example:'be able to finish on time' }
   ],
 
   /* Nhãn hiển thị cho từng loại từ */

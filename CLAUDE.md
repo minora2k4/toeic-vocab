@@ -48,7 +48,7 @@ Tên file **phải là `index.html`** để Pages phục vụ mặc định.
 | 2. Đa nền tảng máy tính & điện thoại | Responsive: 1 cột trên điện thoại, 2 cột thẻ trên màn rộng; thanh điều hướng dưới cùng kiểu app |
 | 3. Ôn tập từ phù hợp | Thẻ ghi nhớ (chạm để lật nghĩa) + quiz trắc nghiệm + **quiz nối từ** |
 | 4. Một từ có nhiều loại; cấu trúc + theo sau là gì | Mỗi từ ghi rõ **loại từ** (mã màu); mỗi cấu trúc ghi rõ **theo sau bởi** `S+V` / `N` / `V-ing`… |
-| 5. Lấy hết wordform, phân loại rõ ràng | 474 họ từ → 829 dạng, tách sẵn theo Danh từ / Động từ / Tính từ / Trạng từ / Giới từ; tab **Tổng hợp** hiện cả họ từ theo bảng |
+| 5. Lấy hết wordform, phân loại rõ ràng | 482 họ từ → 846 dạng, tách sẵn theo Danh từ / Động từ / Tính từ / Trạng từ / Giới từ; tab **Tổng hợp** hiện cả họ từ theo bảng |
 | 6. Tự thêm từ mới (từ, nghĩa, loại) vào list | Tab **Thêm từ**: thêm từ vựng hoặc cấu trúc; tự gộp vào họ từ nếu trùng gốc; lưu vào máy |
 | 7. Quiz hỏi nghĩa từ / cấu trúc theo sau | Quiz trắc nghiệm 4 đáp án: Từ→nghĩa, Nghĩa→từ, "Theo sau là gì?", Nghĩa cấu trúc, hoặc **Nối từ** |
 | 8. Chia nhóm ôn: Tổng hợp, Trạng từ, Cấu trúc, Danh từ, Động từ, Tính từ | Đúng 7 nhóm này ở cả tab **Học** lẫn tab **Kiểm tra** (đã bổ sung thêm **Giới từ**) |
